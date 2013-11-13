@@ -1,0 +1,22 @@
+{
+  "name": "twitchpoll",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "locomotive": "0.3.x",
+    "express": "3.x.x",
+    "connect-powered-by": "0.1.x",
+    "me2": "0.x",
+    "mustache-express": "~0.2.3"
+  },
+  "domains": [
+    "twitchpoll.com"
+  ],
+  "subdomain": "twitchpoll",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
