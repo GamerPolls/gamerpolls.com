@@ -1,6 +1,6 @@
 {
   "name": "twitchpoll",
-  "version": "0.0.1",
+  "version": "0.0.1-15",
   "private": true,
   "dependencies": {
     "locomotive": "0.3.x",
