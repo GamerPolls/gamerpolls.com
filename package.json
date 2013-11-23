@@ -3,11 +3,16 @@
   "version": "0.0.1-15",
   "private": true,
   "dependencies": {
-    "locomotive": "0.3.x",
-    "express": "3.x.x",
-    "connect-powered-by": "0.1.x",
+    "locomotive": "0.x",
+    "express": "3.x",
+    "connect-powered-by": "0.x",
     "me2": "0.x",
-    "mustache-express": "~0.2.3"
+    "mustache-express": "0.x",
+    "passport-twitchtv": "0.x",
+    "passport": "0.x",
+    "prompt": "0.x",
+    "locomotive-mongoose": "0.x",
+    "connect-ensure-login": "0.x"
   },
   "domains": [
     "twitchpoll.com"
