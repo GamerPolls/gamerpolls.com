@@ -1,0 +1,9 @@
+{
+	"MONGO_DB": "mongodb://localhost/test",
+	"authkeys": {
+		"twitchtv": {
+			"clientID": "",
+			"clientSecret": ""
+		}
+	}
+}

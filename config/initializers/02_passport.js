@@ -1,3 +1,4 @@
+var nconf = require('nconf');
 var passport = require('passport');
 var strategies = {
 	twitchtv: require('passport-twitchtv').Strategy
@@ -7,9 +8,9 @@ var Account = require('../../app/models/account');
 module.exports = function () {
 	passport.use('auth-twitchtv', new strategies.twitchtv(
 		{
-			clientID: '',
-			clientSecret: '',
-			callbackURL: '',
+			clientID: nconf.get('authkeys:twitchtv:clientID'),
+			clientSecret: nconf.get('authkeys:twitchtv:clientSecret'),
+			callbackURL: nconf.get('authkeys:twitchtv:callbackURL'),
 			scope: ['user_read', 'user_subscriptions'],
 			passReqToCallback: true
 		},

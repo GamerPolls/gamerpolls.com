@@ -1,27 +1,27 @@
 {
   "name": "twitchpoll",
-  "version": "0.0.1-15",
+  "version": "0.0.1-27",
   "private": true,
   "dependencies": {
-    "locomotive": "0.x",
-    "express": "3.x",
+    "connect-ensure-login": "0.x",
     "connect-powered-by": "0.x",
-    "me2": "0.x",
-    "mustache-express": "0.x",
-    "passport-twitchtv": "0.x",
-    "passport": "0.x",
-    "prompt": "0.x",
+    "express": "3.x",
+    "locomotive": "0.x",
     "locomotive-mongoose": "0.x",
-    "connect-ensure-login": "0.x"
+    "mongoose": "3.x",
+    "mustache-express": "0.x",
+    "passport": "0.x",
+    "passport-twitchtv": "0.x",
+    "nconf": "0.x"
   },
   "domains": [
     "twitchpoll.com"
   ],
   "subdomain": "twitchpoll",
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./node_modules/locomotive/bin/lcm.js server"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.x"
   }
 }

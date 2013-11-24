@@ -1,4 +1,6 @@
+var nconf = require('nconf');
 module.exports = function(){
+	console.log(nconf.get());
 	this.mongoose = require('mongoose');
-	this.mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost/test');
+	this.mongoose.connect(nconf.get('MONGO_DB'));
 };
