@@ -12,7 +12,7 @@ module.exports = function() {
   this.engine('mustache', require('mustache-express')());
 
   // Middleware.
-  this.use(poweredBy('Locomotive'));
+  this.use(poweredBy(null));
   this.use(express.logger());
   this.use(express.favicon());
   this.use(express.static(__dirname + '/../../public'));
