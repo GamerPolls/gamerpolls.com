@@ -29,7 +29,7 @@ AccountController.login = function () {
 			successRedirect: this.urlFor({action: 'showAccount'}),
 			failureRedirect: this.urlFor({action: 'login'})
 		}
-	)(this.request, this.response, this.next);
+	)(this.request, this.response, this.__next);
 };
 
 AccountController.logout = function () {
