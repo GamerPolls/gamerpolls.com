@@ -7,9 +7,11 @@ var passport = require('passport');
 
 AccountController.before('showAccount', login.ensureLoggedIn());
 AccountController.showAccount = function () {
-	var userdata = this.request.session.userdata.twitchtv.profile._json;
-	this.displayName = userdata.display_name;
+	var userdata = this.request.session.userdata.twitchtv;
+
 	this.avatar = userdata.logo;
+	this.displayName = userdata.displayName;
+	this.username = userdata.username;
 	this.render();
 };
 

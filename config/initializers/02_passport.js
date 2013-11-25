@@ -23,8 +23,11 @@ module.exports = function () {
 			}
 			request.session.userdata.twitchtv = {
 				accessToken: accessToken,
+				displayName: profile._json.display_name,
+				email: profile._json.email,
+				logo: profile._json.logo,
 				refreshToken: refreshToken,
-				profile: profile
+				username: profile.username
 			};
 
 			if (request.user) {
