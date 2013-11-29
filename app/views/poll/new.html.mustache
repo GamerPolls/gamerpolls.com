@@ -1,0 +1,22 @@
+<form action="/poll/new" method="post">
+	<input type="text" name="question" placeholder="Question" value="{{poll.question}}">
+	<ul>
+		{{#poll.answers}}
+		<li>
+			<input type="text" name="answers[]" placeholder="Answer..." value="{{text}}">
+		</li>
+		{{/poll.answers}}
+		<li>
+			<input type="text" name="answers[]" placeholder="Answer...">
+		</li>
+		<li>
+			<input type="text" name="answers[]" placeholder="Answer...">
+		</li>
+		<li>
+			<input type="text" name="answers[]" placeholder="Answer...">
+		</li>
+	</ul>
+	<input type="checkbox" name="multipleChoice" value="true"> Multiple choice?
+	<br>
+	<input type="submit" value="Create poll">
+</form>

@@ -9,10 +9,11 @@
     "locomotive": "0.x",
     "locomotive-mongoose": "0.x",
     "mongoose": "3.x",
+    "mongoose-auto-increment": "2.x",
     "mustache-express": "0.x",
+    "nconf": "0.x",
     "passport": "0.x",
-    "passport-twitchtv": "0.x",
-    "nconf": "0.x"
+    "passport-twitchtv": "0.x"
   },
   "domains": [
     "twitchpoll.com"

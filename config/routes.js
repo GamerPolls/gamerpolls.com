@@ -6,4 +6,10 @@ module.exports = function routes() {
 	this.post('login', 'account#login');
 	this.match('login/:authStrategy/callback', 'account#login');
 	this.match('logout', 'account#logout');
+
+	this.get('poll/new', 'poll#new');
+	this.post('poll/new', 'poll#create');
+	this.match('poll/:id', 'poll#showPoll');
+	this.post('poll/:id/vote', 'poll#vote');
+	this.get('poll/:id/results', 'poll#showResults');
 };
