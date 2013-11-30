@@ -18,6 +18,9 @@ var PollSchema = new Schema({
 	question: String
 });
 
-PollSchema.plugin(require('mongoose-auto-increment').plugin, 'Poll');
+PollSchema.plugin(require('mongoose-auto-increment').plugin, {
+	model: 'Poll',
+	startAt: 1
+});
 
 module.exports = mongoose.model('Poll', PollSchema);
