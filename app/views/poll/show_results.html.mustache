@@ -1,8 +1,65 @@
-<h1>{{poll.question}}</h1>
-<ol>
-	{{#poll.answers}}
-	<li>
-		{{text}} = {{votes}} votes
-	</li>
-	{{/poll.answers}}
-</ol>
+<!doctype>
+<html>
+	<head>
+		<link rel="stylesheet" href="/stylesheets/style.css">
+	</head>
+	<body>
+		<h1>{{poll.question}}</h1>
+		<div id="chart-container"></div>
+
+		<ol>
+			{{#poll.answers}}
+			<li>
+				{{text}} = {{votes}} votes
+			</li>
+			{{/poll.answers}}
+		</ol>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script>
+			$(function () {
+				var chart = $('#chart-container').highcharts({
+					chart: {
+						type: 'pie',
+						backgroundColor: null
+					},
+					credits: { enabled: false },
+					title: { text: '' },
+					plotOptions: {
+						pie: {
+							borderColor: '#000',
+							dataLabels: {
+								distance: -35,
+								backgroundColor: 'rgba(0, 0, 0, 0.5)',
+								borderRadius: '5px'
+							}
+						}
+					},
+					series: [{
+						type: 'pie',
+						name: 'Votes',
+						data: [
+							{{#poll.answers}}
+							['{{text}}', {{votes}}],
+							{{/poll.answers}}
+						],
+						dataLabels: {
+							useHTML: true,
+							formatter: function() {
+								return '<div class="chart-label">' + (this.point.name.length > 15 ? this.point.name.substr(0, 15).trim() + '...' : this.point.name) + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
+							}
+						}
+					}],
+					tooltip: {
+						useHTML: true,
+						headerFormat: '<span class="chart-tooltip-header">{point.key}</span><br><hr>'
+					}
+				});
+				
+				// Update data, to be added in #4, kept here is reference.
+				// chart.series[0].data[0].update(y += 100);
+			});
+		</script>
+	</body>
+</html>
