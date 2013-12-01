@@ -18,6 +18,11 @@ var PollSchema = new Schema({
 	question: String
 });
 
+PollSchema.plugin(require('./_migrations/migration-plugin'), {
+	path: 'poll',
+	version: 1
+});
+
 PollSchema.plugin(require('mongoose-auto-increment').plugin, {
 	model: 'Poll',
 	startAt: 1
