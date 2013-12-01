@@ -1,0 +1,11 @@
+<h1>{{poll.question}}</h1>
+<form action="/poll/{{poll._id}}/vote" method="post">
+	<ol>
+		{{#poll.answers}}
+		<li>
+			<input type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}" name="answers" value="{{_id}}"> {{text}}
+		</li>
+		{{/poll.answers}}
+	</ol>
+	<input type="submit" value="Vote">
+</form>

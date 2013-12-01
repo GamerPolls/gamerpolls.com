@@ -49,6 +49,7 @@ PollController.showPoll = function () {
 		return this.next();
 	}
 	this.poll = this._poll;
+	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 
 	this.render();
 };
@@ -84,8 +85,6 @@ PollController.vote = function () {
 	if (!voted) {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
-	console.log(this._poll);
-	console.log(answers);
 	
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
@@ -100,6 +99,7 @@ PollController.showResults = function () {
 		return this.next();
 	}
 	this.poll = this._poll;
+	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
 

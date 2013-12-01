@@ -9,6 +9,7 @@ AccountController.before('showAccount', login.ensureLoggedIn());
 AccountController.showAccount = function () {
 	var userdata = this.request.session.userdata.twitchtv;
 
+	this.title = 'My account';
 	this.avatar = userdata.logo;
 	this.displayName = userdata.displayName;
 	this.username = userdata.username;
@@ -16,6 +17,7 @@ AccountController.showAccount = function () {
 };
 
 AccountController.loginForm = function () {
+	this.title = 'Login';
 	this.render();
 };
 
