@@ -14,7 +14,7 @@
 
 		{{{yield-styles}}}
 
-		<script src="js/vendor/modernizr-2.7.0.min.js"></script>
+		<script src="/js/vendor/modernizr-2.7.0.min.js"></script>
 	</head>
 	<body>
 		<!--[if lt IE 8]>
@@ -28,10 +28,11 @@
 		{{>layout/footer}}
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-
-		<script src="js/plugins.js"></script>
-		<script src="js/main.js"></script>
+		<script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+		<script src="/js/socket.io.js"></script>
+		<script src="/js/plugins.js"></script>
+		<script src="/js/utils.js"></script>
+		<script src="/js/main.js"></script>
 
 		{{{yield-scripts}}}
 	</body>

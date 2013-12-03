@@ -4,7 +4,7 @@
 <ol>
 	{{#poll.answers}}
 	<li>
-		{{text}} = {{votes}} votes
+		{{text}} = <span id="answer-{{_id}}">{{votes}}</span> votes
 	</li>
 	{{/poll.answers}}
 </ol>
@@ -13,7 +13,7 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
 	$(function () {
-		var chart = $('#chart-container').highcharts({
+		$('#chart-container').highcharts({
 			chart: {
 				type: 'pie',
 				backgroundColor: null
@@ -35,7 +35,11 @@
 				name: 'Votes',
 				data: [
 					{{#poll.answers}}
-					['{{text}}', {{votes}}],
+					{
+						id: '{{_id}}',
+						name: '{{text}}',
+						y: {{votes}}
+					},
 					{{/poll.answers}}
 				],
 				dataLabels: {
@@ -50,9 +54,20 @@
 				headerFormat: '<span class="chart-tooltip-header">{point.key}</span><br><hr>'
 			}
 		});
-		
-		// Update data, to be added in #4, kept here is reference.
-		// chart.series[0].data[0].update(y += 100);
+
+		var chart = $('#chart-container').highcharts();
+
+		var socket = utils.getSocket();
+		socket.on('vote', function (data) {
+			data.forEach(function (answer) {
+				// Update chart values.
+				chart.get(answer._id).update(answer.votes);
+
+				// Update DOM nodes.
+				$('#answer-' + answer._id).text(answer.votes);
+			});
+		});
+
 	});
 </script>
 {{/yield-scripts}}

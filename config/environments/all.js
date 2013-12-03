@@ -34,6 +34,7 @@ module.exports = function() {
 	this.use(poweredBy(null));
 	this.use(express.logger());
 	this.use(express.favicon());
+	this.use('/js', express.static(__dirname + '/../../node_modules/socket.io/node_modules/socket.io-client/dist'));
 	this.use(express.static(__dirname + '/../../public'));
 	this.use(express.urlencoded());
 	this.use(express.json());

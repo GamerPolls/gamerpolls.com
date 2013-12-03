@@ -85,11 +85,12 @@ PollController.vote = function () {
 	if (!voted) {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
-	
+
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
 			return self.next();
 		}
+		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', savedPoll.answers);
 		self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -98,6 +99,10 @@ PollController.showResults = function () {
 	if (!this._poll) {
 		return this.next();
 	}
+	var self = this;
+	this.app.io.sockets.on('connection', function (socket) {
+		socket.join('poll-' + self._poll._id);
+	});
 	this.poll = this._poll;
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
