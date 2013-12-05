@@ -43,5 +43,6 @@ module.exports = function() {
 	this.use(express.session({ secret: 'keyboard cat' }));
 	this.use(passport.initialize());
 	this.use(passport.session());
+	this.use(require(__dirname + '/../../app/libs/locals'));
 	this.use(this.router);
 };
