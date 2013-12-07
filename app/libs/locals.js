@@ -6,7 +6,20 @@ module.exports = function (request, response, next) {
 	// this.locals.foo = 'bar';
 
 	// Client-specific data, e.g. user info
-	response.locals.user = request.user;
+
+	// Expose only certain values.
+	if (request.user) {
+		response.locals.user = {};
+		[
+			'avatar',
+			'displayName',
+			'email',
+			'username'
+		].forEach(function (key) {
+			response.locals.user[key] = request.user[key];
+		});
+	}
+	
 	response.locals.loggedIn = request.isAuthenticated();
 
 	// Pass to next middleware.

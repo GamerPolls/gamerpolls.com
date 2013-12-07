@@ -7,12 +7,7 @@ var passport = require('passport');
 
 AccountController.before('showAccount', login.ensureLoggedIn());
 AccountController.showAccount = function () {
-	var userdata = this.request.session.userdata.twitchtv;
-
 	this.title = 'My account';
-	this.avatar = userdata.logo;
-	this.displayName = userdata.displayName;
-	this.username = userdata.username;
 	this.render();
 };
 

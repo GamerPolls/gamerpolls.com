@@ -15,29 +15,28 @@ module.exports = function () {
 			passReqToCallback: true
 		},
 		function (request, accessToken, refreshToken, profile, done) {
-			var authData = {
-				'auths.twitchtv.id': profile.id
-			};
-			if (!request.session.userdata) {
-				request.session.userdata = {};
-			}
-			request.session.userdata.twitchtv = {
-				accessToken: accessToken,
+			var data = {
+				'auths.twitchtv.id': profile.id,
 				displayName: profile._json.display_name,
 				email: profile._json.email,
-				logo: profile._json.logo,
-				refreshToken: refreshToken,
+				avatar: profile._json.logo,
 				username: profile.username
 			};
 
-			if (request.user) {
-				return done(null, request.user);
-			}
-			Account.findOne(authData, function (err, account) {
-				if (account) {
-					return done(err, account);
+			request.session.twitchtv = {
+				accessToken: accessToken,
+				refreshToken: refreshToken
+			};
+
+			Account.findOne({ 'auths.twitchtv.id': profile.id }, function (err, account) {
+				if (!account) {
+					account = new Account();
 				}
-				account = new Account(authData);
+				for (var key in data) {
+					if (data.hasOwnProperty(key)) {
+						account[key] = data[key];
+					}
+				}
 				account.save(function () {
 					return done(err, account);
 				});
