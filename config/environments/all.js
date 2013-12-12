@@ -16,15 +16,10 @@ module.exports = function() {
 
 	var partials = {};
 	var layout = fs.readdirSync(__dirname + '/../../app/views/_layout');
-	var helper = fs.readdirSync(__dirname + '/../../app/views/_helper');
 
 	layout.forEach(function (filename) {
 		filename = path.basename(filename, '.html');
 		partials['layout/' + filename] = '_layout/' + filename
-	});
-	helper.forEach(function (filename) {
-		filename = path.basename(filename, '.html');
-		partials['helper/' + filename] = '_helper/' + filename
 	});
 
 	this.set('layout', 'layout');
