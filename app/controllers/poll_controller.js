@@ -90,7 +90,7 @@ PollController.vote = function () {
 		if (err) {
 			return self.next();
 		}
-		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', savedPoll.answers);
+		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', calculatePercentages(savedPoll.answers));
 		self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -104,6 +104,7 @@ PollController.showResults = function () {
 		socket.join('poll-' + self._poll._id);
 	});
 	this.poll = this._poll;
+	this.poll.answers = calculatePercentages(this.poll.answers);
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
@@ -127,5 +128,26 @@ PollController.before('*', function (next) {
 		next();
 	});
 });
+
+/**
+ * Adds a `percentage` property to an answer object.
+ * @param  {array} answers An array of answer objects. Must have a `votes` property. Can be a normal object or a mongoose object.
+ * @return {array}         The answers array with a `percentage` property on each answer object.
+ */
+function calculatePercentages(answers) {
+	// Get multiplier scale.
+	var scale = answers.reduce(function (prevVotes, answer) {
+		return prevVotes + answer.votes;
+	}, 0);
+	scale = 100 / scale;
+	
+	// Add `percentage` property.
+	answers.forEach(function (answer, idx, arr) {
+		answer = typeof answer.toObject === 'undefined' ? answer : answer.toObject();
+		answer.percentage = Math.round(answer.votes * scale);
+		arr[idx] = answer;
+	});
+	return answers;
+}
 
 module.exports = PollController;

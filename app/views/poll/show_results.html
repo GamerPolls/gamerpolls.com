@@ -13,6 +13,9 @@
 			{{text}}
 		</p>
 	</div>
+	<div class="progress">
+		<div class="progress-bar" data-answer-id="{{_id}}" style="width: {{percentage}}%;"></div>
+	</div>
 </div>
 {{/poll.answers}}
 
@@ -64,6 +67,11 @@
 
 		var chart = $('#chart-container').highcharts();
 
+		// Set progress bar color to match pie section color.
+		var data = chart.series[0].data.forEach(function (section) {
+			$('.progress-bar[data-answer-id="' + section.id + '"]').css('background-color', section.color);
+		});
+
 		var socket = utils.getSocket();
 		socket.on('vote', function (data) {
 			data.forEach(function (answer) {
@@ -72,6 +80,7 @@
 
 				// Update DOM nodes.
 				$('#answer-' + answer._id).text(answer.votes + ' votes');
+				$('.progress-bar[data-answer-id="' + answer._id + '"]').css('width', answer.percentage + '%');
 			});
 		});
 
