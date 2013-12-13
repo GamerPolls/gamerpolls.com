@@ -5,6 +5,9 @@
 	{{#poll.answers}}
 	<li>
 		{{text}} = <span id="answer-{{_id}}">{{votes}}</span> votes
+		<div class="progress">
+        	<div class="progress-bar" data-answer-id="{{_id}}" style="width: {{percentage}}%;"></div>
+    	</div>
 	</li>
 	{{/poll.answers}}
 </ol>
@@ -57,6 +60,12 @@
 
 		var chart = $('#chart-container').highcharts();
 
+		// Gets answer color from chart and set progress bar color to match
+		var data = chart.series[0].data;
+		data.forEach(function (answer) {
+			$('.progress-bar[data-answer-id="' + answer.id + '"]').css('background-color', answer.color);
+		});
+
 		var socket = utils.getSocket();
 		socket.on('vote', function (data) {
 			data.forEach(function (answer) {
@@ -65,6 +74,7 @@
 
 				// Update DOM nodes.
 				$('#answer-' + answer._id).text(answer.votes);
+				$('.progress-bar[data-answer-id="' + answer._id + '"]').css('width', answer.percentage + '%');
 			});
 		});
 

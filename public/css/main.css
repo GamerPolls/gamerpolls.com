@@ -19,3 +19,10 @@ a {
 .highcharts-tooltip span {
     z-index: 9999;  
 }
+.progress {
+	background-color: #808080;
+	width: 200px;
+}
+.progress-bar {
+	height: 20px;
+}

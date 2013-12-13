@@ -90,7 +90,7 @@ PollController.vote = function () {
 		if (err) {
 			return self.next();
 		}
-		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', savedPoll.answers);
+		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', calculatePercentages(savedPoll.answers));
 		self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -104,9 +104,25 @@ PollController.showResults = function () {
 		socket.join('poll-' + self._poll._id);
 	});
 	this.poll = this._poll;
+	this.poll.answers = calculatePercentages(this.poll.answers);
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
+
+// Returns the answers array that was passed in.
+function calculatePercentages(answers) {
+	// Get percentage per vote.
+	var scale = answers.reduce(function (prevVotes, answer) {
+		return prevVotes + answer.votes;
+	}, 0);
+	scale = 100 / scale;
+	
+	answers.forEach(function (instance, index, array) {
+		array[index] = instance.toObject();
+		array[index].percentage = Math.round(array[index].votes * scale);
+	});
+	return answers;
+}
 
 PollController.before('*', function (next) {
 	var self = this;
