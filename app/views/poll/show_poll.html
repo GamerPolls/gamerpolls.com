@@ -1,11 +1,23 @@
-<h1>{{poll.question}}</h1>
+<h1 class="text-center">{{poll.question}}</h1>
 <form action="/poll/{{poll._id}}/vote" method="post">
-	<ol>
-		{{#poll.answers}}
-		<li>
-			<input type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}" name="answers" value="{{_id}}"> {{text}}
-		</li>
-		{{/poll.answers}}
-	</ol>
-	<input type="submit" value="Vote">
+	{{#poll.answers}}
+	<div class="form-group">
+		<label class="answer">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<input
+						type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
+						name="answers"
+						value="{{_id}}"
+					>
+				</span>
+				<p class="form-control">
+					{{text}}
+				</p>
+			</div>
+		</label>
+	</div>
+	{{/poll.answers}}
+
+	<button type="submit" class="btn btn-lg btn-success btn-block">Vote</span></button>
 </form>
