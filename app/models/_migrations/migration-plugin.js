@@ -35,39 +35,38 @@
  * document is on the newest version.
  */
 module.exports = exports = function schemaMigrations(schema, options) {
-    if (!options) {
-        console.log('You must pass options to the migration plugin.');
-        return;
-    }
+	if (!options) {
+		console.log('You must pass options to the migration plugin.');
+		return;
+	}
 
-    schema.add({ __schemaVersion: Number });
+	schema.add({ __schemaVersion: Number });
 
-    schema.post('init', function (doc) {
-        if (!doc.__schemaVersion) {
-            doc.__schemaVersion = 0;
-        }
-        console.log(doc);
-        if (doc.__schemaVersion < options.version) {
-            console.log('Document schema version is out of date. Current version: `' + doc.__schemaVersion + '`, latest version: `' + options.version + '`');
-            var migrations = require('./' + options.path.toLower());
-            for (var i = doc.__schemaVersion; i < options.version; i++) {
-                console.log('Migrating from `' + i + '` to `' + (i + 1) + '`...');
-                if (!migrations[i + 1]) {
-                    console.log('Migration failed: migration path does not exist for version `' + (i + 1) + '`');
-                    return;
-                }
-                migrations[i + 1].call(doc);
-                doc.__schemaVersion = i + 1;
-            }
-            console.log('Migration complete!');
-            doc.save();
-        }
-    });
+	schema.post('init', function (doc) {
+		if (!doc.__schemaVersion) {
+			doc.__schemaVersion = 0;
+		}
+		if (doc.__schemaVersion < options.version) {
+			console.log('Document schema version is out of date. Current version: `' + doc.__schemaVersion + '`, latest version: `' + options.version + '`');
+			var migrations = require('./' + options.path.toLower());
+			for (var i = doc.__schemaVersion; i < options.version; i++) {
+				console.log('Migrating from `' + i + '` to `' + (i + 1) + '`...');
+				if (!migrations[i + 1]) {
+					console.log('Migration failed: migration path does not exist for version `' + (i + 1) + '`');
+					return;
+				}
+				migrations[i + 1].call(doc);
+				doc.__schemaVersion = i + 1;
+			}
+			console.log('Migration complete!');
+			doc.save();
+		}
+	});
 
-    schema.post('save', function (doc) {
-        if (typeof doc.__schemaVersion === 'undefined') {
-            doc.__schemaVersion = options.version;
-            doc.save();
-        }
-    });
+	schema.post('save', function (doc) {
+		if (typeof doc.__schemaVersion === 'undefined') {
+			doc.__schemaVersion = options.version;
+			doc.save();
+		}
+	});
 }
