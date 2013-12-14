@@ -88,6 +88,9 @@
 				dataLabels: {
 					useHTML: true,
 					formatter: function() {
+						if (this.y === 0) {
+							return;
+						}
 						return '<div class="chart-label">' + (this.point.name.length > 15 ? this.point.name.substr(0, 15).trim() + '...' : this.point.name) + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
 					}
 				}
