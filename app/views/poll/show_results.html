@@ -1,23 +1,27 @@
 <h1 class="text-center">{{poll.question}}</h1>
-<div class="well">
-	<div id="chart-container"></div>
-</div>
+<div class="row">
+	<div class="col-xs-12 col-md-4 col-md-push-8">
+		<div class="well" id="chart-container"></div>
+	</div>
 
-{{#poll.answers}}
-<div class="form-group answer">
-	<div class="input-group">
-		<span class="input-group-addon" id="answer-{{_id}}">
-			{{votes}} votes
-		</span>
-		<p class="form-control">
-			{{text}}
-		</p>
-	</div>
-	<div class="progress">
-		<div class="progress-bar" data-answer-id="{{_id}}" style="width: {{percentage}}%;"></div>
+	<div class="col-xs-12 col-md-8 col-md-pull-4">
+		{{#poll.answers}}
+		<div class="form-group answer">
+			<div class="input-group">
+				<span class="input-group-addon" id="answer-{{_id}}">
+					{{votes}} votes
+				</span>
+				<p class="form-control">
+					{{text}}
+				</p>
+			</div>
+			<div class="progress">
+				<div class="progress-bar" data-answer-id="{{_id}}" style="width: {{percentage}}%;"></div>
+			</div>
+		</div>
+		{{/poll.answers}}
 	</div>
 </div>
-{{/poll.answers}}
 
 {{#yield-scripts}}
 <script src="http://code.highcharts.com/highcharts.js"></script>
