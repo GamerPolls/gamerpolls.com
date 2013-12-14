@@ -67,6 +67,58 @@ PollController.showPoll = function () {
 	this.render();
 };
 
+PollController.showEdit = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+
+	if (!this._poll.canEdit) {
+		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+	}
+	
+	this.poll = this.request.session._poll;
+	delete this.request.session._poll;
+
+	this.isEditing = true;
+	this.render('new');
+};
+
+PollController.edit = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+
+	if (!this._poll.canEdit) {
+		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+	}
+
+	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
+	var question = this.param('question');
+	var multipleChoice = Boolean(this.param('multipleChoice'));
+
+	answers = answers.map(function (answer) {
+		return { text: answer };
+	});
+
+	if (answers.length < 2) {
+		this.request.session._poll = {
+			answers: answers,
+			multipleChoice: multipleChoice,
+			question: question
+		};
+		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
+	}
+
+	var self = this;
+
+	this._poll.save(function (err, savedPoll) {
+		if (err) {
+			return self.next();
+		}
+		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+	});
+};
+
 PollController.vote = function () {
 	if (!this._poll) {
 		return this.next();

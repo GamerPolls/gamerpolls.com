@@ -1,4 +1,7 @@
-<form action="/poll/new" method="post">
+<form action="/poll/{{#poll.isEditing}}{{poll._id}}/edit{{/poll.isEditing}}{{^poll.isEditing}}new{{/poll.isEditing}}" method="post">
+	{{#poll.isEditing}}
+	<h1>Editing Poll</h1>
+	{{/poll.isEditing}}
 	<h2>Question</h2>
 	<div class="form-group">
 		<input type="text" class="form-control input-lg" name="question" placeholder="Enter a question..." value="{{poll.question}}">
@@ -11,13 +14,13 @@
 	</div>
 	{{/poll.answers}}
 	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
 	</div>
 	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
 	</div>
 	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
 	</div>
 	<fieldset>
 		<legend>Options</legend>
@@ -40,5 +43,8 @@
 			</label>
 		</div>
 	</fieldset>
-	<input type="submit" value="Create poll" class="btn btn-lg btn-success btn-block">
+	<input type="submit" value="{{#poll.isEditing}}Save Changes{{/poll.isEditing}}{{^poll.isEditing}}Create Poll{{/poll.isEditing}}" class="btn btn-lg btn-success btn-block">
+	{{#poll.isEditing}}
+	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
+	{{/poll.isEditing}}
 </form>
