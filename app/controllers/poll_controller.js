@@ -109,6 +109,27 @@ PollController.showResults = function () {
 	this.render();
 };
 
+PollController.close = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+
+	if (!this._poll.canClose) {
+		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+	}
+
+	this._poll.closeTime = Date.now()
+
+	var self = this;
+
+	this._poll.save(function (err, savedPoll) {
+		if (err) {
+			return self.next();
+		}
+		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+	});
+}
+
 PollController.before('*', function (next) {
 	var self = this;
 	var id = Number(this.param('id'));

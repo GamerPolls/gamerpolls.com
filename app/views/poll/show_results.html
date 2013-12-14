@@ -2,6 +2,11 @@
 <div class="row">
 	<div class="col-xs-12 col-md-4 col-md-push-8">
 		<div class="well" id="chart-container"></div>
+		{{#poll.canClose}}
+		<form action="/poll/{{poll._id}}/close" method="post">
+			<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+		</form>
+		{{/poll.canClose}}
 	</div>
 
 	<div class="col-xs-12 col-md-8 col-md-pull-4">
