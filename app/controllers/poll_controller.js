@@ -3,6 +3,7 @@ var Controller = locomotive.Controller;
 var PollController = new Controller();
 var Poll = require('../models/poll');
 var login = require('connect-ensure-login');
+var moment = require('moment');
 
 PollController.new = function () {
 	this.poll = this.request.session._poll;
@@ -36,6 +37,10 @@ PollController.create = function () {
 		question: question
 	});
 
+	if (this.request.isAuthenticated()) {
+		poll.creator = this.request.user._id;
+	}
+
 	poll.save(function (err, savedPoll) {
 		if (err) {
 			return self.next();
@@ -48,6 +53,11 @@ PollController.showPoll = function () {
 	if (!this._poll) {
 		return this.next();
 	}
+
+	if (this._poll.isClosed) {
+		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
+	}
+
 	this.poll = this._poll;
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 
@@ -58,6 +68,11 @@ PollController.vote = function () {
 	if (!this._poll) {
 		return this.next();
 	}
+
+	if (this._poll.isClosed) {
+		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
+	}
+
 	var self = this;
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var voted = false;
@@ -114,11 +129,11 @@ PollController.close = function () {
 		return this.next();
 	}
 
-	if (!this._poll.canClose) {
+	if (!this._poll.isClosable) {
 		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
-	this._poll.closeTime = Date.now()
+	this._poll.closeTime = moment.utc();
 
 	var self = this;
 
@@ -128,7 +143,7 @@ PollController.close = function () {
 		}
 		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
-}
+};
 
 PollController.before('*', function (next) {
 	var self = this;
@@ -145,6 +160,7 @@ PollController.before('*', function (next) {
 		if (!poll) {
 			return next();
 		}
+		poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
 		self._poll = poll;
 		next();
 	});
