@@ -16,6 +16,7 @@ PollController.create = function () {
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var question = this.param('question');
 	var multipleChoice = Boolean(this.param('multipleChoice'));
+	var allowSameIP = Boolean(this.param('allowSameIP'));
 
 	answers = answers.map(function (answer) {
 		return { text: answer };
@@ -25,6 +26,7 @@ PollController.create = function () {
 		this.request.session._poll = {
 			answers: answers,
 			multipleChoice: multipleChoice,
+			allowSameIP: allowSameIP,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'new' }));
@@ -34,6 +36,7 @@ PollController.create = function () {
 	var poll = new Poll({
 		answers: answers,
 		multipleChoice: multipleChoice,
+		allowSameIP: allowSameIP,
 		question: question
 	});
 
@@ -54,7 +57,7 @@ PollController.showPoll = function () {
 		return this.next();
 	}
 
-	if (this._poll.isClosed) {
+	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
 
@@ -69,7 +72,7 @@ PollController.vote = function () {
 		return this.next();
 	}
 
-	if (this._poll.isClosed) {
+	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
 
@@ -101,10 +104,20 @@ PollController.vote = function () {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
+	this._poll.voterIPs.push(this.request.ip);
+
+	if (this.request.isAuthenticated()) {
+		this._poll.voterIDs.push(this.request.user._id);
+	}
+
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
 			return self.next();
 		}
+		if (!self.request.session.pollsVotedIn) {
+			self.request.session.pollsVotedIn = [];
+		}
+		self.request.session.pollsVotedIn.push(savedPoll._id);
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', calculatePercentages(savedPoll.answers));
 		self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});

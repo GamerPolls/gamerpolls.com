@@ -32,6 +32,9 @@ var PollSchema = new Schema({
 		}
 	},
 	multipleChoice: Boolean,
+	allowSameIP: Boolean,
+	voterIPs: [String],
+	voterIDs: [Schema.Types.ObjectId],
 	question: String
 });
 
@@ -44,6 +47,19 @@ PollSchema.methods.isCreator = function (user) {
 		return false;
 	}
 	return this.creator.equals(user._id);
+};
+
+PollSchema.methods.hasVoted = function (request) {
+	if (request.user && this.voterIDs.indexOf(request.user._id) >= 0) {
+		return true;
+	}
+	if (!this.allowSameIP && this.voterIPs.indexOf(request.ip) >= 0) {
+		return true;
+	}
+	if (request.session.pollsVotedIn && request.session.pollsVotedIn.indexOf(this._id) >= 0) {
+		return true;
+	}
+	return false;
 };
 
 PollSchema.plugin(require('./_migrations/migration-plugin'), {

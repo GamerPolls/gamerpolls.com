@@ -30,6 +30,14 @@
 					<p class="form-control">Allow multiple choice</p>
 				</div>
 			</label>
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
+					</span>
+					<p class="form-control">Allow multiple votes from one IP</p>
+				</div>
+			</label>
 		</div>
 	</fieldset>
 	<input type="submit" value="Create poll" class="btn btn-lg btn-success btn-block">
