@@ -16,7 +16,8 @@
     "passport-twitchtv": "0.x",
     "hogan-express": "0.x",
     "socket.io": "0.x",
-    "moment": "2.x"
+    "moment": "2.x",
+    "connect-mongo": "0.x"
   },
   "domains": [
     "twitchpoll.com"

@@ -4,8 +4,16 @@ var util = require('util');
 var passport = require('passport');
 var fs = require('fs');
 var path = require('path');
+var MongoStore = require('connect-mongo')(express);
+var nconf = require('nconf');
 
 module.exports = function() {
+	nconf.file({ file: 'default-env.json' });
+	nconf.file({ file: 'env.json' });
+	nconf.argv();
+	nconf.env();
+	this.nconf = nconf;
+	
 	this.datastore(require('locomotive-mongoose'));
 
 	// Template stuff.
@@ -35,7 +43,12 @@ module.exports = function() {
 	this.use(express.json());
 	this.use(express.cookieParser());
 	this.use(express.methodOverride());
-	this.use(express.session({ secret: 'keyboard cat' }));
+	this.use(express.session({
+		secret: 'secret',
+		store: new MongoStore({
+			url: this.nconf.get('MONGO_DB')
+		})
+	}));
 	this.use(passport.initialize());
 	this.use(passport.session());
 	this.use(require(__dirname + '/../../app/libs/locals'));
