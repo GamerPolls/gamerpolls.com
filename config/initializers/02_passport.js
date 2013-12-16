@@ -15,14 +15,6 @@ module.exports = function () {
 			passReqToCallback: true
 		},
 		function (request, accessToken, refreshToken, profile, done) {
-			var data = {
-				'auths.twitchtv.id': profile.id,
-				displayName: profile._json.display_name,
-				email: profile._json.email,
-				avatar: profile._json.logo,
-				username: profile.username
-			};
-
 			request.session.twitchtv = {
 				accessToken: accessToken,
 				refreshToken: refreshToken
@@ -32,11 +24,13 @@ module.exports = function () {
 				if (!account) {
 					account = new Account();
 				}
-				for (var key in data) {
-					if (data.hasOwnProperty(key)) {
-						account[key] = data[key];
-					}
-				}
+
+				account.auths.twitchtv.id = profile.id;
+				account.displayName = profile._json.display_name;
+				account.email = profile._json.email;
+				account.avatar = profile._json.logo;
+				account.username = profile.username;
+
 				account.save(function () {
 					return done(err, account);
 				});
