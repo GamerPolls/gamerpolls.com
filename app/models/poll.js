@@ -42,6 +42,12 @@ PollSchema.virtual('isClosed').get(function () {
 	return moment.utc().isAfter(this.closeTime);
 });
 
+PollSchema.virtual('totalVotes').get(function () {
+	return this.answers.reduce(function (prevVotes, answer) {
+		return prevVotes + answer.votes;
+	}, 0);
+});
+
 PollSchema.methods.isCreator = function (user) {
 	if (!this.creator || !user) {
 		return false;

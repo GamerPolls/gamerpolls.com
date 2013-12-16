@@ -20,7 +20,7 @@
 	{{/poll.answers}}
 
 	<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
-	{{#poll.canEdit}}
+	{{#poll.isEditable}}
 	<button type="submit" class="btn btn-lg btn-primary btn-block">Edit</button>
-	{{/poll.canEdit}}
+	{{/poll.isEditable}}
 </form>

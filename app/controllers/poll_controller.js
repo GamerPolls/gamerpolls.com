@@ -72,7 +72,7 @@ PollController.showEdit = function () {
 		return this.next();
 	}
 
-	if (!this._poll.canEdit) {
+	if (!this._poll.isEditable) {
 		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 	
@@ -88,7 +88,7 @@ PollController.edit = function () {
 		return this.next();
 	}
 
-	if (!this._poll.canEdit) {
+	if (!this._poll.isEditable) {
 		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
@@ -226,6 +226,7 @@ PollController.before('*', function (next) {
 			return next();
 		}
 		poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
+		poll.isEditable = poll.totalVotes < 1 && poll.isCreator(self.request.user);
 		self._poll = poll;
 		next();
 	});
