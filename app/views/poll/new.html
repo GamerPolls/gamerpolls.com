@@ -1,7 +1,7 @@
-<form action="/poll/{{#poll.isEditing}}{{poll._id}}/edit{{/poll.isEditing}}{{^poll.isEditing}}new{{/poll.isEditing}}" method="post">
-	{{#poll.isEditing}}
+<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
+	{{#isEditing}}
 	<h1>Editing Poll</h1>
-	{{/poll.isEditing}}
+	{{/isEditing}}
 	<h2>Question</h2>
 	<div class="form-group">
 		<input type="text" class="form-control input-lg" name="question" placeholder="Enter a question..." value="{{poll.question}}">
@@ -43,8 +43,8 @@
 			</label>
 		</div>
 	</fieldset>
-	<input type="submit" value="{{#poll.isEditing}}Save Changes{{/poll.isEditing}}{{^poll.isEditing}}Create Poll{{/poll.isEditing}}" class="btn btn-lg btn-success btn-block">
-	{{#poll.isEditing}}
+	<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
+	{{#isEditing}}
 	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
-	{{/poll.isEditing}}
+	{{/isEditing}}
 </form>

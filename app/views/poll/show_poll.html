@@ -21,6 +21,6 @@
 
 	<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
 	{{#poll.isEditable}}
-	<button type="submit" class="btn btn-lg btn-primary btn-block">Edit</button>
+	<a href="/poll/{{poll._id}}/edit" class="btn btn-lg btn-primary btn-block">Edit</a>
 	{{/poll.isEditable}}
 </form>

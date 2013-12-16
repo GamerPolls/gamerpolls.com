@@ -75,9 +75,12 @@ PollController.showEdit = function () {
 	if (!this._poll.isEditable) {
 		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
-	
-	this.poll = this.request.session._poll;
-	delete this.request.session._poll;
+	this.poll = this._poll;
+
+	if (this.request.session._poll) {
+		this.poll = this.request.session._poll;
+		delete this.request.session._poll;
+	}
 
 	this.isEditing = true;
 	this.render('new');
@@ -95,6 +98,7 @@ PollController.edit = function () {
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var question = this.param('question');
 	var multipleChoice = Boolean(this.param('multipleChoice'));
+	var allowSameIP = Boolean(this.param('allowSameIP'));
 
 	answers = answers.map(function (answer) {
 		return { text: answer };
@@ -104,12 +108,18 @@ PollController.edit = function () {
 		this.request.session._poll = {
 			answers: answers,
 			multipleChoice: multipleChoice,
+			allowSameIP: allowSameIP,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
 	}
 
 	var self = this;
+
+	this._poll.answers = answers;
+	this._poll.multipleChoice = multipleChoice;
+	this._poll.allowSameIP = allowSameIP;
+	this._poll.question = question;
 
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
