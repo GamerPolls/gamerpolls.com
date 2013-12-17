@@ -17,6 +17,7 @@ AccountController.loginForm = function () {
 };
 
 AccountController.login = function () {
+	this.request.session.returnTo = this.request.headers.referer;
 	var authStrategy = 'auth-' + this.param('authStrategy');
 	if (!passport._strategies.hasOwnProperty(authStrategy)) {
 		console.log('Couldn\'t find strategy: ' + authStrategy);
@@ -25,7 +26,7 @@ AccountController.login = function () {
 	passport.authenticate(
 		authStrategy,
 		{
-			successRedirect: this.urlFor({action: 'showAccount'}),
+			successReturnToOrRedirect: this.urlFor({action: 'showAccount'}),
 			failureRedirect: this.urlFor({action: 'login'})
 		}
 	)(this.request, this.response, this.__next);
