@@ -18,6 +18,8 @@ module.exports = function (request, response, next) {
 		].forEach(function (key) {
 			response.locals.user[key] = request.user[key];
 		});
+
+		response.locals.user.hasSubButton = request.session.twitchtv.hasSubButton;
 	}
 	
 	response.locals.loggedIn = request.isAuthenticated();

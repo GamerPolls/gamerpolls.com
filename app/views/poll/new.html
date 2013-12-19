@@ -41,6 +41,39 @@
 					<p class="form-control">Allow multiple votes from one IP</p>
 				</div>
 			</label>
+			{{^loggedIn}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" disabled>
+					</span>
+					<p class="form-control">Login for following/subscription options</p>
+				</div>
+			</label>
+			{{/loggedIn}}
+
+			{{#loggedIn}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
+					</span>
+					<p class="form-control">Followers only poll</p>
+				</div>
+			</label>
+
+			{{#user.hasSubButton}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
+					</span>
+					<p class="form-control">Subscribers only poll</p>
+				</div>
+			</label>
+			{{/user.hasSubButton}}
+			
+			{{/loggedIn}}
 		</div>
 	</fieldset>
 	<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
