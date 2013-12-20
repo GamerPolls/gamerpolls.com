@@ -17,6 +17,8 @@ PollController.create = function () {
 	var question = this.param('question');
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
+	var mustFollow = Boolean(this.param('mustFollow'));
+	var mustSub = Boolean(this.param('mustSub'));
 
 	answers = answers.map(function (answer) {
 		return { text: answer };
@@ -27,6 +29,8 @@ PollController.create = function () {
 			answers: answers,
 			multipleChoice: multipleChoice,
 			allowSameIP: allowSameIP,
+			mustFollow: mustFollow,
+			mustSub: mustSub,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'new' }));
@@ -37,6 +41,8 @@ PollController.create = function () {
 		answers: answers,
 		multipleChoice: multipleChoice,
 		allowSameIP: allowSameIP,
+		mustFollow: mustFollow,
+		mustSub: mustSub,
 		question: question
 	});
 
@@ -99,6 +105,8 @@ PollController.edit = function () {
 	var question = this.param('question');
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
+	var mustFollow = Boolean(this.param('mustFollow'));
+	var mustSub = Boolean(this.param('mustSub'));
 
 	answers = answers.map(function (answer) {
 		return { text: answer };
@@ -109,6 +117,8 @@ PollController.edit = function () {
 			answers: answers,
 			multipleChoice: multipleChoice,
 			allowSameIP: allowSameIP,
+			mustFollow: mustFollow,
+			mustSub: mustSub,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
@@ -119,6 +129,8 @@ PollController.edit = function () {
 	this._poll.answers = answers;
 	this._poll.multipleChoice = multipleChoice;
 	this._poll.allowSameIP = allowSameIP;
+	this._poll.mustFollow = mustFollow;
+	this._poll.mustSub = mustSub;
 	this._poll.question = question;
 
 	this._poll.save(function (err, savedPoll) {
@@ -228,18 +240,21 @@ PollController.before('*', function (next) {
 		return next();
 	}
 
-	Poll.findOne({ _id: id }, function (err, poll) {
-		if (err) {
-			return next(err);
-		}
-		if (!poll) {
-			return next();
-		}
-		poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
-		poll.isEditable = poll.totalVotes < 1 && poll.isCreator(self.request.user);
-		self._poll = poll;
-		next();
-	});
+	Poll.findOne({ _id: id })
+		.populate('creator')
+		.exec(function (err, poll) {
+			if (err) {
+				return next(err);
+			}
+			if (!poll) {
+				return next();
+			}
+			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
+			poll.isEditable = poll.totalVotes < 1 && poll.isCreator(self.request.user);
+			
+			self._poll = poll;
+			next();
+		});
 });
 
 /**
