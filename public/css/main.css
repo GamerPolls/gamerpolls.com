@@ -53,6 +53,11 @@ label.answer {
 .highcharts-tooltip span {
     z-index: 9999;  
 }
+
 .progress {
 	height: 10px;
+}
+
+.well .row {
+	padding: 2px 0;
 }

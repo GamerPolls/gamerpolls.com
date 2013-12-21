@@ -1,26 +1,77 @@
 <h1 class="text-center">{{poll.question}}</h1>
-<form action="/poll/{{poll._id}}/vote" method="post">
-	{{#poll.answers}}
-	<div class="form-group">
-		<label class="answer">
-			<div class="input-group">
-				<span class="input-group-addon">
-					<input
-						type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
-						name="answers"
-						value="{{_id}}"
-					>
-				</span>
-				<p class="form-control">
-					{{text}}
-				</p>
+<div class="row">
+	<div class="col-xs-12 col-md-4 col-md-push-8">
+		<div class="well">
+			<div class="row">
+				<div class="col-md-6">
+					Creator:
+				</div>
+				<div class="col-md-6 text-right">
+					{{poll.creator.displayName}}
+				</div>
 			</div>
-		</label>
-	</div>
-	{{/poll.answers}}
+			<div class="row">
+				<div class="col-md-6">
+					Created Date:
+				</div>
+				<div class="col-md-6 text-right">
+				{{poll.created}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					Close Date:
+				</div>
+				<div class="col-md-6 text-right">
+					{{poll.closeTime}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					Total Votes:
+				</div>
+				<div class="col-md-6 text-right">
+					{{poll.totalVotes}}
+				</div>
+			</div>
 
-	<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
-	{{#poll.isEditable}}
-	<a href="/poll/{{poll._id}}/edit" class="btn btn-lg btn-primary btn-block">Edit</a>
-	{{/poll.isEditable}}
-</form>
+			{{#poll.isEditable}}
+			<div class="row">
+				<a href="/poll/{{poll._id}}/edit" class="btn btn-primary btn-block">Edit</a>
+			</div>
+			{{/poll.isEditable}}
+
+			{{#poll.isClosable}}
+			<div class="row">
+				<form action="/poll/{{poll._id}}/close" method="post">
+					<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+				</form>
+			</div>
+			{{/poll.isClosable}}
+
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-8 col-md-pull-4">
+		<form action="/poll/{{poll._id}}/vote" method="post">
+			{{#poll.answers}}
+			<div class="form-group">
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input
+							type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
+							name="answers"
+							value="{{_id}}"
+							>
+						</span>
+						<p class="form-control">
+							{{text}}
+						</p>
+					</div>
+				</label>
+			</div>
+			{{/poll.answers}}
+			<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
+		</form>
+	</div>
+</div>

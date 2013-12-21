@@ -2,11 +2,53 @@
 <div class="row">
 	<div class="col-xs-12 col-md-4 col-md-push-8">
 		<div class="well" id="chart-container"></div>
-		{{#poll.isClosable}}
-		<form action="/poll/{{poll._id}}/close" method="post">
-			<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
-		</form>
-		{{/poll.isClosable}}
+			<div class="well">
+				<div class="row">
+					<div class="col-md-6">
+						Creator:
+					</div>
+					<div class="col-md-6 text-right">
+						{{poll.creator.displayName}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						Created Date:
+					</div>
+					<div class="col-md-6 text-right">
+					{{poll.created}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						Close Date:
+					</div>
+					<div class="col-md-6 text-right">
+						{{poll.closeTime}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						Total Votes:
+					</div>
+					<div class="col-md-6 text-right">
+						{{poll.totalVotes}}
+					</div>
+				</div>
+				{{#poll.isEditable}}
+				<div class="row">
+					<a href="/poll/{{poll._id}}/edit" class="btn btn-primary btn-block">Edit</a>
+				</div>
+				{{/poll.isEditable}}
+				{{#poll.isClosable}}
+				<div class="row">
+					<form action="/poll/{{poll._id}}/close" method="post">
+						<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+					</form>
+				</div>
+				{{/poll.isClosable}}
+
+			</div>
 	</div>
 
 	<div class="col-xs-12 col-md-8 col-md-pull-4">
