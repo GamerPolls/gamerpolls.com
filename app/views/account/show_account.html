@@ -1,3 +1,44 @@
-<h1>Welcome <img src="{{avatar}}" class="avatar"/> {{displayName}}!</h1>
+<h1>Dashboard</h1>
 
-<a href="/logout">Logout</a>
+<h2>Your Polls</h2>
+
+{{^polls}}
+<div class="well">
+	You haven't created any polls recently. Your polls will only show here if you were logged in while creating them.
+</div>
+{{/polls}}
+
+{{#polls.length}}
+<table class="table">
+	<thead>
+		<tr>
+			<th>Question</th>
+			<th>Votes</th>
+			<th>Created Date</th>
+			<th>Close Date</th>
+			<th>Poll Options</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#polls}}
+		<tr{{#isClosed}} class="danger"{{/isClosed}}>
+			<td><a href="/poll/{{_id}}">{{question}}</a></td>
+			<td>{{totalVotes}}</td>
+			<td>{{created}}</td>
+			<td>{{closeTime}}</td>
+			<td>
+				{{#multipleChoice}}MC {{/multipleChoice}}
+				{{#allowSameIP}}SameIP {{/allowSameIP}}
+				{{#mustFollow}}Follow {{/mustFollow}}
+				{{#mustSub}}Sub{{/mustSub}}
+				{{^isClosed}}
+				<form action="/poll/{{_id}}/close" method="post">
+						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+				</form>
+				{{/isClosed}}
+			</td>
+		</tr>
+		{{/polls}}
+	</tbody>
+</table>
+{{/polls.length}}
