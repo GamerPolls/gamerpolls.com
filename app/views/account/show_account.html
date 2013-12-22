@@ -16,7 +16,7 @@
 			<th>Votes</th>
 			<th>Created Date</th>
 			<th>Close Date</th>
-			<th>Poll Options</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,15 +27,11 @@
 			<td>{{created}}</td>
 			<td>{{closeTime}}</td>
 			<td>
-				{{#multipleChoice}}MC {{/multipleChoice}}
-				{{#allowSameIP}}SameIP {{/allowSameIP}}
-				{{#mustFollow}}Follow {{/mustFollow}}
-				{{#mustSub}}Sub{{/mustSub}}
-				{{^isClosed}}
+				
 				<form action="/poll/{{_id}}/close" method="post">
-						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+						<button type="submit" class="btn btn-danger btn-block btn-xs" {{#isClosed}}disabled="disabled"{{/isClosed}}>Close Poll</button>
 				</form>
-				{{/isClosed}}
+				
 			</td>
 		</tr>
 		{{/polls}}
