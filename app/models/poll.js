@@ -35,6 +35,8 @@ var PollSchema = new Schema({
 	allowSameIP: Boolean,
 	voterIPs: [String],
 	voterIDs: [Schema.Types.ObjectId],
+	mustFollow: Boolean,
+	mustSub: Boolean,
 	question: String
 });
 
@@ -52,7 +54,7 @@ PollSchema.methods.isCreator = function (user) {
 	if (!this.creator || !user) {
 		return false;
 	}
-	return this.creator.equals(user._id);
+	return this.creator.equals(user) || this.creator.equals(user._id);
 };
 
 PollSchema.methods.hasVoted = function (request) {

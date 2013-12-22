@@ -71,7 +71,30 @@
 				</label>
 			</div>
 			{{/poll.answers}}
+
+			{{#poll.isVotable}}
 			<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
+			{{/poll.isVotable}}
+
+			{{^poll.isVotable}}
+
+				{{#poll.mustSub}}
+					{{^poll.isSubscribed}}
+						<p class="alert alert-danger">
+							You must be subscribed to {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}/subscribe" target="_blank">subscribe to them on Twitch</a>.
+						</p>
+					{{/poll.isSubscribed}}
+				{{/poll.mustSub}}
+
+				{{#poll.mustFollow}}
+					{{^poll.isFollowing}}
+						<p class="alert alert-danger">
+							You must be following {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">follow them on Twitch</a>.
+						</p>
+					{{/poll.isFollowing}}
+				{{/poll.mustFollow}}
+
+			{{/poll.isVotable}}
 		</form>
 	</div>
 </div>

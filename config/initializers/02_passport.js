@@ -6,6 +6,7 @@ var strategies = {
 var Account = require('../../app/models/account');
 
 module.exports = function () {
+	var self = this;
 	passport.use('auth-twitchtv', new strategies.twitchtv(
 		{
 			clientID: nconf.get('authkeys:twitchtv:clientID'),
@@ -32,7 +33,26 @@ module.exports = function () {
 				account.username = profile.username;
 
 				account.save(function () {
-					return done(err, account);
+					self.twitch.api(
+						'/users/:user/subscriptions/:channel',
+						{
+							replacements: {
+								user: profile.username,
+								channel: profile.username
+							},
+							accessKey: accessToken
+						},
+						function (error, statusCode, response) {
+							if (error) {
+								console.log(error);
+								return;
+							}
+							if (statusCode !== 422) {
+								request.session.twitchtv.hasSubButton = true;
+							}
+							return done(err, account);
+						}
+					);
 				});
 			});
 		}
