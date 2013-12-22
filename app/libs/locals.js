@@ -26,4 +26,4 @@ module.exports = function (request, response, next) {
 
 	// Pass to next middleware.
 	next();
-}
+};

@@ -24,8 +24,8 @@
 		<tr{{#isClosed}} class="danger"{{/isClosed}}>
 			<td><a href="/poll/{{_id}}">{{question}}</a></td>
 			<td>{{totalVotes}}</td>
-			<td>{{created}}</td>
-			<td>{{closeTime}}</td>
+			<td><span data-time="{{created}}">{{created}}</span></td>
+			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
 			<td>
 				
 				<form action="/poll/{{_id}}/close" method="post">
