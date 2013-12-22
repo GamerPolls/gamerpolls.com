@@ -4,11 +4,22 @@ var AccountController = new Controller();
 var Account = require('../models/account');
 var login = require('connect-ensure-login');
 var passport = require('passport');
+var Poll = require('../models/poll');
 
 AccountController.before('showAccount', login.ensureLoggedIn());
 AccountController.showAccount = function () {
+	var self = this;
 	this.title = 'My account';
-	this.render();
+
+	Poll.find({creator: this.request.user._id}, function (err, polls) {
+		if (err) {
+			console.log(err);
+		}
+
+		self.polls = polls;
+		self.render();
+	});
+
 };
 
 AccountController.loginForm = function () {
