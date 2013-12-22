@@ -54,7 +54,7 @@ PollController.create = function () {
 		if (err) {
 			return self.next();
 		}
-		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
 
@@ -79,7 +79,7 @@ PollController.showEdit = function () {
 	}
 
 	if (!this._poll.isEditable) {
-		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 	this.poll = this._poll;
 
@@ -98,7 +98,7 @@ PollController.edit = function () {
 	}
 
 	if (!this._poll.isEditable) {
-		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
@@ -137,7 +137,7 @@ PollController.edit = function () {
 		if (err) {
 			return self.next();
 		}
-		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
 
@@ -197,7 +197,7 @@ PollController.vote = function () {
 		}
 		self.request.session.pollsVotedIn.push(savedPoll._id);
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', calculatePercentages(savedPoll.answers));
-		self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
+		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
 
@@ -221,7 +221,7 @@ PollController.close = function () {
 	}
 
 	if (!this._poll.isClosable) {
-		this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
 	this._poll.closeTime = moment.utc();
@@ -232,7 +232,7 @@ PollController.close = function () {
 		if (err) {
 			return self.next();
 		}
-		self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
 
