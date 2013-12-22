@@ -278,7 +278,7 @@ PollController.before('*', function (next) {
 							user: self.request.user.username,
 							channel: poll.creator.username
 						},
-						accessKey: request.session.twitchtv.accessToken
+						accessKey: self.request.session.twitchtv.accessToken
 					},
 					function (err, statusCode, response) {
 						apiCalls--;
@@ -304,7 +304,7 @@ PollController.before('*', function (next) {
 							user: self.request.user.username,
 							target: poll.creator.username
 						},
-						accessKey: request.session.twitchtv.accessToken
+						accessKey: self.request.session.twitchtv.accessToken
 					},
 					function (err, statusCode, response) {
 						apiCalls--;

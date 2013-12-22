@@ -54,7 +54,11 @@ PollSchema.methods.isCreator = function (user) {
 	if (!this.creator || !user) {
 		return false;
 	}
-	return this.creator.equals(user) || this.creator.equals(user._id);
+	
+	user = user._id ? user._id.toString() : user.toString();
+	var creator = this.creator._id ? this.creator._id.toString() : this.creator.toString();
+
+	return creator === user;
 };
 
 PollSchema.methods.hasVoted = function (request) {
