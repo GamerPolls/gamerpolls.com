@@ -8,20 +8,31 @@
 	</div>
 
 	<h2>Answers</h2>
-	{{#poll.answers}}
-	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+	<div class="answers-container">
+		{{#poll.answers}}
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+		</div>
+		{{/poll.answers}}
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+		</div>
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+		</div>
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+		</div>
 	</div>
-	{{/poll.answers}}
-	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
-	</div>
-	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
-	</div>
-	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
-	</div>
+
+	{{#yield-ich}}
+	<script id="blankanswer" type="text/html">
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+		</div>
+	</script>
+	{{/yield-ich}}
+
 	<fieldset>
 		<legend>Options</legend>
 		<div class="form-group">
@@ -84,3 +95,13 @@
 	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
 	{{/isEditing}}
 </form>
+
+{{#yield-scripts}}
+<script>
+	$(function () {
+		$('.answers-container').on('focus', '.form-group:last-child input', function () {
+			ich.blankanswer().appendTo('.answers-container');
+		});
+	});
+</script>
+{{/yield-scripts}}
