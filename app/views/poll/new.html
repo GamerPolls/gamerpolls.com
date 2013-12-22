@@ -53,6 +53,8 @@
 			{{/loggedIn}}
 
 			{{#loggedIn}}
+
+			{{^user.hasSubButton}}
 			<label class="answer">
 				<div class="input-group">
 					<span class="input-group-addon">
@@ -61,6 +63,7 @@
 					<p class="form-control">Followers only poll</p>
 				</div>
 			</label>
+			{{/user.hasSubButton}}
 
 			{{#user.hasSubButton}}
 			<label class="answer">

@@ -146,6 +146,10 @@ PollController.vote = function () {
 		return this.next();
 	}
 
+	if (!this._poll.isVotable) {
+		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+	}
+
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
@@ -235,26 +239,108 @@ PollController.close = function () {
 PollController.before('*', function (next) {
 	var self = this;
 	var id = Number(this.param('id'));
+	var apiCalls = 0;
 
 	if (isNaN(id)) {
-		return next();
+		return done();
 	}
 
 	Poll.findOne({ _id: id })
 		.populate('creator')
 		.exec(function (err, poll) {
 			if (err) {
-				return next(err);
+				return done(err);
 			}
+
 			if (!poll) {
-				return next();
+				return done();
 			}
+
 			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
 			poll.isEditable = poll.totalVotes < 1 && poll.isCreator(self.request.user);
 			
-			self._poll = poll;
-			next();
+			if (poll.isCreator(self.request.user)) {
+				poll.isSubscribed = true;
+				poll.isFollowing = true;
+				return done(null, poll);
+			}
+
+			if (!self.request.isAuthenticated()) {
+				return done(null, poll);
+			}
+
+			if (poll.mustSub) {
+				apiCalls++;
+				self.app.twitch.api(
+					'/users/:user/subscriptions/:channel',
+					{
+						replacements: {
+							user: self.request.user.username,
+							channel: poll.creator.username
+						},
+						accessKey: request.session.twitchtv.accessToken
+					},
+					function (err, statusCode, response) {
+						apiCalls--;
+						if (err) {
+							return done(err);
+						}
+
+						if (statusCode !== 422 && statusCode !== 404) {
+							poll.isSubscribed = true;
+						}
+
+						return done(null, poll);
+					}
+				);
+			}
+
+			if (poll.mustFollow) {
+				apiCalls++;
+				self.app.twitch.api(
+					'/users/:user/follows/channels/:target',
+					{
+						replacements: {
+							user: self.request.user.username,
+							target: poll.creator.username
+						},
+						accessKey: request.session.twitchtv.accessToken
+					},
+					function (err, statusCode, response) {
+						apiCalls--;
+						if (err) {
+							return done(err);
+						}
+
+						if (statusCode !== 404) {
+							poll.isFollowing = true;
+						}
+
+						return done(null, poll);
+					}
+				);
+			}
 		});
+
+	function done(err, poll) {
+		if (err) {
+			return next(err);
+		}
+		// Still API calls out there.
+		if (apiCalls) {
+			return;
+		}
+		if (poll) {
+			if (!poll.mustSub && !poll.mustFollow) {
+				poll.isVotable = true;
+			}
+			else if ((poll.mustSub && poll.isSubscribed) || (poll.mustFollow && poll.isFollowing)) {
+				poll.isVotable = true;
+			}
+			self._poll = poll;
+		}
+		return next();
+	}
 });
 
 /**
