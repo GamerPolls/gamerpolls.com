@@ -4,6 +4,7 @@ var PollController = new Controller();
 var Poll = require('../models/poll');
 var login = require('connect-ensure-login');
 var moment = require('moment');
+var extend = require('jquery-extend');
 
 PollController.new = function () {
 	this.poll = this.request.session._poll;
@@ -14,17 +15,22 @@ PollController.new = function () {
 
 PollController.create = function () {
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
-	var question = this.param('question');
+	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var mustFollow = Boolean(this.param('mustFollow'));
 	var mustSub = Boolean(this.param('mustSub'));
 
 	answers = answers.map(function (answer) {
-		return { text: answer };
+		answer = answer.trim();
+		if (answer.length > 0) {
+			return { text: answer };
+		}
+	}).filter(function (answer) {
+		return !!answer;
 	});
 
-	if (answers.length < 2) {
+	if (answers.length < 2 || question === '') {
 		this.request.session._poll = {
 			answers: answers,
 			multipleChoice: multipleChoice,
@@ -84,7 +90,7 @@ PollController.showEdit = function () {
 	this.poll = this._poll;
 
 	if (this.request.session._poll) {
-		this.poll = this.request.session._poll;
+		extend(this.poll, this.request.session._poll);
 		delete this.request.session._poll;
 	}
 
@@ -102,17 +108,22 @@ PollController.edit = function () {
 	}
 
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
-	var question = this.param('question');
+	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var mustFollow = Boolean(this.param('mustFollow'));
 	var mustSub = Boolean(this.param('mustSub'));
 
 	answers = answers.map(function (answer) {
-		return { text: answer };
+		answer = answer.trim();
+		if (answer.length > 0) {
+			return { text: answer };
+		}
+	}).filter(function (answer) {
+		return !!answer;
 	});
 
-	if (answers.length < 2) {
+	if (answers.length < 2 || question === '') {
 		this.request.session._poll = {
 			answers: answers,
 			multipleChoice: multipleChoice,
@@ -257,7 +268,7 @@ PollController.before('*', function (next) {
 			}
 
 			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
-			poll.isEditable = poll.totalVotes < 1 && poll.isCreator(self.request.user);
+			poll.isEditable = !poll.isClosed && poll.totalVotes < 1 && poll.isCreator(self.request.user);
 			
 			if (poll.isCreator(self.request.user)) {
 				poll.isSubscribed = true;

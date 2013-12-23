@@ -18,7 +18,8 @@
     "socket.io": "0.x",
     "moment": "2.x",
     "connect-mongo": "0.x",
-    "node-twitch-api": "git://github.com/cletusc/node-twitch-api#master"
+    "node-twitch-api": "git://github.com/cletusc/node-twitch-api#master",
+    "jquery-extend": "2.x"
   },
   "domains": [
     "twitchpoll.com"
