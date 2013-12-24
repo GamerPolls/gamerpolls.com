@@ -30,7 +30,7 @@
 				<div class="col-xs-6 col-md-6">
 					Total Votes:
 				</div>
-				<div class="col-xs-6 col-md-6 text-right">
+				<div data-bind="poll.totalVotes" class="col-xs-6 col-md-6 text-right">
 					{{poll.totalVotes}}
 				</div>
 			</div>
@@ -108,3 +108,16 @@
 		</form>
 	</div>
 </div>
+{{#yield-scripts}}
+<script>
+	$(function () {
+		var socket = utils.getSocket();
+		socket.on('close', function () {
+			window.location.href = '/poll/{{poll._id}}/results';				
+		});
+		socket.on('vote', function (poll) {
+			$('[data-bind="poll.totalVotes"]').text(poll.totalVotes);
+		});
+	});
+</script>
+{{/yield-scripts}}

@@ -207,7 +207,19 @@ PollController.vote = function () {
 			self.request.session.pollsVotedIn = [];
 		}
 		self.request.session.pollsVotedIn.push(savedPoll._id);
-		self.app.io.sockets.in('poll-' + savedPoll._id).emit('vote', calculatePercentages(savedPoll.answers));
+
+		var data = {
+			answers: calculatePercentages(savedPoll.answers).map(function (answer) {
+				return {
+					_id: answer._id,
+					percentage: answer.percentage,
+					votes: answer.votes
+				};
+			}),
+			totalVotes: savedPoll.totalVotes
+		};
+
+		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
 		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -217,10 +229,13 @@ PollController.showResults = function () {
 		return this.next();
 	}
 	var self = this;
-	this.app.io.sockets.on('connection', function (socket) {
-		socket.join('poll-' + self._poll._id);
-	});
+
 	this.poll = this._poll;
+
+	self.app.io.sockets.on('connection', function (socket) {
+		socket.join('vote');
+	});
+
 	this.poll.answers = calculatePercentages(this.poll.answers);
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
@@ -243,7 +258,9 @@ PollController.close = function () {
 		if (err) {
 			return self.next();
 		}
-		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+
+		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
+		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
 
@@ -266,6 +283,9 @@ PollController.before('*', function (next) {
 			if (!poll) {
 				return done();
 			}
+			self.app.io.sockets.on('connection', function (socket) {
+				socket.join('poll-' + poll._id);
+			});
 
 			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
 			poll.isEditable = !poll.isClosed && poll.totalVotes < 1 && poll.isCreator(self.request.user);

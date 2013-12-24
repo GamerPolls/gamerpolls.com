@@ -102,6 +102,13 @@
 		$('.answers-container').on('focus', '.form-group:last-child input', function () {
 			ich.blankanswer().appendTo('.answers-container');
 		});
+
+		{{#isEditing}}
+		var socket = utils.getSocket();
+		socket.on('vote', function () {
+			window.location.href = '/poll/{{poll._id}}/';				
+		});
+		{{/isEditing}}
 	});
 </script>
 {{/yield-scripts}}
