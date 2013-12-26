@@ -9,6 +9,10 @@ var PollSchema = new Schema({
 		votes: {
 			type: Number,
 			default: 0
+		},
+		votesVs: {
+			type: Number,
+			default: 0
 		}
 	}],
 	creator: {
@@ -37,6 +41,7 @@ var PollSchema = new Schema({
 	voterIDs: [Schema.Types.ObjectId],
 	mustFollow: Boolean,
 	mustSub: Boolean,
+	isVersus: Boolean,
 	question: String
 });
 
@@ -47,6 +52,12 @@ PollSchema.virtual('isClosed').get(function () {
 PollSchema.virtual('totalVotes').get(function () {
 	return this.answers.reduce(function (prevVotes, answer) {
 		return prevVotes + answer.votes;
+	}, 0);
+});
+
+PollSchema.virtual('totalVotesVs').get(function () {
+	return this.answers.reduce(function (prevVotes, answer) {
+		return prevVotes + answer.votesVs;
 	}, 0);
 });
 

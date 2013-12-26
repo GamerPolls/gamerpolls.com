@@ -65,11 +65,19 @@
 
 			{{#loggedIn}}
 
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="normal" checked>
+					</span>
+					<p class="form-control">Normal Poll</p>
+				</div>
+			</label>
 			{{^user.hasSubButton}}
 			<label class="answer">
 				<div class="input-group">
 					<span class="input-group-addon">
-						<input type="checkbox" name="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
+						<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
 					</span>
 					<p class="form-control">Followers only poll</p>
 				</div>
@@ -80,13 +88,21 @@
 			<label class="answer">
 				<div class="input-group">
 					<span class="input-group-addon">
-						<input type="checkbox" name="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
+						<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
 					</span>
 					<p class="form-control">Subscribers only poll</p>
 				</div>
 			</label>
 			{{/user.hasSubButton}}
-			
+
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
+					</span>
+					<p class="form-control">Versus poll</p>
+				</div>
+			</label>
 			{{/loggedIn}}
 		</div>
 	</fieldset>

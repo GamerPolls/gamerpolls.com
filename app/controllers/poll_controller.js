@@ -18,9 +18,24 @@ PollController.create = function () {
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
-	var mustFollow = Boolean(this.param('mustFollow'));
-	var mustSub = Boolean(this.param('mustSub'));
+	var pollType = this.param('pollType');
 
+	var mustFollow = false;
+	var mustSub = false;
+	var isVersus = false;
+
+	switch (pollType) {
+		case 'mustFollow':
+			mustFollow = true;
+			break;
+		case 'mustSub':
+			mustSub = true;
+			break;
+		case 'isVersus':
+			isVersus = true;
+			break;
+	};
+	
 	answers = answers.map(function (answer) {
 		answer = answer.trim();
 		if (answer.length > 0) {
@@ -37,9 +52,19 @@ PollController.create = function () {
 			allowSameIP: allowSameIP,
 			mustFollow: mustFollow,
 			mustSub: mustSub,
+			isVersus: isVersus,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'new' }));
+	}
+
+	if (isVersus) {
+		if (this.request.user.hasSubButton) {
+			mustSub = true;
+		}
+		else {
+			mustFollow = true;
+		}
 	}
 
 	var self = this;
@@ -49,6 +74,7 @@ PollController.create = function () {
 		allowSameIP: allowSameIP,
 		mustFollow: mustFollow,
 		mustSub: mustSub,
+		isVersus: isVersus,
 		question: question
 	});
 
@@ -70,6 +96,10 @@ PollController.showPoll = function () {
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
+		if (this._poll.isVersus) {
+			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
+		}
+
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
 
@@ -111,8 +141,22 @@ PollController.edit = function () {
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
-	var mustFollow = Boolean(this.param('mustFollow'));
-	var mustSub = Boolean(this.param('mustSub'));
+
+	var mustFollow = false;
+	var mustSub = false;
+	var isVersus = false;
+
+	switch (pollType) {
+		case 'mustFollow':
+			mustFollow = true;
+			break;
+		case 'mustSub':
+			mustSub = true;
+			break;
+		case 'isVersus':
+			isVersus = true;
+			break;
+	};
 
 	answers = answers.map(function (answer) {
 		answer = answer.trim();
@@ -130,9 +174,19 @@ PollController.edit = function () {
 			allowSameIP: allowSameIP,
 			mustFollow: mustFollow,
 			mustSub: mustSub,
+			isVersus: isVersus,
 			question: question
 		};
 		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
+	}
+
+	if (isVersus) {
+		if (this.request.user.hasSubButton) {
+			mustSub = true;
+		}
+		else {
+			mustFollow = true;
+		}
 	}
 
 	var self = this;
@@ -142,6 +196,7 @@ PollController.edit = function () {
 	this._poll.allowSameIP = allowSameIP;
 	this._poll.mustFollow = mustFollow;
 	this._poll.mustSub = mustSub;
+	this._poll.isVersus = isVersus;
 	this._poll.question = question;
 
 	this._poll.save(function (err, savedPoll) {
@@ -162,6 +217,10 @@ PollController.vote = function () {
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
+		if (this._poll.isVersus) {
+			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
+		}
+
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
 
@@ -178,7 +237,12 @@ PollController.vote = function () {
 	answers.some(function (id) {
 		self._poll.answers.some(function (val, idx, arr) {
 			if (String(val._id) === id) {
-				arr[idx].votes++;
+				if (self._poll.isVersus && !(self._poll.isSubscribed || self._poll.isFollowing)) {
+					arr[idx].votesVs++;
+				}
+				else {
+					arr[idx].votes++;
+				}
 				voted = true;
 				return true;
 			}
@@ -213,13 +277,20 @@ PollController.vote = function () {
 				return {
 					_id: answer._id,
 					percentage: answer.percentage,
-					votes: answer.votes
+					percentageVs: answer.percentageVs,
+					votes: answer.votes,
+					votesVs: answer.votesVs
 				};
 			}),
-			totalVotes: savedPoll.totalVotes
+			totalVotes: savedPoll.totalVotes,
+			totalVotesVs: savedPoll.totalVotesVs
 		};
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
+		if (savedPoll.isVersus) {
+			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
+		}
+
 		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -231,6 +302,31 @@ PollController.showResults = function () {
 	var self = this;
 
 	this.poll = this._poll;
+
+	if (this.poll.isVersus) {
+		return self.redirect(self.urlFor({ action: 'showVersus', id: this.poll._id }));
+	};
+
+	self.app.io.sockets.on('connection', function (socket) {
+		socket.join('vote');
+	});
+
+	this.poll.answers = calculatePercentages(this.poll.answers);
+	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
+	this.render();
+};
+
+PollController.showVersus = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+	var self = this;
+
+	this.poll = this._poll;
+
+	if (!this.poll.isVersus) {
+		return self.redirect(self.urlFor({ action: 'showResults', id: this.poll._id }));
+	};
 
 	self.app.io.sockets.on('connection', function (socket) {
 		socket.join('vote');
@@ -260,6 +356,10 @@ PollController.close = function () {
 		}
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
+		if (savedPoll.isVersus) {
+			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
+		}
+		
 		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
@@ -362,7 +462,7 @@ PollController.before('*', function (next) {
 			return;
 		}
 		if (poll) {
-			if (!poll.mustSub && !poll.mustFollow) {
+			if ((!poll.mustSub && !poll.mustFollow) || (poll.isVersus && self.request.isAuthenticated())) {
 				poll.isVotable = true;
 			}
 			else if ((poll.mustSub && poll.isSubscribed) || (poll.mustFollow && poll.isFollowing)) {
@@ -385,11 +485,17 @@ function calculatePercentages(answers) {
 		return prevVotes + answer.votes;
 	}, 0);
 	scale = 100 / scale;
+
+	var scaleVs = answers.reduce(function (prevVotes, answer) {
+		return prevVotes + answer.votesVs;
+	}, 0);
+	scaleVs = 100 / scaleVs;
 	
 	// Add `percentage` property.
 	answers.forEach(function (answer, idx, arr) {
 		answer = typeof answer.toObject === 'undefined' ? answer : answer.toObject();
 		answer.percentage = Math.round(answer.votes * scale);
+		answer.percentageVs = Math.round(answer.votesVs * scaleVs);
 		arr[idx] = answer;
 	});
 	return answers;

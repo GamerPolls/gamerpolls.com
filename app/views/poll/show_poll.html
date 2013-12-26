@@ -31,7 +31,13 @@
 					Total Votes:
 				</div>
 				<div data-bind="poll.totalVotes" class="col-xs-6 col-md-6 text-right">
-					{{poll.totalVotes}}
+					{{#poll.isVersus}}
+						{{poll.totalVotesVs}}/{{poll.totalVotes}}
+					{{/poll.isVersus}}
+
+					{{^poll.isVersus}}
+						{{poll.totalVotes}}
+					{{/poll.isVersus}}
 				</div>
 			</div>
 
@@ -87,6 +93,11 @@
 			{{/poll.isVotable}}
 
 			{{^poll.isVotable}}
+				{{^loggedIn}}
+					<p class="alert alert-danger">
+						You must be logged in before you can vote in this poll. Please <a href="/login/twitchtv">Connect with Twitch</a> in order to vote.
+					</p>
+				{{/loggedIn}}
 
 				{{#poll.mustSub}}
 					{{^poll.isSubscribed}}
@@ -116,7 +127,12 @@
 			window.location.href = '/poll/{{poll._id}}/results';				
 		});
 		socket.on('vote', function (poll) {
-			$('[data-bind="poll.totalVotes"]').text(poll.totalVotes);
+			{{#poll.isVersus}}
+				$('[data-bind="poll.totalVotes"]').text(poll.totalVotesVs + '/' + poll.totalVotes);
+			{{/poll.isVersus}}
+			{{^poll.isVersus}}
+				$('[data-bind="poll.totalVotes"]').text(poll.totalVotes);
+			{{/poll.isVersus}}
 		});
 	});
 </script>
