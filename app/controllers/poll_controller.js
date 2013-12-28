@@ -141,6 +141,7 @@ PollController.edit = function () {
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
+	var pollType = this.param('pollType');
 
 	var mustFollow = false;
 	var mustSub = false;
