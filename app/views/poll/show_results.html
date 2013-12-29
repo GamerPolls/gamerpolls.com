@@ -31,8 +31,8 @@
 					<div class="col-xs-6 col-md-6">
 						Total Votes:
 					</div>
-					<div data-bind="poll.totalVotes" class="col-xs-6 col-md-6 text-right">
-						{{poll.totalVotes}}
+					<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
+						{{poll.totalVotes._grand}}
 					</div>
 				</div>
 				{{#poll.isEditable}}
@@ -66,7 +66,7 @@
 		<div class="form-group answer">
 			<div class="input-group">
 				<span class="input-group-addon">
-					<span data-bind="poll.answer.{{_id}}.votes">{{votes}}</span>
+					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
 					&nbsp;votes
 				</span>				
 				<p class="form-control">
@@ -74,7 +74,7 @@
 				</p>
 			</div>
 			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage" style="width: {{percentage}}%;"></div>
+				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
 			</div>
 		</div>
 		{{/poll.answers}}
@@ -154,7 +154,7 @@
 					{
 						id: '{{_id}}',
 						name: '{{text}}',
-						y: {{votes}}
+						y: {{votes.normal}}
 					},
 					{{/poll.answers}}
 				],
@@ -175,20 +175,20 @@
 
 		// Set progress bar color to match pie section color.
 		var data = chart.series[0].data.forEach(function (section) {
-			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage"]').css('background-color', section.color);
+			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.normal"]').css('background-color', section.color);
 		});
 
 		var socket = utils.getSocket();
 		socket.on('vote', function (poll) {
 			poll.answers.forEach(function (answer) {
 				// Update chart values.
-				chart.get(answer._id).update(answer.votes);
+				chart.get(answer._id).update(answer.votes.normal);
 
 				// Update DOM nodes.
-				$('[data-bind="poll.answer.' + answer._id + '.votes"]').text(answer.votes);
-				$('[data-bind="poll.answer.' + answer._id + '.percentage"]').css('width', answer.percentage + '%');
+				$('[data-bind="poll.answer.' + answer._id + '.votes.normal"]').text(answer.votes.normal);
+				$('[data-bind="poll.answer.' + answer._id + '.percentage.normal"]').css('width', answer.percentage.normal + '%');
 			});
-			$('[data-bind="poll.totalVotes"]').text(poll.totalVotes);
+			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');

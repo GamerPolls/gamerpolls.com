@@ -30,14 +30,8 @@
 				<div class="col-xs-6 col-md-6">
 					Total Votes:
 				</div>
-				<div data-bind="poll.totalVotes" class="col-xs-6 col-md-6 text-right">
-					{{#poll.isVersus}}
-						{{poll.totalVotesVs}}/{{poll.totalVotes}}
-					{{/poll.isVersus}}
-
-					{{^poll.isVersus}}
-						{{poll.totalVotes}}
-					{{/poll.isVersus}}
+				<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
+					{{poll.totalVotes._grand}}
 				</div>
 			</div>
 
@@ -127,12 +121,7 @@
 			window.location.href = '/poll/{{poll._id}}/results';				
 		});
 		socket.on('vote', function (poll) {
-			{{#poll.isVersus}}
-				$('[data-bind="poll.totalVotes"]').text(poll.totalVotesVs + '/' + poll.totalVotes);
-			{{/poll.isVersus}}
-			{{^poll.isVersus}}
-				$('[data-bind="poll.totalVotes"]').text(poll.totalVotes);
-			{{/poll.isVersus}}
+			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
 		});
 	});
 </script>

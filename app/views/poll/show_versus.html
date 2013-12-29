@@ -16,7 +16,7 @@
 		<div class="form-group answer">
 			<div class="input-group">
 				<span class="input-group-addon">
-					<span data-bind="poll.answer.{{_id}}.votesVs">{{votesVs}}</span>
+					<span data-bind="poll.answer.{{_id}}.votes.versus">{{votes.versus}}</span>
 					&nbsp;votes
 				</span>
 				<p class="form-control">
@@ -24,7 +24,7 @@
 				</p>
 			</div>
 			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentageVs" style="width: {{percentageVs}}%;"></div>
+				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.versus" style="width: {{percentage.versus}}%;"></div>
 			</div>
 		</div>
 		{{/poll.answers}}
@@ -35,7 +35,7 @@
 		<div class="form-group answer">
 			<div class="input-group">
 				<span class="input-group-addon">
-					<span data-bind="poll.answer.{{_id}}.votes">{{votes}}</span>
+					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
 					&nbsp;votes
 				</span>
 				<p class="form-control">
@@ -43,7 +43,7 @@
 				</p>
 			</div>
 			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage" style="width: {{percentage}}%;"></div>
+				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
 			</div>
 		</div>
 		{{/poll.answers}}
@@ -78,8 +78,8 @@
 				<div class="col-xs-6 col-md-6">
 					Total Votes:
 				</div>
-				<div data-bind="poll.totalVotes" class="col-xs-6 col-md-6 text-right">
-					{{poll.totalVotesVs}}/{{poll.totalVotes}}
+				<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
+					{{poll.totalVotes._grand}}
 				</div>
 			</div>
 			{{#poll.isEditable}}
@@ -169,7 +169,7 @@
 						{
 						id: '{{_id}}',
 						name: '{{text}}',
-						y: {{votes}}
+						y: {{votes.normal}
 						},
 						{{/poll.answers}}
 					]
@@ -181,7 +181,7 @@
 						{
 						id: '{{_id}}Vs',
 						name: '{{text}}',
-						y: -{{votesVs}}
+						y: -{{votes.versus}}
 						},
 						{{/poll.answers}}
 					]
@@ -198,25 +198,25 @@
 
 		// Set progress bar color to match pie section color.
 		var data = chart.series[0].data.forEach(function (section) {
-			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage"]').css('background-color', section.color);
-			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentageVs"]').css('background-color', section.color);
+			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.normal"]').css('background-color', section.color);
+			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.versus"]').css('background-color', section.color);
 		});
 
 		var socket = utils.getSocket();
 		socket.on('vote', function (poll) {
 			poll.answers.forEach(function (answer) {
 				// Update chart values.
-				chart.get(answer._id).update(answer.votes);
-				chart.get(answer._id + 'Vs').update(answer.votesVs * -1);
+				chart.get(answer._id).update(answer.votes.normal);
+				chart.get(answer._id + 'Vs').update(answer.votes.versus * -1);
 
 				// Update DOM nodes.
-				$('[data-bind="poll.answer.' + answer._id + '.votes"]').text(answer.votes);
-				$('[data-bind="poll.answer.' + answer._id + '.percentage"]').css('width', answer.percentage + '%');
+				$('[data-bind="poll.answer.' + answer._id + '.votes.normal"]').text(answer.votes.normal);
+				$('[data-bind="poll.answer.' + answer._id + '.percentage.normal"]').css('width', answer.percentage.normal + '%');
 
-				$('[data-bind="poll.answer.' + answer._id + '.votesVs"]').text(answer.votesVs);
-				$('[data-bind="poll.answer.' + answer._id + '.percentageVs"]').css('width', answer.percentageVs + '%');
+				$('[data-bind="poll.answer.' + answer._id + '.votes.versus"]').text(answer.votes.versus);
+				$('[data-bind="poll.answer.' + answer._id + '.percentage.versus"]').css('width', answer.percentage.versus + '%');
 			});
-			$('[data-bind="poll.totalVotes"]').text(poll.totalVotesVs + '/' + poll.totalVotes);
+			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.chart-container');

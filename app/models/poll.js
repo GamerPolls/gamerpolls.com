@@ -7,12 +7,14 @@ var PollSchema = new Schema({
 		id: Schema.Types.ObjectId,
 		text: String,
 		votes: {
-			type: Number,
-			default: 0
-		},
-		votesVs: {
-			type: Number,
-			default: 0
+			normal: {
+				type: Number,
+				default: 0
+			},
+			versus: {
+				type: Number,
+				default: 0
+			}
 		}
 	}],
 	creator: {
@@ -50,15 +52,19 @@ PollSchema.virtual('isClosed').get(function () {
 });
 
 PollSchema.virtual('totalVotes').get(function () {
-	return this.answers.reduce(function (prevVotes, answer) {
-		return prevVotes + answer.votes;
-	}, 0);
-});
-
-PollSchema.virtual('totalVotesVs').get(function () {
-	return this.answers.reduce(function (prevVotes, answer) {
-		return prevVotes + answer.votesVs;
-	}, 0);
+	var data = {_grand: 0};
+	this.answers.forEach(function (answer) {
+		for (var type in answer.votes) {
+			if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
+				if (typeof data[type] !== 'number') {
+					data[type] = 0;
+				}
+				data[type] += answer.votes[type];
+				data._grand += answer.votes[type];
+			}
+		}
+	});
+	return data;
 });
 
 PollSchema.methods.isCreator = function (user) {

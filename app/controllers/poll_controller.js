@@ -239,10 +239,10 @@ PollController.vote = function () {
 		self._poll.answers.some(function (val, idx, arr) {
 			if (String(val._id) === id) {
 				if (self._poll.isVersus && !(self._poll.isSubscribed || self._poll.isFollowing)) {
-					arr[idx].votesVs++;
+					arr[idx].votes.versus++;
 				}
 				else {
-					arr[idx].votes++;
+					arr[idx].votes.normal++;
 				}
 				voted = true;
 				return true;
@@ -273,18 +273,18 @@ PollController.vote = function () {
 		}
 		self.request.session.pollsVotedIn.push(savedPoll._id);
 
+		calculatePercentages(savedPoll);
+
 		var data = {
-			answers: calculatePercentages(savedPoll.answers).map(function (answer) {
+			answers: savedPoll.answers.map(function (answer) {
 				return {
 					_id: answer._id,
 					percentage: answer.percentage,
 					percentageVs: answer.percentageVs,
-					votes: answer.votes,
-					votesVs: answer.votesVs
+					votes: answer.votes
 				};
 			}),
-			totalVotes: savedPoll.totalVotes,
-			totalVotesVs: savedPoll.totalVotesVs
+			totalVotes: savedPoll.totalVotes
 		};
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
@@ -312,7 +312,8 @@ PollController.showResults = function () {
 		socket.join('vote');
 	});
 
-	this.poll.answers = calculatePercentages(this.poll.answers);
+	calculatePercentages(this.poll);
+
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
@@ -333,7 +334,8 @@ PollController.showVersus = function () {
 		socket.join('vote');
 	});
 
-	this.poll.answers = calculatePercentages(this.poll.answers);
+	calculatePercentages(this.poll);
+
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
@@ -384,12 +386,13 @@ PollController.before('*', function (next) {
 			if (!poll) {
 				return done();
 			}
+			console.log(poll.totalVotes);
 			self.app.io.sockets.on('connection', function (socket) {
 				socket.join('poll-' + poll._id);
 			});
 
 			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
-			poll.isEditable = !poll.isClosed && poll.totalVotes < 1 && poll.isCreator(self.request.user);
+			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.isCreator(self.request.user);
 			
 			if (poll.isCreator(self.request.user)) {
 				poll.isSubscribed = true;
@@ -476,30 +479,30 @@ PollController.before('*', function (next) {
 });
 
 /**
- * Adds a `percentage` property to an answer object.
- * @param  {array} answers An array of answer objects. Must have a `votes` property. Can be a normal object or a mongoose object.
- * @return {array}         The answers array with a `percentage` property on each answer object.
+ * Adds a `percentage` property to a poll's answer objects.
+ * @param  {object} poll The poll.
  */
-function calculatePercentages(answers) {
-	// Get multiplier scale.
-	var scale = answers.reduce(function (prevVotes, answer) {
-		return prevVotes + answer.votes;
-	}, 0);
-	scale = 100 / scale;
-
-	var scaleVs = answers.reduce(function (prevVotes, answer) {
-		return prevVotes + answer.votesVs;
-	}, 0);
-	scaleVs = 100 / scaleVs;
+function calculatePercentages(poll) {
+	var totals = poll.totalVotes;
+	var scales = {};
+	// Get multiplier scales for each type.
+	for (var type in totals) {
+		if (totals.hasOwnProperty(type)) {
+			scales[type] = 100 / totals[type];
+		}
+	}
 	
 	// Add `percentage` property.
-	answers.forEach(function (answer, idx, arr) {
+	poll.answers.forEach(function (answer, idx, arr) {
 		answer = typeof answer.toObject === 'undefined' ? answer : answer.toObject();
-		answer.percentage = Math.round(answer.votes * scale);
-		answer.percentageVs = Math.round(answer.votesVs * scaleVs);
+		answer.percentage = {};
+		for (var type in answer.votes) {
+			if (answer.votes.hasOwnProperty(type) && scales.hasOwnProperty(type)) {
+				answer.percentage[type] = Math.round(answer.votes[type] * scales[type]);
+			}
+		}
 		arr[idx] = answer;
 	});
-	return answers;
 }
 
 module.exports = PollController;
