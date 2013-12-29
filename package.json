@@ -1,5 +1,5 @@
 {
-  "name": "twitchpoll",
+  "name": "gamerpolls",
   "version": "0.0.1-27",
   "private": true,
   "dependencies": {
@@ -16,9 +16,9 @@
     "passport-twitchtv": "0.x"
   },
   "domains": [
-    "twitchpoll.com"
+    "gamerpolls.com"
   ],
-  "subdomain": "twitchpoll",
+  "subdomain": "gamerpolls",
   "scripts": {
     "start": "node ./node_modules/locomotive/bin/lcm.js server"
   },
