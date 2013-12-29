@@ -34,7 +34,7 @@ PollController.create = function () {
 		case 'isVersus':
 			isVersus = true;
 			break;
-	};
+	}
 	
 	answers = answers.map(function (answer) {
 		answer = answer.trim();
@@ -157,7 +157,7 @@ PollController.edit = function () {
 		case 'isVersus':
 			isVersus = true;
 			break;
-	};
+	}
 
 	answers = answers.map(function (answer) {
 		answer = answer.trim();
@@ -306,7 +306,7 @@ PollController.showResults = function () {
 
 	if (this.poll.isVersus) {
 		return self.redirect(self.urlFor({ action: 'showVersus', id: this.poll._id }));
-	};
+	}
 
 	self.app.io.sockets.on('connection', function (socket) {
 		socket.join('vote');
@@ -328,7 +328,7 @@ PollController.showVersus = function () {
 
 	if (!this.poll.isVersus) {
 		return self.redirect(self.urlFor({ action: 'showResults', id: this.poll._id }));
-	};
+	}
 
 	self.app.io.sockets.on('connection', function (socket) {
 		socket.join('vote');
@@ -386,7 +386,7 @@ PollController.before('*', function (next) {
 			if (!poll) {
 				return done();
 			}
-			console.log(poll.totalVotes);
+
 			self.app.io.sockets.on('connection', function (socket) {
 				socket.join('poll-' + poll._id);
 			});
@@ -455,6 +455,7 @@ PollController.before('*', function (next) {
 					}
 				);
 			}
+			return done(null, poll);
 		});
 
 	function done(err, poll) {
