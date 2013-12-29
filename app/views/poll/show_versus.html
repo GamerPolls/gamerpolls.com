@@ -11,7 +11,13 @@
 </div>
 <div class="row">
 	<div class="col-xs-12 col-md-4 answers-container">
-		<div class="text-center"><h3>{{#poll.mustSub}}Non-Subscribers{{/poll.mustSub}}{{^poll.mustSub}}Not Following{{/poll.mustSub}}</h3></div>
+		<div class="text-center">
+			<h3>
+				{{#poll.mustSub}}Non-Subscribers{{/poll.mustSub}}
+				{{^poll.mustSub}}Not Following{{/poll.mustSub}} - 
+				<span data-bind="poll.totalVotes.versus">{{poll.totalVotes.versus}}</span> Votes
+			</h3>
+		</div>
 		{{#poll.answers}}
 		<div class="form-group answer">
 			<div class="input-group">
@@ -30,7 +36,13 @@
 		{{/poll.answers}}
 	</div>
 	<div class="col-xs-12 col-md-4 answers-container">
-		<div class="text-center"><h3>{{#poll.mustSub}}Subscribers{{/poll.mustSub}}{{^poll.mustSub}}Following{{/poll.mustSub}}</h3></div>
+		<div class="text-center">
+			<h3>
+				{{#poll.mustSub}}Subscribers{{/poll.mustSub}}
+				{{^poll.mustSub}}Following{{/poll.mustSub}} - 
+				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes
+			</h3>
+		</div>
 		{{#poll.answers}}
 		<div class="form-group answer">
 			<div class="input-group">
@@ -56,6 +68,9 @@
 				</div>
 				<div class="col-xs-6 col-md-6 text-right">
 					{{poll.creator.displayName}}
+					{{^poll.creator}}
+						Anonymous
+					{{/poll.creator}}
 				</div>
 			</div>
 			<div class="row">
@@ -169,7 +184,7 @@
 						{
 						id: '{{_id}}',
 						name: '{{text}}',
-						y: {{votes.normal}
+						y: {{votes.normal}}
 						},
 						{{/poll.answers}}
 					]
@@ -217,6 +232,8 @@
 				$('[data-bind="poll.answer.' + answer._id + '.percentage.versus"]').css('width', answer.percentage.versus + '%');
 			});
 			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+			$('[data-bind="poll.totalVotes.normal"]').text(poll.totalVotes.normal);
+			$('[data-bind="poll.totalVotes.versus"]').text(poll.totalVotes.versus);
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.chart-container');
