@@ -104,6 +104,16 @@ PollController.showPoll = function () {
 	}
 
 	this.poll = this._poll;
+
+	this.poll.answers = this.poll.answers.map(function (answer) {
+		if (/game:.+/.test(answer.text)) {
+			answer.isGame = true;
+			answer.text = answer.text.replace(/^game:/, '').trim();
+			answer.textEncoded = encodeURIComponent(answer.text);
+		}
+		return answer;
+	});
+
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 
 	this.render();
@@ -313,6 +323,14 @@ PollController.showResults = function () {
 	});
 
 	calculatePercentages(this.poll);
+	this.poll.answers = this.poll.answers.map(function (answer) {
+		if (/game:.+/.test(answer.text)) {
+			answer.isGame = true;
+			answer.text = answer.text.replace(/^game:/, '').trim();
+			answer.textEncoded = encodeURIComponent(answer.text);
+		}
+		return answer;
+	});
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
@@ -335,6 +353,14 @@ PollController.showVersus = function () {
 	});
 
 	calculatePercentages(this.poll);
+	this.poll.answers = this.poll.answers.map(function (answer) {
+		if (/game:.+/.test(answer.text)) {
+			answer.isGame = true;
+			answer.text = answer.text.replace(/^game:/, '').trim();
+			answer.textEncoded = encodeURIComponent(answer.text);
+		}
+		return answer;
+	});
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
