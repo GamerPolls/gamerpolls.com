@@ -2,6 +2,7 @@ var locomotive = require('locomotive');
 var Controller = locomotive.Controller;
 var PollController = new Controller();
 var Poll = require('../models/poll');
+var Stat = require('../models/stat');
 var login = require('connect-ensure-login');
 var moment = require('moment');
 var extend = require('jquery-extend');
@@ -212,6 +213,10 @@ PollController.vote = function () {
 	if (!this._poll) {
 		return this.next();
 	}
+	var firstVote = false;
+	if (this._poll.totalVotes._grand === 0) {
+		firstVote = true;
+	}
 
 	if (!this._poll.isVotable) {
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
@@ -228,6 +233,7 @@ PollController.vote = function () {
 	var self = this;
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var voted = false;
+	var statData = {totalVotes: 0};
 
 	// Filter out duplicates.
 	answers = answers.filter(function (val, idx, arr) {
@@ -240,9 +246,11 @@ PollController.vote = function () {
 			if (String(val._id) === id) {
 				if (self._poll.isVersus && !(self._poll.isSubscribed || self._poll.isFollowing)) {
 					arr[idx].votes.versus++;
+					statData.totalVotes++;
 				}
 				else {
 					arr[idx].votes.normal++;
+					statData.totalVotes++;
 				}
 				voted = true;
 				return true;
@@ -257,6 +265,10 @@ PollController.vote = function () {
 	if (!voted) {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
+
+	if (firstVote){
+		statData = calculateStats(statData, self._poll);
+	}	
 
 	this._poll.voterIPs.push(this.request.ip);
 
@@ -286,6 +298,17 @@ PollController.vote = function () {
 			}),
 			totalVotes: savedPoll.totalVotes
 		};
+
+		Stat.update(
+			{date: moment.utc().startOf('day')},
+			{$inc: statData},
+			{upsert: true},
+			function (err) {
+				if (err) {
+					console.log('Error Saving Stats: ' + err);
+				}
+			}
+		);
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
 		if (savedPoll.isVersus) {
@@ -504,6 +527,18 @@ function calculatePercentages(poll) {
 		}
 		arr[idx] = answer;
 	});
+}
+
+function calculateStats(statData, poll){
+	['mustfollow','mustSub', 'isVersus', 'multipleChoice', 'allowSameIP', 'creator'].forEach(function (prop) {
+		if (prop === 'creator') {
+			statData['poll.' + (poll[prop] ? 'loggedIn' : 'anonymous')] = 1;
+		}
+		else if (poll[prop]) {
+			statData['poll.' + prop] = 1;
+		}
+	});
+	return statData;
 }
 
 module.exports = PollController;
