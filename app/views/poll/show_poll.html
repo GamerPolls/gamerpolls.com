@@ -95,23 +95,23 @@
 						You must be logged in before you can vote in this poll. Please <a href="/login/twitchtv">Connect with Twitch</a> in order to vote.
 					</p>
 				{{/loggedIn}}
+				{{^poll.isVersus}}
+					{{#poll.mustSub}}
+						{{^poll.isSubscribed}}
+							<p class="alert alert-danger">
+								You must be subscribed to {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}/subscribe" target="_blank">subscribe to them on Twitch</a>.
+							</p>
+						{{/poll.isSubscribed}}
+					{{/poll.mustSub}}
 
-				{{#poll.mustSub}}
-					{{^poll.isSubscribed}}
-						<p class="alert alert-danger">
-							You must be subscribed to {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}/subscribe" target="_blank">subscribe to them on Twitch</a>.
-						</p>
-					{{/poll.isSubscribed}}
-				{{/poll.mustSub}}
-
-				{{#poll.mustFollow}}
-					{{^poll.isFollowing}}
-						<p class="alert alert-danger">
-							You must be following {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">follow them on Twitch</a>.
-						</p>
-					{{/poll.isFollowing}}
-				{{/poll.mustFollow}}
-
+					{{#poll.mustFollow}}
+						{{^poll.isFollowing}}
+							<p class="alert alert-danger">
+								You must be following {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">follow them on Twitch</a>.
+							</p>
+						{{/poll.isFollowing}}
+					{{/poll.mustFollow}}
+				{{/poll.isVersus}}
 			{{/poll.isVotable}}
 		</form>
 	</div>
