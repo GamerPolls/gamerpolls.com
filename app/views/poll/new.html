@@ -4,34 +4,28 @@
 	{{/isEditing}}
 	<h2>Question</h2>
 	<div class="form-group">
-		<input type="text" class="form-control input-lg" name="question" placeholder="Enter a question..." value="{{poll.question}}">
+		<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}">
 	</div>
 
 	<h2>Answers</h2>
 	<div class="answers-container">
+		<p class="help-block">Hint: type <code>game:</code> in front of an answer to search.</p>
+
 		{{#poll.answers}}
 		<div class="form-group">
-			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
 		</div>
 		{{/poll.answers}}
 		<div class="form-group">
-			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
 		</div>
 		<div class="form-group">
-			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
 		</div>
 		<div class="form-group">
-			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
 		</div>
 	</div>
-
-	{{#yield-ich}}
-	<script id="blankanswer" type="text/html">
-		<div class="form-group">
-			<input type="text" class="form-control input-lg" name="answers[]" placeholder="Enter an answer...">
-		</div>
-	</script>
-	{{/yield-ich}}
 
 	<fieldset>
 		<legend>Options</legend>
@@ -112,11 +106,72 @@
 	{{/isEditing}}
 </form>
 
+{{#yield-styles}}
+<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
+{{/yield-styles}}
+
+{{#yield-ich}}
+{{=<% %>=}}
+
+<script id="blankanswer" type="text/html">
+	<div class="form-group">
+		<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
+	</div>
+</script>
+
+<script id="typeahead-games-list-dropdown" type="text/html">
+	<p>
+		<img src="{{logo.small}}"/>
+		{{name}}
+	</p>
+</script>
+
+<%={{ }}=%>
+{{/yield-ich}}
+
 {{#yield-scripts}}
+<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
 <script>
 	$(function () {
+
+		var typeaheadSetup = {
+			name: 'games-list',
+			template: function (data) {
+				return ich["typeahead-games-list-dropdown"](data).html();
+			},
+			remote: {
+				url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY',
+				filter: function (data) {
+					return data.games.map(function (game) {
+						game.value = 'game:' + game.name;
+						game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
+						return game;
+					});
+				},
+				replace: function (url, query) {
+					query = decodeURIComponent(query);
+					if (/^game:.+/.test(query)) {
+						query = query.replace(/^game:/, '').trim();
+						return url.replace('%QUERY', encodeURIComponent(query));
+					}
+					return '-';
+				},
+				beforeSend: function (jqXhr, settings) {
+					if (/^-/.test(settings.url)) {
+						return false;
+					}
+				},
+				dataType: 'jsonp'
+			}
+		};
+
+		$('[name="answers[]"]').typeahead(typeaheadSetup);
+
 		$('.answers-container').on('focus', '.form-group:last-child input', function () {
-			ich.blankanswer().appendTo('.answers-container');
+			ich.blankanswer()
+				.appendTo('.answers-container')
+				.find('input')
+				.typeahead(typeaheadSetup);
 		});
 
 		{{#isEditing}}
