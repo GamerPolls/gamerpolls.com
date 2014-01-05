@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var MongoStore = require('connect-mongo')(express);
 var nconf = require('nconf');
+var flash = require('connect-flash');
 
 module.exports = function() {
 	nconf.file({ file: 'default-env.json' });
@@ -27,7 +28,7 @@ module.exports = function() {
 
 	layout.forEach(function (filename) {
 		filename = path.basename(filename, '.html');
-		partials['layout/' + filename] = '_layout/' + filename
+		partials['layout/' + filename] = '_layout/' + filename;
 	});
 
 	this.set('layout', 'layout');
@@ -52,6 +53,7 @@ module.exports = function() {
 	}));
 	this.use(passport.initialize());
 	this.use(passport.session());
+	this.use(flash());
 	this.use(require(__dirname + '/../../app/libs/locals').bind(this));
 	this.use(this.router);
 };

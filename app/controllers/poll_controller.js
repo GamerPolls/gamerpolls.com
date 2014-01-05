@@ -55,6 +55,7 @@ PollController.create = function () {
 			isVersus: isVersus,
 			question: question
 		};
+		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
 		return this.redirect(this.urlFor({ action: 'new' }));
 	}
 
@@ -86,6 +87,7 @@ PollController.create = function () {
 		if (err) {
 			return self.next();
 		}
+		self.request.flash('success', 'Poll Created!');
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
@@ -178,6 +180,7 @@ PollController.edit = function () {
 			isVersus: isVersus,
 			question: question
 		};
+		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
 		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
 	}
 
@@ -204,6 +207,7 @@ PollController.edit = function () {
 		if (err) {
 			return self.next();
 		}
+		self.request.flash('success', 'Poll Edited!');
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
@@ -288,6 +292,7 @@ PollController.vote = function () {
 		};
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
+		self.request.flash('info', 'Vote Successful!');
 		if (savedPoll.isVersus) {
 			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
 		}
@@ -359,6 +364,7 @@ PollController.close = function () {
 		}
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
+		self.request.flash('success', 'Poll Closed.');
 		if (savedPoll.isVersus) {
 			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
 		}

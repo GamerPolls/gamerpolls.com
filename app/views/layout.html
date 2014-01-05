@@ -32,6 +32,10 @@
 
 		<div class="container">
 
+			{{#flash}}
+				<p class="alert alert-{{type}}">{{text}}</p>
+			{{/flash}}
+
 			{{{yield}}}
 			
 			{{>layout/footer}}

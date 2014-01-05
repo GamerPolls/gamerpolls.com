@@ -21,7 +21,22 @@ module.exports = function (request, response, next) {
 
 		response.locals.user.hasSubButton = request.session.twitchtv.hasSubButton;
 	}
-	
+
+	var types = request.flash();
+	var messages = [];
+	for (var type in types) {
+		if (types.hasOwnProperty(type)) {
+			types[type].forEach(pushMessages);
+		}
+	}
+	function pushMessages(message) {
+		messages.push({
+			text: message,
+			type: type
+		});
+	}
+	response.locals.flash = messages;
+
 	response.locals.loggedIn = request.isAuthenticated();
 
 	// Pass to next middleware.

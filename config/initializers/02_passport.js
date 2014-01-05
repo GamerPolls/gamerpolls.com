@@ -50,6 +50,7 @@ module.exports = function () {
 							if (statusCode !== 422) {
 								request.session.twitchtv.hasSubButton = true;
 							}
+							request.flash('info', 'Welcome ' + account.displayName + '!');
 							return done(err, account);
 						}
 					);
