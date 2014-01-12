@@ -13,7 +13,7 @@ AccountController.showAccount = function () {
 
 	Poll.find({creator: this.request.user._id}, function (err, polls) {
 		if (err) {
-			console.log(err);
+			self.next(err);
 		}
 
 		self.polls = polls;
