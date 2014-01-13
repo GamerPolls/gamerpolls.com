@@ -301,7 +301,7 @@ PollController.vote = function () {
 			totalVotes: savedPoll.totalVotes
 		};
 
-		self.app.io.sockets.in('poll-' + savedPoll._id).in('vote').volatile.emit('vote', data);
+		self.app.io.sockets.in('poll-' + savedPoll._id).volatile.emit('vote', data);
 		self.request.flash('info', 'Vote Successful!');
 		if (savedPoll.isVersus) {
 			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
@@ -322,10 +322,6 @@ PollController.showResults = function () {
 	if (this.poll.isVersus) {
 		return self.redirect(self.urlFor({ action: 'showVersus', id: this.poll._id }));
 	}
-
-	self.app.io.sockets.on('connection', function (socket) {
-		socket.join('vote');
-	});
 
 	calculatePercentages(this.poll);
 	this.poll.answers = this.poll.answers.map(function (answer) {
@@ -352,10 +348,6 @@ PollController.showVersus = function () {
 	if (!this.poll.isVersus) {
 		return self.redirect(self.urlFor({ action: 'showResults', id: this.poll._id }));
 	}
-
-	self.app.io.sockets.on('connection', function (socket) {
-		socket.join('vote');
-	});
 
 	calculatePercentages(this.poll);
 	this.poll.answers = this.poll.answers.map(function (answer) {
