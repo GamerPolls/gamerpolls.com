@@ -11,14 +11,16 @@ AccountController.showAccount = function () {
 	var self = this;
 	this.title = 'My account';
 
-	Poll.find({creator: this.request.user._id}, function (err, polls) {
-		if (err) {
-			self.next(err);
-		}
+	Poll.find({creator: this.request.user._id})
+		.sort({created: 'desc'})
+		.exec(function (err, polls) {
+			if (err) {
+				self.next(err);
+			}
 
-		self.polls = polls;
-		self.render();
-	});
+			self.polls = polls;
+			self.render();
+		});
 
 };
 
