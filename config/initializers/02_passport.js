@@ -6,6 +6,7 @@ var strategies = {
 var Account = require('../../app/models/account');
 
 module.exports = function () {
+	var self = this;
 	passport.use('auth-twitchtv', new strategies.twitchtv(
 		{
 			clientID: nconf.get('authkeys:twitchtv:clientID'),
@@ -15,31 +16,46 @@ module.exports = function () {
 			passReqToCallback: true
 		},
 		function (request, accessToken, refreshToken, profile, done) {
-			var authData = {
-				'auths.twitchtv.id': profile.id
-			};
-			if (!request.session.userdata) {
-				request.session.userdata = {};
-			}
-			request.session.userdata.twitchtv = {
+			request.session.twitchtv = {
 				accessToken: accessToken,
-				displayName: profile._json.display_name,
-				email: profile._json.email,
-				logo: profile._json.logo,
-				refreshToken: refreshToken,
-				username: profile.username
+				refreshToken: refreshToken
 			};
 
-			if (request.user) {
-				return done(null, request.user);
-			}
-			Account.findOne(authData, function (err, account) {
-				if (account) {
-					return done(err, account);
+			Account.findOne({ 'auths.twitchtv.id': profile.id }, function (err, account) {
+				if (err) {
+					return done(err);
 				}
-				account = new Account(authData);
+				if (!account) {
+					account = new Account();
+				}
+
+				account.auths.twitchtv.id = profile.id;
+				account.displayName = profile._json.display_name;
+				account.email = profile._json.email;
+				account.avatar = profile._json.logo;
+				account.username = profile.username;
+
 				account.save(function () {
-					return done(err, account);
+					self.twitch.api(
+						'/users/:user/subscriptions/:channel',
+						{
+							replacements: {
+								user: profile.username,
+								channel: profile.username
+							},
+							accessKey: accessToken
+						},
+						function (err, statusCode, response) {
+							if (err) {
+								return done(err);
+							}
+							if (statusCode !== 422) {
+								request.session.twitchtv.hasSubButton = true;
+							}
+							request.flash('info', 'Welcome ' + account.displayName + '!');
+							return done(null, account);
+						}
+					);
 				});
 			});
 		}
@@ -51,7 +67,10 @@ module.exports = function () {
 
 	passport.deserializeUser(function (id, done) {
 		Account.findById(id, function (err, account) {
-			done(err, account);
+			if (err) {
+				return done(err);
+			}
+			return done(null, account);
 		});
 	});
 };

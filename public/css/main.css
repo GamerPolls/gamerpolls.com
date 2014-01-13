@@ -1,0 +1,74 @@
+html {
+	/* Prevent scroll on narrow devices */
+	overflow-x: hidden;
+}
+footer {
+	padding: 30px 0;
+}
+
+.browsehappy {
+	margin: 0;
+	text-align: center;
+}
+
+.navbar {
+	border-radius: 0;
+}
+
+.navbar .btn.login {
+	background-color: #6441A5;
+	background-image: url("/img/vendor/twitch_glitch_icon_white.png");
+	background-position: 5px center;
+	background-repeat: no-repeat;
+	background-size: 26px auto;
+	border: medium none;
+	padding-left: 35px;
+}
+
+.navbar .btn.login:hover {
+	background-color: #6F4CB0;
+}
+
+.navbar .avatar {
+	float: left;
+	height: 32px;
+	width: 32px;
+	margin: -7px 10px -7px 0;
+	border-radius: 32px;
+}
+.creator .avatar {
+	height: 32px;
+	width: 32px;
+	margin: -7px 0 -7px 5px;
+	border-radius: 32px;
+}
+
+label.answer {
+	width: 100%;
+}
+
+.chart-label {
+	color: #fff;
+	text-align: center;
+}
+
+.chart-label-percent, .chart-tooltip-header {
+	font-size: 150%;
+}
+
+.highcharts-tooltip span {
+	z-index: 9999;  
+}
+
+.progress {
+	height: 10px;
+}
+
+.well .row {
+	padding: 2px 0;
+}
+
+.tt-suggestions {
+	max-height: 300px;
+	overflow: auto;
+}

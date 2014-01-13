@@ -1,0 +1,209 @@
+<h1 class="text-center">{{poll.question}}</h1>
+<div class="row">
+	<div class="col-xs-12 col-md-8 answers-container">
+		{{#poll.isClosed}}
+		<div class="alert alert-danger">
+			<span class="glyphicon glyphicon-remove"></span> This poll is closed! The poll closed <strong><span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span></strong>.
+		</div>
+		{{/poll.isClosed}}
+
+		{{#poll.answers}}
+		<div class="form-group answer">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
+					&nbsp;votes
+				</span>				
+				<p class="form-control">
+					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
+					{{text}}
+					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
+				</p>
+			</div>
+			<div class="progress">
+				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
+			</div>
+		</div>
+		{{/poll.answers}}
+	</div>
+	<div class="col-xs-12 col-md-4">
+		<div class="well" id="chart-container"></div>
+			<div class="well">
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
+						Creator:
+					</div>
+					<div class="col-xs-6 col-md-6 text-right creator">
+						{{#poll.creator}}
+							<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+								{{poll.creator.displayName}}
+								<img src="{{poll.creator.avatar}}" class="avatar">
+							</a>
+						{{/poll.creator}}
+						{{^poll.creator}}
+							Anonymous
+						{{/poll.creator}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
+						Created Date:
+					</div>
+					<div class="col-xs-6 col-md-6 text-right">
+						<span data-time="{{poll.created}}">{{poll.created}}</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
+						Close Date:
+					</div>
+					<div class="col-xs-6 col-md-6 text-right">
+						<span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
+						Total Votes:
+					</div>
+					<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
+						{{poll.totalVotes._grand}}
+					</div>
+				</div>
+				{{#poll.isEditable}}
+				<div class="row">
+					<div class="col-md-12">
+						<a href="/poll/{{poll._id}}/edit" class="btn btn-primary btn-block">Edit</a>
+					</div>
+				</div>
+				{{/poll.isEditable}}
+				{{#poll.isClosable}}
+				<div class="row">
+					<div class="col-md-12">
+						<form action="/poll/{{poll._id}}/close" method="post">
+							<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+						</form>
+					</div>
+				</div>
+				{{/poll.isClosable}}
+
+			</div>
+	</div>
+</div>
+
+{{#yield-ich}}
+{{=<% %>=}}
+<script id="pollclosed" type="text/html">
+	<div class="alert alert-danger">
+		<span class="glyphicon glyphicon-remove"></span> This poll is closed! The poll closed <strong><span data-time="{{closeTime}}">{{closeTime}}</span></strong>.
+	</div>
+</script>
+<%={{ }}=%>
+{{/yield-ich}}
+
+{{#yield-scripts}}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script>
+	$(function () {
+		$('#chart-container').highcharts({
+			chart: {
+				type: 'pie',
+				backgroundColor: null
+			},
+			colors: [
+				'#0080ff',
+				'#dc3912',
+				'#ff9900',
+				'#109618',
+				'#990099',
+				'#0099c6',
+				'#dd4477',
+				'#66aa00',
+				'#b82e2e',
+				'#316395',
+				'#994499',
+				'#22aa99',
+				'#aaaa11',
+				'#6633cc',
+				'#e67300',
+				'#8b0707',
+				'#651067',
+				'#329262',
+				'#5574a6',
+				'#3b3eac',
+				'#b77322',
+				'#16d620',
+				'#b91383',
+				'#f4359e',
+				'#9c5935',
+				'#a9c413',
+				'#2a778d',
+				'#668d1c',
+				'#bea413',
+				'#0c5922',
+				'#743411'
+			],
+			credits: { enabled: false },
+			title: { text: '' },
+			plotOptions: {
+				pie: {
+					borderColor: '#000',
+					dataLabels: {
+						distance: -35,
+						backgroundColor: 'rgba(0, 0, 0, 0.5)',
+						borderRadius: '5px'
+					},
+					size: '100%'
+				}
+			},
+			series: [{
+				type: 'pie',
+				name: 'Votes',
+				data: [
+					{{#poll.answers}}
+					{
+						id: '{{_id}}',
+						name: '{{text}}',
+						y: {{votes.normal}}
+					},
+					{{/poll.answers}}
+				],
+				dataLabels: {
+					useHTML: true,
+					formatter: function() {
+						if (this.y === 0) {
+							return;
+						}
+						return '<div class="chart-label">' + (this.point.name.length > 15 ? this.point.name.substr(0, 15).trim() + '...' : this.point.name) + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
+					}
+				}
+			}],
+			tooltip: { enabled: false }
+		});
+
+		var chart = $('#chart-container').highcharts();
+
+		// Set progress bar color to match pie section color.
+		var data = chart.series[0].data.forEach(function (section) {
+			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.normal"]').css('background-color', section.color);
+		});
+
+		var socket = utils.getSocket();
+		socket.on('vote', function (poll) {
+			poll.answers.forEach(function (answer) {
+				// Update chart values.
+				chart.get(answer._id).update(answer.votes.normal);
+
+				// Update DOM nodes.
+				$('[data-bind="poll.answer.' + answer._id + '.votes.normal"]').text(answer.votes.normal);
+				$('[data-bind="poll.answer.' + answer._id + '.percentage.normal"]').css('width', answer.percentage.normal + '%');
+			});
+			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+		});
+		socket.on('close', function (closeTime) {
+			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');
+			$('span[data-time]').updateMoments();
+		});
+
+	});
+</script>
+{{/yield-scripts}}

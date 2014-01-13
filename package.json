@@ -13,7 +13,16 @@
     "mustache-express": "0.x",
     "nconf": "0.x",
     "passport": "0.x",
-    "passport-twitchtv": "0.x"
+    "passport-twitchtv": "0.x",
+    "hogan-express": "0.x",
+    "socket.io": "0.x",
+    "moment": "2.x",
+    "connect-mongo": "0.x",
+    "node-twitch-api": "git://github.com/cletusc/node-twitch-api#master",
+    "jquery-extend": "2.x",
+    "connect-flash": "0.x",
+    "agenda": "0.x",
+    "colors": "0.x"
   },
   "domains": [
     "gamerpolls.com"

@@ -1,0 +1,140 @@
+<h1 class="text-center">{{poll.question}}</h1>
+<div class="row">
+	<div class="col-xs-12 col-md-8">
+		<form action="/poll/{{poll._id}}/vote" method="post">
+			{{#poll.answers}}
+			<div class="form-group">
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input
+							type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
+							name="answers"
+							value="{{_id}}"
+							>
+						</span>
+						<p class="form-control">
+							{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
+							{{text}}
+							{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
+						</p>
+					</div>
+				</label>
+			</div>
+			{{/poll.answers}}
+			<div class="form-group">
+
+			{{#poll.isVotable}}
+				<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
+			{{/poll.isVotable}}
+
+			{{^poll.isVotable}}
+				{{^loggedIn}}
+					<p class="alert alert-danger">
+						You must be logged in before you can vote in this poll. Please <a href="/login/twitchtv">Connect with Twitch</a> in order to vote.
+					</p>
+				{{/loggedIn}}
+				{{^poll.isVersus}}
+					{{#poll.mustSub}}
+						{{^poll.isSubscribed}}
+							<p class="alert alert-danger">
+								You must be subscribed to {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}/subscribe" target="_blank">subscribe to them on Twitch</a>.
+							</p>
+						{{/poll.isSubscribed}}
+					{{/poll.mustSub}}
+
+					{{#poll.mustFollow}}
+						{{^poll.isFollowing}}
+							<p class="alert alert-danger">
+								You must be following {{poll.creator.displayName}} before you can vote in this poll. You can <a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">follow them on Twitch</a>.
+							</p>
+						{{/poll.isFollowing}}
+					{{/poll.mustFollow}}
+				{{/poll.isVersus}}
+			{{/poll.isVotable}}
+			</div>
+		</form>
+	</div>
+	<div class="col-xs-12 col-md-4">
+		<div class="well">
+			<div class="row">
+				<div class="col-xs-6 col-md-6">
+					Creator:
+				</div>
+				<div class="col-xs-6 col-md-6 text-right creator">
+					{{#poll.creator}}
+						<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+							{{poll.creator.displayName}}
+							<img src="{{poll.creator.avatar}}" class="avatar">
+						</a>
+					{{/poll.creator}}
+					{{^poll.creator}}
+						Anonymous
+					{{/poll.creator}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-6">
+					Created Date:
+				</div>
+				<div class="col-xs-6 col-md-6 text-right">
+					<span data-time="{{poll.created}}"></span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-6">
+					Close Date:
+				</div>
+				<div class="col-xs-6 col-md-6 text-right">
+					<span data-time="{{poll.closeTime}}"></span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-6">
+					Total Votes:
+				</div>
+				<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
+					{{poll.totalVotes._grand}}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<a href="/poll/{{poll._id}}/results" class="btn btn-primary btn-block">Show Results</a>
+				</div>
+			</div>
+
+			{{#poll.isEditable}}
+			<div class="row">
+				<div class="col-md-12">
+					<a href="/poll/{{poll._id}}/edit" class="btn btn-warning btn-block">Edit</a>
+				</div>
+			</div>
+			{{/poll.isEditable}}
+
+			{{#poll.isClosable}}
+			<div class="row">
+				<div class="col-md-12">
+					<form action="/poll/{{poll._id}}/close" method="post">
+						<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+					</form>
+				</div>
+			</div>
+			{{/poll.isClosable}}
+
+		</div>
+	</div>
+</div>
+{{#yield-scripts}}
+<script>
+	$(function () {
+		var socket = utils.getSocket();
+		socket.on('close', function () {
+			window.location.href = '/poll/{{poll._id}}/results';				
+		});
+		socket.on('vote', function (poll) {
+			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+		});
+	});
+</script>
+{{/yield-scripts}}

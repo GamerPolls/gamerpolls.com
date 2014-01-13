@@ -1,0 +1,40 @@
+<h1>Dashboard</h1>
+
+<h2>Your Polls</h2>
+
+{{^polls}}
+<div class="well">
+	You haven't created any polls recently. Your polls will only show here if you were logged in while creating them.
+</div>
+{{/polls}}
+
+{{#polls.length}}
+<table class="table">
+	<thead>
+		<tr>
+			<th>Question</th>
+			<th>Votes</th>
+			<th>Created Date</th>
+			<th>Close Date</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#polls}}
+		<tr{{#isClosed}} class="danger"{{/isClosed}}>
+			<td><a href="/poll/{{_id}}">{{question}}</a></td>
+			<td>{{totalVotes._grand}}</td>
+			<td><span data-time="{{created}}">{{created}}</span></td>
+			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
+			<td>
+				
+				<form action="/poll/{{_id}}/close" method="post">
+						<button type="submit" class="btn btn-danger btn-block btn-xs" {{#isClosed}}disabled="disabled"{{/isClosed}}>Close Poll</button>
+				</form>
+				
+			</td>
+		</tr>
+		{{/polls}}
+	</tbody>
+</table>
+{{/polls.length}}

@@ -1,0 +1,187 @@
+<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
+	{{#isEditing}}
+	<h1>Editing Poll</h1>
+	{{/isEditing}}
+	<h2>Question</h2>
+	<div class="form-group">
+		<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}">
+	</div>
+
+	<h2>Answers</h2>
+	<div class="answers-container">
+		<p class="help-block">Hint: type <code>game:</code> in front of an answer to search.</p>
+
+		{{#poll.answers}}
+		<div class="form-group">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}">
+		</div>
+		{{/poll.answers}}
+		<div class="form-group">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
+		</div>
+		<div class="form-group">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
+		</div>
+		<div class="form-group">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
+		</div>
+	</div>
+
+	<fieldset>
+		<legend>Options</legend>
+		<div class="form-group">
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="multipleChoice"{{#poll.multipleChoice}} checked{{/poll.multipleChoice}}>
+					</span>
+					<p class="form-control">Allow multiple choice</p>
+				</div>
+			</label>
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
+					</span>
+					<p class="form-control">Allow multiple votes from one IP</p>
+				</div>
+			</label>
+			{{^loggedIn}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" disabled>
+					</span>
+					<p class="form-control">Login for following/subscription options</p>
+				</div>
+			</label>
+			{{/loggedIn}}
+
+			{{#loggedIn}}
+
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="normal" checked>
+					</span>
+					<p class="form-control">Normal Poll</p>
+				</div>
+			</label>
+			{{^user.hasSubButton}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
+					</span>
+					<p class="form-control">Followers only poll</p>
+				</div>
+			</label>
+			{{/user.hasSubButton}}
+
+			{{#user.hasSubButton}}
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
+					</span>
+					<p class="form-control">Subscribers only poll</p>
+				</div>
+			</label>
+			{{/user.hasSubButton}}
+
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
+					</span>
+					<p class="form-control">Versus poll</p>
+				</div>
+			</label>
+			{{/loggedIn}}
+		</div>
+	</fieldset>
+	<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
+	{{#isEditing}}
+	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
+	{{/isEditing}}
+</form>
+
+{{#yield-styles}}
+<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
+{{/yield-styles}}
+
+{{#yield-ich}}
+{{=<% %>=}}
+
+<script id="blankanswer" type="text/html">
+	<div class="form-group">
+		<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer...">
+	</div>
+</script>
+
+<script id="typeahead-games-list-dropdown" type="text/html">
+	<p>
+		<img src="{{image}}"/>
+		{{name}}
+	</p>
+</script>
+
+<%={{ }}=%>
+{{/yield-ich}}
+
+{{#yield-scripts}}
+<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
+<script>
+	$(function () {
+
+		var typeaheadSetup = {
+			name: 'games-list',
+			template: function (data) {
+				return ich["typeahead-games-list-dropdown"](data).html();
+			},
+			limit: 20,
+			remote: {
+				url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY',
+				filter: function (data) {
+					return data.games.map(function (game) {
+						game.value = 'game:' + game.name;
+						game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
+						game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
+						return game;
+					});
+				},
+				replace: function (url, query) {
+					query = decodeURIComponent(query);
+					if (/^game:.+/.test(query)) {
+						query = query.replace(/^game:/, '').trim();
+						return url.replace('%QUERY', encodeURIComponent(query));
+					}
+					return '-';
+				},
+				beforeSend: function (jqXhr, settings) {
+					if (/^-/.test(settings.url)) {
+						return false;
+					}
+				},
+				dataType: 'jsonp'
+			}
+		};
+
+		$('[name="answers[]"]').typeahead(typeaheadSetup);
+
+		$('.answers-container').on('focus', '.form-group:last-child input', function () {
+			ich.blankanswer()
+				.appendTo('.answers-container')
+				.find('input')
+				.typeahead(typeaheadSetup);
+		});
+
+		{{#isEditing}}
+		var socket = utils.getSocket();
+		socket.on('vote', function () {
+			window.location.href = '/poll/{{poll._id}}/';				
+		});
+		{{/isEditing}}
+	});
+</script>
+{{/yield-scripts}}

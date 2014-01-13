@@ -4,22 +4,33 @@ var AccountController = new Controller();
 var Account = require('../models/account');
 var login = require('connect-ensure-login');
 var passport = require('passport');
+var Poll = require('../models/poll');
 
 AccountController.before('showAccount', login.ensureLoggedIn());
 AccountController.showAccount = function () {
-	var userdata = this.request.session.userdata.twitchtv;
+	var self = this;
+	this.title = 'My account';
 
-	this.avatar = userdata.logo;
-	this.displayName = userdata.displayName;
-	this.username = userdata.username;
-	this.render();
+	Poll.find({creator: this.request.user._id})
+		.sort({created: 'desc'})
+		.exec(function (err, polls) {
+			if (err) {
+				self.next(err);
+			}
+
+			self.polls = polls;
+			self.render();
+		});
+
 };
 
 AccountController.loginForm = function () {
+	this.title = 'Login';
 	this.render();
 };
 
 AccountController.login = function () {
+	this.request.session.returnTo = this.request.headers.referer;
 	var authStrategy = 'auth-' + this.param('authStrategy');
 	if (!passport._strategies.hasOwnProperty(authStrategy)) {
 		console.log('Couldn\'t find strategy: ' + authStrategy);
@@ -28,7 +39,7 @@ AccountController.login = function () {
 	passport.authenticate(
 		authStrategy,
 		{
-			successRedirect: this.urlFor({action: 'showAccount'}),
+			successReturnToOrRedirect: this.urlFor({action: 'showAccount'}),
 			failureRedirect: this.urlFor({action: 'login'})
 		}
 	)(this.request, this.response, this.__next);

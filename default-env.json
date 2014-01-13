@@ -3,7 +3,10 @@
 	"authkeys": {
 		"twitchtv": {
 			"clientID": "",
-			"clientSecret": ""
+			"clientSecret": "",
+			"callbackURL": ""
 		}
-	}
+	},
+	"sessionSecret": "this should be something super secret",
+	"betaTesters": ""
 }
