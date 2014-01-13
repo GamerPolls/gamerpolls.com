@@ -8,5 +8,5 @@
 		}
 	},
 	"sessionSecret": "this should be something super secret",
-	"betaTesters": []
+	"betaTesters": ""
 }
