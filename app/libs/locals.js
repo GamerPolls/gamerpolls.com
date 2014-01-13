@@ -8,6 +8,7 @@ module.exports = function (request, response, next) {
 	// Client-specific data, e.g. user info
 
 	// Expose only certain values.
+	request.session.isBetaTester = false;
 	if (request.user) {
 		response.locals.user = {};
 		[
@@ -20,6 +21,8 @@ module.exports = function (request, response, next) {
 		});
 
 		response.locals.user.hasSubButton = request.session.twitchtv.hasSubButton;
+		response.locals.user.isBetaTester = this.nconf.get('betaTesters').indexOf(request.user.username) >= 0;
+		request.session.isBetaTester = response.locals.user.isBetaTester;
 	}
 
 	var types = request.flash();

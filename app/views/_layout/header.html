@@ -28,7 +28,9 @@
 		<div style="height: 1px;" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
 				<li><a href="/">Home</a></li>
+				{{#user.isBetaTester}}
 				<li><a href="/poll/new">New Poll</a></li>
+				{{/user.isBetaTester}}
 			</ul>
 		</div>
 	</div>

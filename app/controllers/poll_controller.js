@@ -10,10 +10,19 @@ PollController.new = function () {
 	this.poll = this.request.session._poll;
 	delete this.request.session._poll;
 
+	if (!this.request.session.isBetaTester) {
+		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
+		return this.redirect('/');
+	}
+
 	this.render();
 };
 
 PollController.create = function () {
+	if (!this.request.session.isBetaTester) {
+		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
+		return this.redirect('/');
+	}
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
