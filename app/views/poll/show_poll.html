@@ -61,8 +61,13 @@
 				<div class="col-xs-6 col-md-6">
 					Creator:
 				</div>
-				<div class="col-xs-6 col-md-6 text-right">
-					{{poll.creator.displayName}}
+				<div class="col-xs-6 col-md-6 text-right creator">
+					{{#poll.creator}}
+						<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+							{{poll.creator.displayName}}
+							<img src="{{poll.creator.avatar}}" class="avatar">
+						</a>
+					{{/poll.creator}}
 					{{^poll.creator}}
 						Anonymous
 					{{/poll.creator}}

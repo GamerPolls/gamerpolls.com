@@ -36,6 +36,12 @@ footer {
 	margin: -7px 10px -7px 0;
 	border-radius: 32px;
 }
+.creator .avatar {
+	height: 32px;
+	width: 32px;
+	margin: -7px 0 -7px 5px;
+	border-radius: 32px;
+}
 
 label.answer {
 	width: 100%;
