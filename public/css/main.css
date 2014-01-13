@@ -43,15 +43,15 @@ label.answer {
 
 .chart-label {
 	color: #fff;
-    text-align: center;
+	text-align: center;
 }
 
 .chart-label-percent, .chart-tooltip-header {
-    font-size: 150%;
+	font-size: 150%;
 }
 
 .highcharts-tooltip span {
-    z-index: 9999;  
+	z-index: 9999;  
 }
 
 .progress {
@@ -60,4 +60,9 @@ label.answer {
 
 .well .row {
 	padding: 2px 0;
+}
+
+.tt-suggestions {
+	max-height: 300px;
+	overflow: auto;
 }

@@ -121,7 +121,7 @@
 
 <script id="typeahead-games-list-dropdown" type="text/html">
 	<p>
-		<img src="{{logo.small}}"/>
+		<img src="{{image}}"/>
 		{{name}}
 	</p>
 </script>
@@ -139,12 +139,14 @@
 			template: function (data) {
 				return ich["typeahead-games-list-dropdown"](data).html();
 			},
+			limit: 20,
 			remote: {
 				url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY',
 				filter: function (data) {
 					return data.games.map(function (game) {
 						game.value = 'game:' + game.name;
 						game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
+						game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
 						return game;
 					});
 				},
