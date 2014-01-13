@@ -10,14 +10,25 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-12 col-md-4 answers-container">
-		<div class="text-center">
-			<h3>
+	<div class="col-xs-12 col-md-8">
+		<div class="pull-left">
+			<h4>
 				{{#poll.mustSub}}Non-Subscribers{{/poll.mustSub}}
 				{{^poll.mustSub}}Not Following{{/poll.mustSub}} - 
 				<span data-bind="poll.totalVotes.versus">{{poll.totalVotes.versus}}</span> Votes
-			</h3>
+			</h4>
 		</div>
+		<div class="pull-right">
+			<h4>
+				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes - 
+				{{#poll.mustSub}}Subscribers{{/poll.mustSub}}
+				{{^poll.mustSub}}Following{{/poll.mustSub}}
+			</h4>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-8 answers-container">
 		{{#poll.answers}}
 		<div class="form-group answer">
 			<div class="input-group">
@@ -26,37 +37,14 @@
 					&nbsp;votes
 				</span>
 				<p class="form-control">
+					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
 					{{text}}
+					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
 				</p>
-			</div>
-			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.versus" style="width: {{percentage.versus}}%;"></div>
-			</div>
-		</div>
-		{{/poll.answers}}
-	</div>
-	<div class="col-xs-12 col-md-4 answers-container">
-		<div class="text-center">
-			<h3>
-				{{#poll.mustSub}}Subscribers{{/poll.mustSub}}
-				{{^poll.mustSub}}Following{{/poll.mustSub}} - 
-				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes
-			</h3>
-		</div>
-		{{#poll.answers}}
-		<div class="form-group answer">
-			<div class="input-group">
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
 					&nbsp;votes
 				</span>
-				<p class="form-control">
-					{{text}}
-					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary btn-xs pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
-				</p>
-			</div>
-			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
 			</div>
 		</div>
 		{{/poll.answers}}
