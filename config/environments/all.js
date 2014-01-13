@@ -7,6 +7,7 @@ var path = require('path');
 var MongoStore = require('connect-mongo')(express);
 var nconf = require('nconf');
 var flash = require('connect-flash');
+var errorHandler = require('../../app/libs/error-handler');
 
 module.exports = function() {
 	nconf.file({ file: 'default-env.json' });
@@ -36,11 +37,11 @@ module.exports = function() {
 
 	// Middleware.
 	this.use(poweredBy(null));
-	this.use(express.logger());
 	this.use(express.favicon());
 	this.use('/js', express.static(__dirname + '/../../node_modules/moment/min'));
 	this.use('/js', express.static(__dirname + '/../../node_modules/socket.io/node_modules/socket.io-client/dist'));
 	this.use(express.static(__dirname + '/../../public'));
+	this.use(express.logger());
 	this.use(express.urlencoded());
 	this.use(express.json());
 	this.use(express.cookieParser());
@@ -56,4 +57,7 @@ module.exports = function() {
 	this.use(flash());
 	this.use(require(__dirname + '/../../app/libs/locals').bind(this));
 	this.use(this.router);
+	this.use(errorHandler.notFound);
+	this.use(errorHandler.logErrors);
+	this.use(errorHandler.handleAll);
 };

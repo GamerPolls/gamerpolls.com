@@ -85,7 +85,7 @@ PollController.create = function () {
 
 	poll.save(function (err, savedPoll) {
 		if (err) {
-			return self.next();
+			return self.next(err);
 		}
 		self.request.flash('success', 'Poll Created!');
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
@@ -215,7 +215,7 @@ PollController.edit = function () {
 
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
-			return self.next();
+			return self.next(err);
 		}
 		self.request.flash('success', 'Poll Edited!');
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
@@ -280,7 +280,7 @@ PollController.vote = function () {
 
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
-			return self.next();
+			return self.next(err);
 		}
 		if (!self.request.session.pollsVotedIn) {
 			self.request.session.pollsVotedIn = [];
@@ -386,7 +386,7 @@ PollController.close = function () {
 
 	this._poll.save(function (err, savedPoll) {
 		if (err) {
-			return self.next();
+			return self.next(err);
 		}
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);

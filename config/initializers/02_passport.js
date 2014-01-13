@@ -22,6 +22,9 @@ module.exports = function () {
 			};
 
 			Account.findOne({ 'auths.twitchtv.id': profile.id }, function (err, account) {
+				if (err) {
+					return done(err);
+				}
 				if (!account) {
 					account = new Account();
 				}
@@ -42,16 +45,15 @@ module.exports = function () {
 							},
 							accessKey: accessToken
 						},
-						function (error, statusCode, response) {
-							if (error) {
-								console.log(error);
-								return;
+						function (err, statusCode, response) {
+							if (err) {
+								return done(err);
 							}
 							if (statusCode !== 422) {
 								request.session.twitchtv.hasSubButton = true;
 							}
 							request.flash('info', 'Welcome ' + account.displayName + '!');
-							return done(err, account);
+							return done(null, account);
 						}
 					);
 				});
@@ -65,7 +67,10 @@ module.exports = function () {
 
 	passport.deserializeUser(function (id, done) {
 		Account.findById(id, function (err, account) {
-			done(err, account);
+			if (err) {
+				return done(err);
+			}
+			return done(null, account);
 		});
 	});
 };
