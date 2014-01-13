@@ -6,7 +6,7 @@
 
 	exports.getSocket = function () {
 		if (!socket) {
-			socket = io.connect(window.location.origin.replace(/\d+$/, 3001));
+			socket = io.connect(window.location.protocol + '//' + window.location.hostname + ':3001');
 		}
 		return socket;
 	}
