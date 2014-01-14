@@ -35,7 +35,10 @@
 					<span class="input-group-addon">
 						<input type="checkbox" name="multipleChoice"{{#poll.multipleChoice}} checked{{/poll.multipleChoice}}>
 					</span>
-					<p class="form-control">Allow multiple choice</p>
+					<p class="form-control">
+						Allow multiple choice
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Simple: allow people to vote for more than one item."></span>
+					</p>
 				</div>
 			</label>
 			<label class="answer">
@@ -43,28 +46,23 @@
 					<span class="input-group-addon">
 						<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
 					</span>
-					<p class="form-control">Allow multiple votes from one IP</p>
+					<p class="form-control">
+						Allow multiple votes from one IP
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
+					</p>
 				</div>
 			</label>
-			{{^loggedIn}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="checkbox" disabled>
-					</span>
-					<p class="form-control">Login for following/subscription options</p>
-				</div>
-			</label>
-			{{/loggedIn}}
 
 			{{#loggedIn}}
-
 			<label class="answer">
 				<div class="input-group">
 					<span class="input-group-addon">
 						<input type="radio" name="pollType" value="normal" checked>
 					</span>
-					<p class="form-control">Normal Poll</p>
+					<p class="form-control">
+						Normal Poll
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Your standard everyday poll. Anyone can vote on it."></span>
+					</p>
 				</div>
 			</label>
 			{{^user.hasSubButton}}
@@ -73,7 +71,10 @@
 					<span class="input-group-addon">
 						<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
 					</span>
-					<p class="form-control">Followers only poll</p>
+					<p class="form-control">
+						Follower-only poll
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only your Twitch followers can vote."></span>
+					</p>
 				</div>
 			</label>
 			{{/user.hasSubButton}}
@@ -84,7 +85,10 @@
 					<span class="input-group-addon">
 						<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
 					</span>
-					<p class="form-control">Subscribers only poll</p>
+					<p class="form-control">
+						Subscriber-only poll
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only subscribers to your Twitch channel can vote."></span>
+					</p>
 				</div>
 			</label>
 			{{/user.hasSubButton}}
@@ -94,9 +98,18 @@
 					<span class="input-group-addon">
 						<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
 					</span>
-					<p class="form-control">Versus poll</p>
+					<p class="form-control">
+						Versus poll
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
+					</p>
 				</div>
 			</label>
+			{{/loggedIn}}
+
+			{{^loggedIn}}
+			<p class="alert alert-info">
+				Please login to see more poll options.
+			</p>
 			{{/loggedIn}}
 		</div>
 	</fieldset>
