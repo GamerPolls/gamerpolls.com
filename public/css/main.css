@@ -36,6 +36,18 @@ footer {
 	margin: -7px 10px -7px 0;
 	border-radius: 32px;
 }
+
+/* Beta tag */
+.navbar-brand:after {
+    color: #FF0000;
+    content: "[BETA]";
+    font-size: 60%;
+    font-weight: bold;
+    margin: 15px 0 0 -65px;
+    position: absolute;
+}
+/* End beta tag */
+
 .creator .avatar {
 	height: 32px;
 	width: 32px;
