@@ -400,6 +400,19 @@ PollController.close = function () {
 	});
 };
 
+PollController.copy = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+
+	if (!this._poll.isCreator(this.request.user)) {
+		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+	}
+	this.request.session._poll = this._poll;
+
+	return this.redirect(this.urlFor({ action: 'new' }));
+};
+
 PollController.before('*', function (next) {
 	var self = this;
 	var id = Number(this.param('id'));
@@ -424,10 +437,11 @@ PollController.before('*', function (next) {
 				socket.join('poll-' + poll._id);
 			});
 
-			poll.isClosable = !poll.isClosed && poll.isCreator(self.request.user);
-			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.isCreator(self.request.user);
+			poll.userIsCreator = poll.isCreator(self.request.user);
+			poll.isClosable = !poll.isClosed && poll.userIsCreator;
+			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.userIsCreator;
 			
-			if (poll.isCreator(self.request.user)) {
+			if (poll.userIsCreator) {
 				poll.isSubscribed = true;
 				poll.isFollowing = true;
 				return done(null, poll);
