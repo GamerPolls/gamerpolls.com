@@ -22,14 +22,16 @@
     "jquery-extend": "2.x",
     "connect-flash": "0.x",
     "agenda": "0.x",
-    "colors": "0.x"
+    "colors": "0.x",
+    "bootable": "0.x",
+    "bootable-environment": "0.x"
   },
   "domains": [
     "twitchpoll.com"
   ],
   "subdomain": "twitchpoll",
   "scripts": {
-    "start": "node ./node_modules/locomotive/bin/lcm.js server"
+    "start": "node server"
   },
   "engines": {
     "node": "0.x"
