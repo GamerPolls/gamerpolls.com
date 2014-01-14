@@ -100,14 +100,14 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<a href="/poll/{{poll._id}}/results" class="btn btn-primary btn-block">Show Results</a>
+					<a href="/poll/{{poll._id}}/results" class="btn btn-primary btn-block btn-xs">Show Results</a>
 				</div>
 			</div>
 
 			{{#poll.isEditable}}
 			<div class="row">
 				<div class="col-md-12">
-					<a href="/poll/{{poll._id}}/edit" class="btn btn-warning btn-block">Edit</a>
+					<a href="/poll/{{poll._id}}/edit" class="btn btn-warning btn-block btn-xs">Edit</a>
 				</div>
 			</div>
 			{{/poll.isEditable}}
@@ -116,11 +116,19 @@
 			<div class="row">
 				<div class="col-md-12">
 					<form action="/poll/{{poll._id}}/close" method="post">
-						<button type="submit" class="btn btn-danger btn-block">Close Poll</button>
+						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
 					</form>
 				</div>
 			</div>
 			{{/poll.isClosable}}
+
+			{{#poll.userIsCreator}}
+			<div class="row">
+				<div class="col-md-12">
+					<a href="/poll/{{poll._id}}/copy" class="btn btn-info btn-block btn-xs">Copy Poll As New</a>
+				</div>
+			</div>
+			{{/poll.userIsCreator}}
 
 		</div>
 	</div>
