@@ -39,7 +39,6 @@ module.exports = function() {
 	this.use(poweredBy(null));
 	this.use(express.favicon());
 	this.use('/js', express.static(__dirname + '/../../node_modules/moment/min'));
-	this.use('/js', express.static(__dirname + '/../../node_modules/socket.io/node_modules/socket.io-client/dist'));
 	this.use(express.static(__dirname + '/../../public'));
 	this.use(express.logger());
 	this.use(express.urlencoded());
