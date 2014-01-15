@@ -5,12 +5,14 @@ var Poll = require('../models/poll');
 var login = require('connect-ensure-login');
 var moment = require('moment');
 var extend = require('jquery-extend');
+var colors = require('colors');
 
 PollController.new = function () {
 	this.poll = this.request.session._poll;
 	delete this.request.session._poll;
 
 	if (!this.request.session.isBetaTester) {
+		console.log('User is not a beta tester.'.red);
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
 		return this.redirect('/');
 	}
@@ -20,6 +22,7 @@ PollController.new = function () {
 
 PollController.create = function () {
 	if (!this.request.session.isBetaTester) {
+		console.log('User is not a beta tester.'.red);
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
 		return this.redirect('/');
 	}
@@ -65,6 +68,8 @@ PollController.create = function () {
 			question: question
 		};
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
+		console.log('Could not create poll'.red);
+		console.log(this.request.session._poll);
 		return this.redirect(this.urlFor({ action: 'new' }));
 	}
 
@@ -97,6 +102,7 @@ PollController.create = function () {
 			return self.next(err);
 		}
 		self.request.flash('success', 'Poll Created!');
+		console.log('Poll created!'.green);
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
@@ -107,6 +113,11 @@ PollController.showPoll = function () {
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
+		console.log('Poll is closed or user has voted, redirecting to results.'.yellow);
+		console.log({
+			closed: this._poll.isClosed,
+			voted: this._poll.hasVoted(this.request)
+		});
 		if (this._poll.isVersus) {
 			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
 		}
@@ -125,6 +136,9 @@ PollController.showPoll = function () {
 		return answer;
 	});
 
+	console.log('Poll found'.green);
+	console.log(this.poll);
+
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 
 	this.render();
@@ -136,6 +150,7 @@ PollController.showEdit = function () {
 	}
 
 	if (!this._poll.isEditable) {
+		console.log('Can\'t edit, redirecting to poll.'.yellow);
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 	this.poll = this._poll;
@@ -155,6 +170,7 @@ PollController.edit = function () {
 	}
 
 	if (!this._poll.isEditable) {
+		console.log('Can\'t edit, redirecting to poll.'.yellow);
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
@@ -199,6 +215,8 @@ PollController.edit = function () {
 			isVersus: isVersus,
 			question: question
 		};
+		console.log('Could not edit poll'.red);
+		console.log(this.request.session._poll);
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
 		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
 	}
@@ -227,6 +245,7 @@ PollController.edit = function () {
 			return self.next(err);
 		}
 		self.request.flash('success', 'Poll Edited!');
+		console.log('Poll edited.'.green);
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
@@ -237,10 +256,16 @@ PollController.vote = function () {
 	}
 
 	if (!this._poll.isVotable) {
+		console.log('Can\'t vote, redirecting to poll');
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
+		console.log('Poll is closed or user has voted, redirecting to results.'.yellow);
+		console.log({
+			closed: this._poll.isClosed,
+			voted: this._poll.hasVoted(this.request)
+		});
 		if (this._poll.isVersus) {
 			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
 		}
@@ -278,6 +303,8 @@ PollController.vote = function () {
 	});
 
 	if (!voted) {
+		console.log('Invalid options sent, redirecting back to poll.'.red);
+		console.log(answers);
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
@@ -342,6 +369,9 @@ PollController.showResults = function () {
 		return answer;
 	});
 
+	console.log('Poll found'.green);
+	console.log(this.poll);
+
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
@@ -368,6 +398,9 @@ PollController.showVersus = function () {
 		return answer;
 	});
 
+	console.log('Poll found'.green);
+	console.log(this.poll);
+
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
 };
@@ -378,6 +411,7 @@ PollController.close = function () {
 	}
 
 	if (!this._poll.isClosable) {
+		console.log('Poll not closable, redirecting to poll.');
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
@@ -406,6 +440,7 @@ PollController.copy = function () {
 	}
 
 	if (!this._poll.isCreator(this.request.user)) {
+		console.log('User is not creator, redirecting to poll.');
 		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 	this.request.session._poll = this._poll;
