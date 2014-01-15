@@ -1,9 +1,13 @@
+var utils = require('./utils');
+var pkg = utils.getPackage();
 /**
  * Expose global data to views.
  */
 module.exports = function (request, response, next) {
 	// Data available to all clients, e.g. application settings.
-	// this.locals.foo = 'bar';
+	this.locals.pkg = {
+		version: pkg.version
+	};
 
 	// Client-specific data, e.g. user info
 
