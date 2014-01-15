@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
+var utils = require('../libs/utils');
 
 var PollSchema = new Schema({
 	answers: [{
@@ -83,7 +84,7 @@ PollSchema.methods.hasVoted = function (request) {
 		console.log('User voted based on user id.');
 		return true;
 	}
-	if (!this.allowSameIP && this.voterIPs.indexOf(request.ip) >= 0) {
+	if (!this.allowSameIP && this.voterIPs.indexOf(utils.getIp(request)) >= 0) {
 		console.log('User voted based on user ip.');
 		return true;
 	}

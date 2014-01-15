@@ -6,6 +6,7 @@ var login = require('connect-ensure-login');
 var moment = require('moment');
 var extend = require('jquery-extend');
 var colors = require('colors');
+var utils = require('../libs/utils');
 
 PollController.new = function () {
 	this.poll = this.request.session._poll;
@@ -308,7 +309,7 @@ PollController.vote = function () {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
-	this._poll.voterIPs.push(this.request.ip);
+	this._poll.voterIPs.push(utils.getIp(this.request));
 
 	if (this.request.isAuthenticated()) {
 		this._poll.voterIDs.push(this.request.user._id);
