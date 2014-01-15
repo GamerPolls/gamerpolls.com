@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /poll/
+Disallow: /account
+Disallow: /login
+Disallow: /login/
+Disallow: /logout
