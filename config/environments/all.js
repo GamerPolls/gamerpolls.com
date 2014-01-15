@@ -1,6 +1,6 @@
 var express = require('express');
 var poweredBy = require('connect-powered-by');
-var util = require('util');
+var utils = require('../../app/libs/utils');
 var passport = require('passport');
 var fs = require('fs');
 var path = require('path');
@@ -40,6 +40,9 @@ module.exports = function() {
 	this.use(express.favicon());
 	this.use('/js', express.static(__dirname + '/../../node_modules/moment/min'));
 	this.use(express.static(__dirname + '/../../public'));
+	express.logger.token('remote-addr', function (request, response) {
+		return utils.getIp(request);
+	});
 	this.use(express.logger());
 	this.use(express.urlencoded());
 	this.use(express.json());
