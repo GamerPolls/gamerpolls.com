@@ -330,7 +330,6 @@ PollController.vote = function () {
 				return {
 					_id: answer._id,
 					percentage: answer.percentage,
-					percentageVs: answer.percentageVs,
 					votes: answer.votes
 				};
 			}),
