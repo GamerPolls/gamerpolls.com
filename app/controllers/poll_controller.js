@@ -388,7 +388,6 @@ PollController.showResults = function () {
 	});
 
 	console.log('Poll found'.green);
-	console.log(this.poll);
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
