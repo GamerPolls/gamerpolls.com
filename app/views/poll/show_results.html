@@ -8,7 +8,7 @@
 		{{/poll.isClosed}}
 
 		{{#poll.answers}}
-		<div class="form-group answer">
+		<div class="form-group answer mix">
 			<div class="input-group">
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
@@ -109,6 +109,7 @@
 {{/yield-ich}}
 
 {{#yield-scripts}}
+<script src="/js/vendor/jquery.mixitup.min.js"></script>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
 	$(function () {
@@ -206,12 +207,32 @@
 				$('[data-bind="poll.answer.' + answer._id + '.percentage.normal"]').css('width', answer.percentage.normal + '%');
 			});
 			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+			
+			// Perform sort.
+			var answerElements = $('.answers-container .answer');
+			answerElements.sort(sortByVotes);
+			$('.answers-container').mixitup('sort', ['custom', answerElements]);
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');
 			$('span[data-time]').updateMoments();
 		});
 
+		function sortByVotes(a, b) {
+			a = $(a).find('span[data-bind*="votes.normal"]').text();
+			b = $(b).find('span[data-bind*="votes.normal"]').text();
+			if (a > b) {
+				return -1;
+			}
+			if (a < b) {
+				return 1;
+			}
+			return 0;
+		}
+
+		$('.answers-container').mixitup({
+			layoutMode: 'list'
+		});
 	});
 </script>
 {{/yield-scripts}}
