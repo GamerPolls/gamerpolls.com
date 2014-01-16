@@ -45,4 +45,6 @@ app.boot(function(err) {
 		return process.exit(-1);
 	}
 	console.log('App started!'.green);
+	console.log('Current beta testers:'.cyan);
+	console.log(app.nconf.get('betaTesters').split(',').sort());
 });
