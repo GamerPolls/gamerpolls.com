@@ -219,8 +219,8 @@
 		});
 
 		function sortByVotes(a, b) {
-			a = $(a).find('span[data-bind*="votes.normal"]').text();
-			b = $(b).find('span[data-bind*="votes.normal"]').text();
+			a = Number($(a).find('span[data-bind*="votes.normal"]').text());
+			b = Number($(b).find('span[data-bind*="votes.normal"]').text());
 			if (a > b) {
 				return -1;
 			}
