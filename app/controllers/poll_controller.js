@@ -75,7 +75,7 @@ PollController.create = function () {
 	}
 
 	if (isVersus) {
-		if (this.request.user.hasSubButton) {
+		if (this.request.session.twitchtv.hasSubButton) {
 			mustSub = true;
 		}
 		else {
@@ -138,7 +138,6 @@ PollController.showPoll = function () {
 	});
 
 	console.log('Poll found'.green);
-	console.log(this.poll);
 
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 
@@ -416,7 +415,6 @@ PollController.showVersus = function () {
 	});
 
 	console.log('Poll found'.green);
-	console.log(this.poll);
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.render();
@@ -598,7 +596,7 @@ function calculatePercentages(poll) {
 		answer.percentage = {};
 		for (var type in answer.votes) {
 			if (answer.votes.hasOwnProperty(type) && scales.hasOwnProperty(type)) {
-				answer.percentage[type] = Math.round(answer.votes[type] * scales[type]);
+				answer.percentage[type] = Math.round((answer.votes[type] * scales[type]) * 100) / 100;
 			}
 		}
 		arr[idx] = answer;
