@@ -193,7 +193,10 @@
 
 		// Set progress bar color to match pie section color.
 		var data = chart.series[0].data.forEach(function (section) {
-			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.normal"]').css('background-color', section.color);
+			$('.progress-bar[data-bind="poll.answer.' + section.id + '.percentage.normal"]').css({
+				'background-color': section.color,
+				'background-image': 'none'
+			});
 		});
 
 		var socket = utils.getSocket();
