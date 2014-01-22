@@ -144,6 +144,7 @@
 			plotOptions: {
 				series: {
 					stacking: 'normal',
+					borderWidth: 0,
 					colorByPoint: true,
 					colors: [
 					'#0080ff',
@@ -160,6 +161,9 @@
 				}
 			},
 			xAxis: {
+				tickColor: '#000000',
+				lineColor: '#000000',
+				lineWidth: 1,
 				categories: [
 					{{#poll.answers}}
 					('{{text}}'.length > 15 ? '{{text}}'.substr(0, 15).trim() + '...' : '{{text}}'),
@@ -168,9 +172,12 @@
 				]
 			},
 			yAxis: {
-				
 				allowDecimals: false,
 				minRange: 10,
+				gridLineColor: '#000000',
+				lineColor: '#000000',
+				lineWidth: 1,
+				tickColor: '#000000',
 				title: { text: 'Votes' },
 				labels: {
 					formatter: function () {
