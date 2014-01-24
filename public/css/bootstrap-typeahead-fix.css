@@ -55,6 +55,10 @@
     background-clip: padding-box;
 }
 
+.tt-dropdown-menu {
+  background-color: #111;
+}
+
 .tt-suggestion {
     display: block;
     padding: 3px 20px;
