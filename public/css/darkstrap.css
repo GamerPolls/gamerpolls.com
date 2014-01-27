@@ -190,9 +190,9 @@ body.theme-dark {
 
 .theme-dark .alert-danger,
 .theme-dark .alert-error {
-  background-color: #a00;
+  background-color: #400;
   background-color: rgba(255, 0, 0, 0.1);
-  border-color: #e7a248;
+  border-color: #a00;
 }
 
 .theme-dark .alert-info {
@@ -504,7 +504,7 @@ fieldset[disabled] .form-control {
   height: 29px;
 }
 
-.theme-dark a {
+.theme-dark a:not(.btn) {
   color: #999;
   text-decoration: none;
 }
