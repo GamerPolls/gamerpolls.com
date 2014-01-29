@@ -143,28 +143,6 @@ body.theme-dark {
   background-color: #34789a;
 }
 
-.theme-dark [class^="icon-"],
-.theme-dark [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
-}
-
-.theme-dark .icon-white,
-.theme-dark .nav-pills > .active > a > [class^="icon-"],
-.theme-dark .nav-pills > .active > a > [class*=" icon-"],
-.theme-dark .nav-list > .active > a > [class^="icon-"],
-.theme-dark .nav-list > .active > a > [class*=" icon-"],
-.theme-dark .navbar-inverse .nav > .active > a > [class^="icon-"],
-.theme-dark .navbar-inverse .nav > .active > a > [class*=" icon-"],
-.theme-dark .dropdown-menu > li > a:hover > [class^="icon-"],
-.theme-dark .dropdown-menu > li > a:hover > [class*=" icon-"],
-.theme-dark .dropdown-menu > .active > a > [class^="icon-"],
-.theme-dark .dropdown-menu > .active > a > [class*=" icon-"],
-.theme-dark .dropdown-submenu:hover > a > [class^="icon-"],
-.theme-dark .dropdown-submenu:hover > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
-}
-
-
 .theme-dark .btn-link:hover {
   color: #1ab2ff;
 }
