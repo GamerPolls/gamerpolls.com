@@ -14,9 +14,9 @@
 		<tr>
 			<th>Question</th>
 			<th>Votes</th>
-			<th>Created Date</th>
+			<th class="hidden-xs">Created Date</th>
 			<th>Close Date</th>
-			<th></th>
+			<th class="hidden-xs"></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -24,9 +24,9 @@
 		<tr{{#isClosed}} class="danger"{{/isClosed}}>
 			<td><a href="/poll/{{_id}}">{{question}}</a></td>
 			<td>{{totalVotes._grand}}</td>
-			<td><span data-time="{{created}}">{{created}}</span></td>
+			<td class="hidden-xs"><span data-time="{{created}}">{{created}}</span></td>
 			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
-			<td>
+			<td class="hidden-xs">
 				
 				<form action="/poll/{{_id}}/close" method="post">
 						<button type="submit" class="btn btn-danger btn-block btn-xs" {{#isClosed}}disabled="disabled"{{/isClosed}}>Close Poll</button>
