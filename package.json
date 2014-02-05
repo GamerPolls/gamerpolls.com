@@ -24,7 +24,8 @@
     "agenda": "0.x",
     "colors": "0.x",
     "bootable": "0.x",
-    "bootable-environment": "0.x"
+    "bootable-environment": "0.x",
+    "connect-no-www": "0.x"
   },
   "domains": [
     "gamerpolls.com"

@@ -8,6 +8,7 @@ var MongoStore = require('connect-mongo')(express);
 var nconf = require('nconf');
 var flash = require('connect-flash');
 var errorHandler = require('../../app/libs/error-handler');
+var nowww = require('connect-no-www');
 
 module.exports = function() {
 	nconf.file({ file: 'default-env.json' });
@@ -36,6 +37,7 @@ module.exports = function() {
 	this.set('partials', partials);
 
 	// Middleware.
+	this.use(nowww());
 	this.use(poweredBy(null));
 	this.use(express.favicon());
 	this.use('/js', express.static(__dirname + '/../../node_modules/moment/min'));
