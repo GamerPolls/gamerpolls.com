@@ -276,6 +276,10 @@ PollController.vote = function () {
 	var self = this;
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var voted = false;
+	var updateData = {
+		$inc: {},
+		$addToSet: {}
+	};
 
 	// Filter out duplicates.
 	answers = answers.filter(function (val, idx, arr) {
@@ -287,10 +291,10 @@ PollController.vote = function () {
 		self._poll.answers.some(function (val, idx, arr) {
 			if (String(val._id) === id) {
 				if (self._poll.isVersus && !(self._poll.isSubscribed || self._poll.isFollowing)) {
-					arr[idx].votes.versus++;
+					updateData.$inc['answers.' + idx + '.votes.versus'] = 1;
 				}
 				else {
-					arr[idx].votes.normal++;
+					updateData.$inc['answers.' + idx + '.votes.normal'] = 1;
 				}
 				voted = true;
 				return true;
@@ -308,41 +312,47 @@ PollController.vote = function () {
 		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
 	}
 
-	this._poll.voterIPs.push(utils.getIp(this.request));
+	updateData.$addToSet.voterIPs = utils.getIp(this.request);
 
 	if (this.request.isAuthenticated()) {
-		this._poll.voterIDs.push(this.request.user._id);
+		updateData.$addToSet.voterIDs = this.request.user._id;
 	}
 
-	this._poll.save(function (err, savedPoll) {
+	// Update poll data.
+	Poll.update({_id: this._poll._id}, updateData, function (err) {
 		if (err) {
 			return self.next(err);
 		}
-		if (!self.request.session.pollsVotedIn) {
-			self.request.session.pollsVotedIn = [];
-		}
-		self.request.session.pollsVotedIn.push(savedPoll._id);
+		Poll.findOne({_id: self._poll._id}, function (err, poll) {
+			if (err) {
+				return self.next(err);
+			}
+			if (!self.request.session.pollsVotedIn) {
+				self.request.session.pollsVotedIn = [];
+			}
+			self.request.session.pollsVotedIn.push(poll._id);
 
-		calculatePercentages(savedPoll);
+			calculatePercentages(poll);
 
-		var data = {
-			answers: savedPoll.answers.map(function (answer) {
-				return {
-					_id: answer._id,
-					percentage: answer.percentage,
-					votes: answer.votes
-				};
-			}),
-			totalVotes: savedPoll.totalVotes
-		};
+			var data = {
+				answers: poll.answers.map(function (answer) {
+					return {
+						_id: answer._id,
+						percentage: answer.percentage,
+						votes: answer.votes
+					};
+				}),
+				totalVotes: poll.totalVotes
+			};
 
-		self.app.io.sockets.in('poll-' + savedPoll._id).volatile.emit('vote', data);
-		self.request.flash('info', 'Vote Successful!');
-		if (savedPoll.isVersus) {
-			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
-		}
+			self.app.io.sockets.in('poll-' + poll._id).volatile.emit('vote', data);
+			self.request.flash('info', 'Vote Successful!');
+			if (poll.isVersus) {
+				return self.redirect(self.urlFor({ action: 'showVersus', id: poll._id }));
+			}
 
-		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
+			return self.redirect(self.urlFor({ action: 'showResults', id: poll._id }));
+		});
 	});
 };
 
