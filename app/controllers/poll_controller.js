@@ -60,14 +60,21 @@ PollController.create = function () {
 			break;
 	}
 	
+	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
+
 	answers = answers.map(function (answer) {
 		answer = answer.trim();
+		answer = (answer.length > 200 ? answer.substr(0, 200).trim() + '...' : answer);
 		if (answer.length > 0) {
 			return { text: answer };
 		}
 	}).filter(function (answer) {
 		return !!answer;
 	});
+
+	if (answers.length > 20) {
+		answers = answers.slice(0, 20);
+	}
 
 	if (answers.length < 2 || question === '') {
 		this.request.session._poll = {
