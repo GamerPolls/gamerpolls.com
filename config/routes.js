@@ -16,6 +16,7 @@ module.exports = function routes() {
 	this.post('poll/:id/vote', 'poll#vote');
 	this.post('poll/:id/close', 'poll#close');
 	this.get('poll/:id/results', 'poll#showResults');
-	this.get('poll/:id/versus', 'poll#showVersus');
+	// TODO: Remove legacy "versus" route on v0.4.0.
+	this.get('poll/:id/versus', 'poll#showResults');
 	this.get('poll/:id/copy', 'poll#copy');
 };

@@ -156,9 +156,6 @@ PollController.showPoll = function () {
 			closed: this._poll.isClosed,
 			voted: this._poll.hasVoted(this.request)
 		});
-		if (this._poll.isVersus) {
-			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
-		}
 
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
@@ -223,9 +220,6 @@ PollController.vote = function () {
 			closed: this._poll.isClosed,
 			voted: this._poll.hasVoted(this.request)
 		});
-		if (this._poll.isVersus) {
-			return this.redirect(this.urlFor({ action: 'showVersus', id: this._poll._id }));
-		}
 
 		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
 	}
@@ -304,9 +298,6 @@ PollController.vote = function () {
 
 			self.app.io.sockets.in('poll-' + poll._id).volatile.emit('vote', data);
 			self.request.flash('info', 'Vote Successful!');
-			if (poll.isVersus) {
-				return self.redirect(self.urlFor({ action: 'showVersus', id: poll._id }));
-			}
 
 			return self.redirect(self.urlFor({ action: 'showResults', id: poll._id }));
 		});
@@ -321,55 +312,24 @@ PollController.showResults = function () {
 
 	this.poll = this._poll;
 
+	calculatePercentages(this.poll);
+	this.poll.answers = this.poll.answers.map(function (answer) {
+		if (/game:.+/.test(answer.text)) {
+			answer.isGame = true;
+			answer.text = answer.text.replace(/^game:/, '').trim();
+			answer.textEncoded = encodeURIComponent(answer.text);
+		}
+		return answer;
+	});
+
+	console.log('Poll found'.green);
+
+	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
+	this.socialTitle = this.poll.question;
+	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
 	if (this.poll.isVersus) {
-		return self.redirect(self.urlFor({ action: 'showVersus', id: this.poll._id }));
+		return this.render('showVersus');
 	}
-
-	calculatePercentages(this.poll);
-	this.poll.answers = this.poll.answers.map(function (answer) {
-		if (/game:.+/.test(answer.text)) {
-			answer.isGame = true;
-			answer.text = answer.text.replace(/^game:/, '').trim();
-			answer.textEncoded = encodeURIComponent(answer.text);
-		}
-		return answer;
-	});
-
-	console.log('Poll found'.green);
-
-	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
-	this.socialTitle = this.poll.question;
-	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
-	this.render();
-};
-
-PollController.showVersus = function () {
-	if (!this._poll) {
-		return this.next();
-	}
-	var self = this;
-
-	this.poll = this._poll;
-
-	if (!this.poll.isVersus) {
-		return self.redirect(self.urlFor({ action: 'showResults', id: this.poll._id }));
-	}
-
-	calculatePercentages(this.poll);
-	this.poll.answers = this.poll.answers.map(function (answer) {
-		if (/game:.+/.test(answer.text)) {
-			answer.isGame = true;
-			answer.text = answer.text.replace(/^game:/, '').trim();
-			answer.textEncoded = encodeURIComponent(answer.text);
-		}
-		return answer;
-	});
-
-	console.log('Poll found'.green);
-
-	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
-	this.socialTitle = this.poll.question;
-	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
 	this.render();
 };
 
@@ -394,10 +354,7 @@ PollController.close = function () {
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
 		self.request.flash('success', 'Poll Closed.');
-		if (savedPoll.isVersus) {
-			return self.redirect(self.urlFor({ action: 'showVersus', id: savedPoll._id }));
-		}
-		
+
 		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
 	});
 };
