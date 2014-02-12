@@ -27,6 +27,17 @@ PollController.create = function () {
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
 		return this.redirect('/');
 	}
+	if (this.isEditing) {
+		if (!this._poll) {
+			return this.next();
+		}
+		if (!this._poll.isEditable) {
+			console.log('Can\'t edit, redirecting to poll.'.yellow);
+			return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		}
+	}
+
+	var self = this;
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
@@ -68,10 +79,18 @@ PollController.create = function () {
 			isVersus: isVersus,
 			question: question
 		};
+
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
-		console.log('Could not create poll'.red);
+
 		console.log(this.request.session._poll);
-		return this.redirect(this.urlFor({ action: 'new' }));
+		if (this.isEditing) {
+			console.log('Could not edit poll'.red);
+			return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
+		}
+		else {
+			console.log('Could not create poll'.red);
+			return this.redirect(this.urlFor({ action: 'new' }));
+		}
 	}
 
 	if (isVersus) {
@@ -82,9 +101,7 @@ PollController.create = function () {
 			mustFollow = true;
 		}
 	}
-
-	var self = this;
-	var poll = new Poll({
+	var pollData = {
 		answers: answers,
 		multipleChoice: multipleChoice,
 		allowSameIP: allowSameIP,
@@ -92,18 +109,31 @@ PollController.create = function () {
 		mustSub: mustSub,
 		isVersus: isVersus,
 		question: question
-	});
+	};
 
 	if (this.request.isAuthenticated()) {
-		poll.creator = this.request.user._id;
+		pollData.creator = this.request.user._id;
 	}
 
-	poll.save(function (err, savedPoll) {
+	if (this.isEditing) {
+		extend(this._poll, pollData);
+	}
+	else {
+		this._poll = new Poll(pollData);
+	}
+
+	this._poll.save(function (err, savedPoll) {
 		if (err) {
 			return self.next(err);
 		}
-		self.request.flash('success', 'Poll Created!');
-		console.log('Poll created!'.green);
+		if (self.isEditing) {
+			self.request.flash('success', 'Poll Edited!');
+			console.log('Poll edited.'.green);
+		}
+		else {
+			self.request.flash('success', 'Poll Created!');
+			console.log('Poll created!'.green);
+		}
 		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
 	});
 };
@@ -166,89 +196,8 @@ PollController.showEdit = function () {
 };
 
 PollController.edit = function () {
-	if (!this._poll) {
-		return this.next();
-	}
-
-	if (!this._poll.isEditable) {
-		console.log('Can\'t edit, redirecting to poll.'.yellow);
-		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
-	}
-
-	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
-	var question = this.param('question').trim();
-	var multipleChoice = Boolean(this.param('multipleChoice'));
-	var allowSameIP = Boolean(this.param('allowSameIP'));
-	var pollType = this.param('pollType');
-
-	var mustFollow = false;
-	var mustSub = false;
-	var isVersus = false;
-
-	switch (pollType) {
-		case 'mustFollow':
-			mustFollow = true;
-			break;
-		case 'mustSub':
-			mustSub = true;
-			break;
-		case 'isVersus':
-			isVersus = true;
-			break;
-	}
-
-	answers = answers.map(function (answer) {
-		answer = answer.trim();
-		if (answer.length > 0) {
-			return { text: answer };
-		}
-	}).filter(function (answer) {
-		return !!answer;
-	});
-
-	if (answers.length < 2 || question === '') {
-		this.request.session._poll = {
-			answers: answers,
-			multipleChoice: multipleChoice,
-			allowSameIP: allowSameIP,
-			mustFollow: mustFollow,
-			mustSub: mustSub,
-			isVersus: isVersus,
-			question: question
-		};
-		console.log('Could not edit poll'.red);
-		console.log(this.request.session._poll);
-		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
-		return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
-	}
-
-	if (isVersus) {
-		if (this.request.user.hasSubButton) {
-			mustSub = true;
-		}
-		else {
-			mustFollow = true;
-		}
-	}
-
-	var self = this;
-
-	this._poll.answers = answers;
-	this._poll.multipleChoice = multipleChoice;
-	this._poll.allowSameIP = allowSameIP;
-	this._poll.mustFollow = mustFollow;
-	this._poll.mustSub = mustSub;
-	this._poll.isVersus = isVersus;
-	this._poll.question = question;
-
-	this._poll.save(function (err, savedPoll) {
-		if (err) {
-			return self.next(err);
-		}
-		self.request.flash('success', 'Poll Edited!');
-		console.log('Poll edited.'.green);
-		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
-	});
+	this.isEditing = true;
+	return PollController.create.call(this);
 };
 
 PollController.vote = function () {
