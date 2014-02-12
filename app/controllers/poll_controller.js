@@ -335,24 +335,6 @@ PollController.showResults = function () {
 		return answer;
 	});
 
-	this.poll.answers.sort(function (a, b) {
-		if (a.votes && !b.votes) {
-			return -1;
-		}
-		if (!a.votes && b.votes) {
-			return 1;
-		}
-		if (a.votes && b.votes) {
-			if (a.votes.normal > b.votes.normal) {
-				return -1;
-			}
-			if (a.votes.normal < b.votes.normal) {
-				return 1;
-			}
-		}
-		return 0;
-	});
-
 	console.log('Poll found'.green);
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
