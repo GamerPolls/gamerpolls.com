@@ -140,7 +140,8 @@ PollController.showPoll = function () {
 	console.log('Poll found'.green);
 
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
-
+	this.socialTitle = this.poll.question;
+	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
 	this.render();
 };
 
@@ -399,6 +400,8 @@ PollController.showResults = function () {
 	console.log('Poll found'.green);
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
+	this.socialTitle = this.poll.question;
+	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
 	this.render();
 };
 
@@ -427,6 +430,8 @@ PollController.showVersus = function () {
 	console.log('Poll found'.green);
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
+	this.socialTitle = this.poll.question;
+	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
 	this.render();
 };
 

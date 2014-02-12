@@ -6,8 +6,14 @@
 
 		<title>{{#title}}{{title}} | {{/title}}GamerPolls{{^title}} | Polls for the gaming community!{{/title}}</title>
 
-		<meta name="description" content="">
+		<meta name="description" content="{{#description}}{{description}}{{/description}}{{#description}}A place to get the cold-hard opinion from fellow gamers.{{/description}}">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta property="og:description" content="{{#description}}{{description}}{{/description}}{{#description}}A place to get the cold-hard opinion from fellow gamers.{{/description}}">
+		<meta property="og:site_name" content="GamerPolls">
+		<meta property="og:title" content="{{#socialTitle}}{{socialTitle}}{{/socialTitle}}{{^socialTitle}}{{#title}}{{title}}{{/title}}{{^title}}Polls for the gaming community!{{/title}}{{/socialTitle}}">
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="{{#url}}{{url}}{{/url}}{{^url}}http://gamerpolls.com/{{/url}}">
 
 		<link rel="stylesheet" href="/css/glyphicons.css">
 		<link rel="stylesheet" href="/css/bootstrap.css">
