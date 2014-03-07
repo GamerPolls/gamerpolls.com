@@ -51,21 +51,18 @@
 	</div>
 	<div class="col-xs-12 col-md-4">
 		<div class="well">
-			<div class="row">
-				<div class="col-xs-3 col-md-3">
-					Creator:
-				</div>
-				<div class="col-xs-9 col-md-9 text-right creator">
-					{{#poll.creator}}
-						<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
-							{{poll.creator.displayName}}
-							<img src="{{poll.creator.avatar}}" class="avatar">
-						</a>
-					{{/poll.creator}}
-					{{^poll.creator}}
-						Anonymous
-					{{/poll.creator}}
-				</div>
+			{{#poll.creator}}
+			<div class="row text-center creator">
+				<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+					<img src="{{poll.creator.avatar}}" class="avatar">
+					{{poll.creator.displayName}}
+				</a>
+			</div>
+			{{/poll.creator}}
+			<div class="row text-center">
+				<h3>
+					<span data-bind="poll.totalVotes._grand">{{poll.totalVotes._grand}}</span> votes
+				</h3>
 			</div>
 			<div class="row">
 				<div class="col-xs-6 col-md-6">
@@ -81,14 +78,6 @@
 				</div>
 				<div class="col-xs-6 col-md-6 text-right">
 					<span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-xs-6 col-md-6">
-					Total Votes:
-				</div>
-				<div data-bind="poll.totalVotes._grand" class="col-xs-6 col-md-6 text-right">
-					{{poll.totalVotes._grand}}
 				</div>
 			</div>
 			{{#poll.isEditable}}
@@ -115,6 +104,14 @@
 				</div>
 			</div>
 			{{/poll.userIsCreator}}
+		</div>
+		<div class="well">
+			<div class="row social-share-buttons text-center">
+				<!-- Note: Facebook share buttons won't show on localhost; if it can't access it, it won't show the button -->
+				<div class="fb-share-button" data-href="{{url}}" data-type="button"></div>
+				<div class="g-plus" data-action="share" data-href="{{url}}" data-annotation="none"></div>
+				<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{url}}" data-count="none" data-text="{{socialTitle}}" data-via="GamerPollsSite">Tweet</a>
+			</div>
 		</div>
 	</div>
 </div>
