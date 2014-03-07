@@ -1,6 +1,8 @@
 module.exports = function routes() {
 	this.root('pages#main');
-	
+
+	this.match('privacy', 'pages#privacy');
+
 	this.match('account', 'account#showAccount');
 	this.get('login', 'account#loginForm');
 	this.post('login', 'account#login');
