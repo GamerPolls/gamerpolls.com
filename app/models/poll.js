@@ -2,8 +2,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 var utils = require('../libs/utils');
+var ShortId = require('mongoose-shortid');
 
 var PollSchema = new Schema({
+	_id: ShortId,
 	answers: [{
 		id: Schema.Types.ObjectId,
 		text: String,
@@ -98,11 +100,6 @@ PollSchema.methods.hasVoted = function (request) {
 PollSchema.plugin(require('./_migrations/migration-plugin'), {
 	path: 'poll',
 	version: 1
-});
-
-PollSchema.plugin(require('mongoose-auto-increment').plugin, {
-	model: 'Poll',
-	startAt: 1
 });
 
 module.exports = mongoose.model('Poll', PollSchema);
