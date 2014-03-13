@@ -25,7 +25,7 @@ module.exports = function (request, response, next) {
 		});
 
 		response.locals.user.hasSubButton = request.session.twitchtv.hasSubButton;
-		response.locals.user.isBetaTester = request.session.twitchtv.hasSubButton || this.nconf.get('betaTesters').split(',').indexOf(request.user.username) >= 0;
+		response.locals.user.isBetaTester = false;
 		request.session.isBetaTester = response.locals.user.isBetaTester;
 	}
 
@@ -42,6 +42,10 @@ module.exports = function (request, response, next) {
 			type: type
 		});
 	}
+	messages.push({
+		text: 'We will be moving the site to a new server between Friday 03/14/14 and Saturday 03/15/14. As a result, we will be starting the database fresh and all polls will be deleted. For beta testers, the ability to create polls has been disabled for now and will be re-enabled once we make the switch.',
+		type: 'error'
+	});
 	response.locals.flash = messages;
 
 	response.locals.loggedIn = request.isAuthenticated();
