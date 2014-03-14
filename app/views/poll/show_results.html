@@ -8,7 +8,7 @@
 		{{/poll.isClosed}}
 
 		{{#poll.answers}}
-		<div class="form-group answer mix">
+		<div class="form-group answer mix" data-poll-answer-id="{{_id}}" data-value="{{votes.normal}}">
 			<div class="input-group">
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
@@ -116,6 +116,11 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
 	$(function () {
+		$('.answers-container').mixItUp({
+			load: {
+				sort: 'value:desc'
+			}
+		});
 		$('#chart-container').highcharts({
 			chart: {
 				type: 'pie',
@@ -211,33 +216,17 @@
 				// Update DOM nodes.
 				$('[data-bind="poll.answer.' + answer._id + '.votes.normal"]').text(answer.votes.normal);
 				$('[data-bind="poll.answer.' + answer._id + '.percentage.normal"]').css('width', answer.percentage.normal + '%');
+				// Update value for sorting.
+				$('[data-poll-answer-id="' + answer._id + '"]').attr('data-value', answer.votes.normal);
 			});
 			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
 			
 			// Perform sort.
-			var answerElements = $('.answers-container .answer');
-			answerElements.sort(sortByVotes);
-			$('.answers-container').mixitup('sort', ['custom', answerElements]);
+			$('.answers-container').mixItUp('sort', 'value:desc');
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');
 			$('span[data-time]').updateMoments();
-		});
-
-		function sortByVotes(a, b) {
-			a = Number($(a).find('span[data-bind*="votes.normal"]').text());
-			b = Number($(b).find('span[data-bind*="votes.normal"]').text());
-			if (a > b) {
-				return -1;
-			}
-			if (a < b) {
-				return 1;
-			}
-			return 0;
-		}
-
-		$('.answers-container').mixitup({
-			layoutMode: 'list'
 		});
 	});
 </script>
