@@ -375,12 +375,8 @@ PollController.copy = function () {
 
 PollController.before('*', function (next) {
 	var self = this;
-	var id = Number(this.param('id'));
+	var id = this.param('id');
 	var apiCalls = 0;
-
-	if (isNaN(id)) {
-		return done();
-	}
 
 	Poll.findOne({ _id: id })
 		.populate('creator')
