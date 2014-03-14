@@ -99,6 +99,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	vertical-align: top;
 }
 
+/* Fix Facebook iframe size when using a page account. See #50 */
+.social-share-buttons .fb-share-button > span[style*="height: 0px;"],
+.social-share-buttons .fb-share-button > span[style*="height: 0px;"] > iframe {
+	height: 60px !important;
+	width: 44px !important;
+}
+
 .js .mix {
 	display: none;
 }
