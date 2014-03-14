@@ -5,6 +5,13 @@ var bootableEnvironment = require('bootable-environment');
 var socketio = require('socket.io');
 var http = require('http');
 var colors = require('colors');
+var nconf = require('nconf');
+
+// Config.
+nconf.file({ file: 'default-env.json' });
+nconf.file({ file: 'env.json' });
+nconf.argv();
+nconf.env();
 
 // Controllers.
 app.phase(locomotive.boot.controllers(__dirname + '/app/controllers'));
@@ -20,8 +27,7 @@ app.phase(locomotive.boot.routes(__dirname + '/config/routes'));
 // HTTP server.
 app.phase(function () {
 	console.log('Starting HTTP server.');
-
-	this.httpServer = http.createServer(this.express).listen(3000);
+	this.httpServer = http.createServer(this.express).listen(Number(nconf.get('httpServerPort')));
 
 	console.log('HTTP server listening on ' + this.httpServer.address().address + ':' + this.httpServer.address().port);
 	console.log('Started HTTP server.'.green);
@@ -46,5 +52,5 @@ app.boot(function(err) {
 	}
 	console.log('App started!'.green);
 	console.log('Current beta testers:'.cyan);
-	console.log(app.nconf.get('betaTesters').split(',').sort());
+	console.log(nconf.get('betaTesters').split(',').sort());
 });
