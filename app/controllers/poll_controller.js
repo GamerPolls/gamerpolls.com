@@ -311,6 +311,7 @@ PollController.showResults = function () {
 	var self = this;
 
 	this.poll = this._poll;
+	this.poll.hasVoted = this._poll.hasVoted(this.request);
 
 	calculatePercentages(this.poll);
 	this.poll.answers = this.poll.answers.map(function (answer) {

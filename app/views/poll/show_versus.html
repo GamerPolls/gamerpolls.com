@@ -80,6 +80,13 @@
 					<span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span>
 				</div>
 			</div>
+			{{^poll.hasVoted}}
+			<div class="row">
+				<div class="col-md-12">
+					<a href="/poll/{{poll._id}}/" class="btn btn-success btn-block btn-xs">Vote On This Poll</a>
+				</div>
+			</div>
+			{{/poll.hasVoted}}
 			{{#poll.isEditable}}
 			<div class="row">
 				<div class="col-md-12">
