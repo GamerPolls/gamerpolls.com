@@ -11,12 +11,6 @@ var errorHandler = require('../../app/libs/error-handler');
 var nowww = require('connect-no-www');
 
 module.exports = function() {
-	nconf.file({ file: 'default-env.json' });
-	nconf.file({ file: 'env.json' });
-	nconf.argv();
-	nconf.env();
-	this.nconf = nconf;
-	
 	this.datastore(require('locomotive-mongoose'));
 
 	// Template stuff.
@@ -53,7 +47,7 @@ module.exports = function() {
 	this.use(express.session({
 		secret: 'secret',
 		store: new MongoStore({
-			url: this.nconf.get('MONGO_DB')
+			url: nconf.get('MONGO_DB')
 		})
 	}));
 	this.use(passport.initialize());
