@@ -98,3 +98,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .social-share-buttons > * {
 	vertical-align: top;
 }
+
+.js .mix {
+	display: none;
+}
