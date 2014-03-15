@@ -6,12 +6,18 @@ var socketio = require('socket.io');
 var http = require('http');
 var colors = require('colors');
 var nconf = require('nconf');
+var hookshot = require('hookshot');
 
 // Config.
 nconf.file({ file: 'default-env.json' });
 nconf.file({ file: 'env.json' });
 nconf.argv();
 nconf.env();
+
+// Webhook Listener.
+if (Boolean(nconf.get('listenForWebhook'))) {
+	hookshot('refs/heads/master', nconf.get('githubUpdateCommand')).listen(Number(nconf.get('webhookPort')));
+}
 
 // Controllers.
 app.phase(locomotive.boot.controllers(__dirname + '/app/controllers'));
