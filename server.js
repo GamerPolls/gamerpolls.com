@@ -7,12 +7,16 @@ var http = require('http');
 var colors = require('colors');
 var nconf = require('nconf');
 var hookshot = require('hookshot');
+var posix = require('posix');
 
 // Config.
 nconf.file({ file: 'default-env.json' });
 nconf.file({ file: 'env.json' });
 nconf.argv();
 nconf.env();
+
+// Set Soft/Hard Limits for Open Files
+posix.setrlimit('nofile', { soft: 10000, hard: 10000 });
 
 // Webhook Listener.
 if (Boolean(nconf.get('listenForWebhook'))) {
