@@ -9,6 +9,7 @@ var nconf = require('nconf');
 var flash = require('connect-flash');
 var errorHandler = require('../../app/libs/error-handler');
 var nowww = require('connect-no-www');
+var methodOverride = require('method-override');
 
 module.exports = function() {
 	this.datastore(require('locomotive-mongoose'));
@@ -43,7 +44,7 @@ module.exports = function() {
 	this.use(express.urlencoded());
 	this.use(express.json());
 	this.use(express.cookieParser());
-	this.use(express.methodOverride());
+	this.use(methodOverride());
 	this.use(express.session({
 		secret: 'secret',
 		store: new MongoStore({

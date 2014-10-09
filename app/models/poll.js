@@ -27,7 +27,7 @@ var PollSchema = new Schema({
 	closeTime: {
 		type: Date,
 		default: function () {
-			return moment.utc().add('month', 1);
+			return moment.utc().add(1, 'month');
 		},
 		get: function (time) {
 			return moment.utc(time);
