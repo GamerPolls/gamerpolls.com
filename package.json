@@ -27,8 +27,7 @@
     "bootable-environment": "0.x",
     "connect-no-www": "0.x",
     "mongoose-shortid": "git://github.com/leeroybrun/mongoose-shortid",
-    "hookshot": "0.x",
-    "posix": "1.0.x"
+    "hookshot": "0.x"
   },
   "domains": [
     "gamerpolls.com"
