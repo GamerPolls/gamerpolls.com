@@ -499,7 +499,6 @@ function calculatePercentages(poll) {
 	
 	// Add `percentage` property.
 	poll.answers.forEach(function (answer, idx, arr) {
-		answer = typeof answer.toObject === 'undefined' ? answer : answer.toObject();
 		answer.percentage = {};
 		for (var type in answer.votes) {
 			if (answer.votes.hasOwnProperty(type) && scales.hasOwnProperty(type)) {

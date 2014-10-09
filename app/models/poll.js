@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 var utils = require('../libs/utils');
-var ShortId = require('mongoose-shortid');
+var ShortId = require('mongoose-shortid-nodeps');
 
 var PollSchema = new Schema({
 	_id: ShortId,
@@ -27,7 +27,7 @@ var PollSchema = new Schema({
 	closeTime: {
 		type: Date,
 		default: function () {
-			return moment.utc().add('month', 1);
+			return moment.utc().add(1, 'month');
 		},
 		get: function (time) {
 			return moment.utc(time);

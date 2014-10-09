@@ -31,12 +31,17 @@ app.phase(bootable.initializers(__dirname + '/config/initializers'));
 app.phase(locomotive.boot.routes(__dirname + '/config/routes'));
 
 // HTTP server.
-app.phase(function () {
+app.phase(function (done) {
+	var self = this;
 	console.log('Starting HTTP server.');
-	this.httpServer = http.createServer(this.express).listen(Number(nconf.get('httpServerPort')));
-
-	console.log('HTTP server listening on ' + this.httpServer.address().address + ':' + this.httpServer.address().port);
-	console.log('Started HTTP server.'.green);
+	this.httpServer = http.createServer(this.express).listen(
+		Number(nconf.get('httpServerPort')),
+		function () {
+			console.log('HTTP server listening on ' + self.httpServer.address().address + ':' + self.httpServer.address().port);
+			console.log('Started HTTP server.'.green);
+			done();
+		}
+	);
 });
 
 // socket.io

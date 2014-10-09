@@ -15,7 +15,7 @@ agenda.define('remove closed polls', function (job, done) {
 	Poll.find(
 		{
 			closeTime: {
-				$lte: moment.utc().subtract('weeks', 2)
+				$lte: moment.utc().subtract(2, 'weeks')
 			}
 		},
 		function (err, docs) {
