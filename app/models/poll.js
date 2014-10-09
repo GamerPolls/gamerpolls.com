@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 var utils = require('../libs/utils');
-var ShortId = require('mongoose-shortid');
+var ShortId = require('mongoose-shortid-nodeps');
 
 var PollSchema = new Schema({
 	_id: ShortId,
