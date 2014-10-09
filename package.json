@@ -1,6 +1,6 @@
 {
   "name": "gamerpolls",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "dependencies": {
     "connect-ensure-login": "0.x",
