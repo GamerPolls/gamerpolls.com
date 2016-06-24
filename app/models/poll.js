@@ -56,19 +56,17 @@ PollSchema.virtual('isClosed').get(function () {
 
 PollSchema.virtual('totalVotes').get(function () {
 	var data = {
-		_grand: 0
+		total: 0,
+		normal: 0,
+		versus: 0
 	};
 	this.answers.forEach(function (answer) {
-		for (var type in answer.votes) {
-			if (type === '__index') {
-				return;
-			}
-			if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
-				if (typeof data[type] !== 'number') {
-					data[type] = 0;
+		for (var type in answer.votes){
+			if(type == 'normal' || type == 'versus') {
+				if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
+					data[type] += answer.votes[type];
+					data.total += answer.votes[type];
 				}
-				data[type] += answer.votes[type];
-				data._grand += answer.votes[type];
 			}
 		}
 	});

@@ -594,6 +594,7 @@ PollController.before('*', function (next) {
 function calculatePercentages(poll) {
 	var totals = poll.totalVotes;
 	var scales = {};
+
 	// Get multiplier scales for each type.
 	for (var type in totals) {
 		if (totals.hasOwnProperty(type)) {
@@ -610,6 +611,7 @@ function calculatePercentages(poll) {
 			}
 		}
 		arr[idx] = answer;
+		console.log(answer);
 	});
 }
 

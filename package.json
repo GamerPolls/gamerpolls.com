@@ -63,6 +63,7 @@
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
     "socket.io": "^1.4.6",
+    "toastr": "^2.1.2",
     "vhost": "^3.0.2"
   }
 }

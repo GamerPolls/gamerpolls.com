@@ -11,8 +11,7 @@
 		<div class="form-group answer mix" data-poll-answer-id="{{_id}}" data-value="{{votes.normal}}">
 			<div class="input-group">
 				<span class="input-group-addon">
-					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
-					&nbsp;votes
+					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span> vote(s)
 				</span>
 				<p class="form-control">
 					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
@@ -39,7 +38,7 @@
 				{{/poll.creator}}
 				<div class="row text-center">
 					<h3>
-						<span data-bind="poll.totalVotes._grand">{{poll.totalVotes._grand}}</span> votes
+						<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> votes
 					</h3>
 				</div>
 				<div class="row">
@@ -219,7 +218,7 @@
 				// Update value for sorting.
 				$('[data-poll-answer-id="' + answer._id + '"]').attr('data-value', answer.votes.normal);
 			});
-			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+			$('[data-bind="poll.totalVotes.total"]').text(poll.totalVotes.total);
 
 			// Perform sort.
 			$('.answers-container').mixItUp('sort', 'value:desc');
