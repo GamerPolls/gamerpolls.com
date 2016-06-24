@@ -68,4 +68,6 @@ app.boot(function (err) {
     console.log('App started!'.green);
     console.log('Current beta testers:'.cyan);
     console.log(nconf.get('betaTesters').split(',').sort());
+    console.log('Current Admins:'.magenta);
+    console.log(nconf.get('admins').split(',').sort());
 });

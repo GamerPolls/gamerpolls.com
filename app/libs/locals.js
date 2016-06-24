@@ -14,6 +14,7 @@ module.exports = function (request, response, next) {
 
 	// Expose only certain values.
 	request.session.isBetaTester = false;
+	request.session.isAdmin = false;
 	if (request.user) {
 		response.locals.user = {};
 		[
@@ -27,7 +28,9 @@ module.exports = function (request, response, next) {
 
 		response.locals.user.hasSubButton = request.session.twitchtv.hasSubButton;
 		response.locals.user.isBetaTester = request.session.twitchtv.hasSubButton || nconf.get('betaTesters').split(',').indexOf(request.user.username) >= 0;
+		response.locals.user.isAdmin = nconf.get('admins').split(',').indexOf(request.user.username) >= 0;
 		request.session.isBetaTester = response.locals.user.isBetaTester;
+		request.session.isAdmin = response.locals.user.isAdmin;
 	}
 
 	var types = request.flash();

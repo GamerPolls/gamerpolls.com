@@ -9,6 +9,7 @@
 	},
 	"sessionSecret": "this should be something super secret",
 	"betaTesters": "",
+	"admins": "",
 	"httpServerPort": 3000,
 	"webhookPort": 3001,
 	"listenForWebhook": false,
