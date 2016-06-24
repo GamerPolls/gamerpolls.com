@@ -13,7 +13,6 @@ AdminController.show = function(){
         this.request.flash('danger', 'Sorry, you need to be an administrator to use this feature!');
         return this.redirect('/');
     }
-    console.log(this);
 
     this.render();
 };
