@@ -31,10 +31,10 @@ module.exports = function () {
 						}
 
 						console.log('Poll removed: ' + JSON.stringify({
-								_id: doc._id,
-								closeTime: doc.closeTime,
-								creator: doc.creator
-							}));
+							_id: doc._id,
+							closeTime: doc.closeTime,
+							creator: doc.creator
+						}));
 					});
 				});
 				console.log('End task: ' + job.attrs.name);
@@ -54,15 +54,13 @@ module.exports = function () {
 				if (err) {
 					console.log(err);
 				}
-				// @todo Debugging purposes
-				var statusCode = 404;
-				// @---@
 				if (statusCode !== 200) {
 					self.locals.twitchStatus = false;
 					console.log('Twitch API is Down!'.red);
 				}
 				else {
 					console.log('Twitch API is Up!'.green);
+					self.locals.twitchStatus = true;
 				}
 
 				console.log('End task: ' + job.attrs.name);

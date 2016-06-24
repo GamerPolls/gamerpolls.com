@@ -33,7 +33,7 @@
 					</li>
 				{{/loggedIn}}
 				{{^loggedIn}}
-					{{^twitchStatus}}
+					{{#twitchStatus}}
 						<a href="/login/twitchtv" class="btn btn-success navbar-btn login"><i class="fa fa-twitch fa-fw"></i> Connect with Twitch</a>
 					{{/twitchStatus}}
 				{{/loggedIn}}
