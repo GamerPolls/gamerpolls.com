@@ -13,6 +13,7 @@ AdminController.show = function(){
         this.request.flash('danger', 'Sorry, you need to be an administrator to use this feature!');
         return this.redirect('/');
     }
+    console.log(this);
 
     this.render();
 };
@@ -25,17 +26,10 @@ AdminController.process = function(){
         return this.redirect('/');
     }
 
-    var maintenanceMode = Boolean(this.param('maintenanceMode'));
-    var disablePolls = Boolean(this.param('disablePolls'));
-    var disableVoting = Boolean(this.param('disableVoting'));
-    var disableLogin = Boolean(this.param('disableLogin'));
-    module.exports = function () {
-        var self = this;
-        self.locals.maintenanceMode = maintenanceMode;
-        self.locals.disablePolls = disablePolls;
-        self.locals.disableVoting = disableVoting;
-        self.locals.disableLogin = disableLogin;
-    };
+    this.__app.locals.maintenanceMode = Boolean(this.param('maintenanceMode'));
+    this.__app.locals.disablePolls = Boolean(this.param('disablePolls'));
+    this.__app.locals.disableVoting = Boolean(this.param('disableVoting'));
+    this.__app.locals.disableLogin = Boolean(this.param('disableLogin'));
 
     console.log('Admin variables saved.'.green);
     self.request.flash('success', 'Admin variables saved.');

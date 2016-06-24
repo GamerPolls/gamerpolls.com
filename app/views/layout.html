@@ -40,29 +40,52 @@
 			</p>
 		</noscript>
 
-		{{>layout/header}}
+		{{^maintenanceMode}}
 
-		<div class="container">
+			{{>layout/header}}
 
-			{{#flash}}
-				<p class="alert alert-{{type}}">{{text}}</p>
-			{{/flash}}
+			<div class="container">
 
-			{{#maintenanceMode}}
-				{{^user.isAdmin}}
-					<p class="alert alert-warning">The website is currently in maintenance mode. We should have everything up and running again soon!</p>
-				{{/user.isAdmin}}
-				{{#user.isAdmin}}
-					{{{yield}}}
-				{{/user.isAdmin}}
-			{{/maintenanceMode}}
-			{{^maintenanceMode}}
+				{{#flash}}
+					<p class="alert alert-{{type}}">{{text}}</p>
+				{{/flash}}
+
 				{{{yield}}}
-			{{/maintenanceMode}}
 
-		</div>
+			</div>
 
-		{{>layout/footer}}
+			{{>layout/footer}}
+
+		{{/maintenanceMode}}
+
+		{{#maintenanceMode}}
+			{{#user.isAdmin}}
+				{{>layout/header}}
+
+				<div class="container">
+					<div class="col-md-12">
+						<div class="alert alert-warning">
+							The website is currently in maintenance mode. We should have everything up and running again soon!
+						</div>
+						{{#flash}}
+							<div class="alert alert-{{type}}">{{text}}</div>
+						{{/flash}}
+					</div>
+
+					{{{yield}}}
+
+				</div>
+
+				{{>layout/footer}}
+			{{/user.isAdmin}}
+			{{^user.isAdmin}}
+				<div class="container">
+					<div class="col-md-6 col-md-offset-3">
+						<p class="alert alert-warning">The website is currently in maintenance mode. We should have everything up and running again soon!</p>
+					</div>
+				</div>
+			{{/user.isAdmin}}
+		{{/maintenanceMode}}
 
 		<!-- Facebook JS Sharing -->
 		<div id="fb-root"></div>

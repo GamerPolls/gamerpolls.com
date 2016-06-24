@@ -48,7 +48,6 @@ PollController.create = function () {
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
-	var closeDate = this.param('pollClose');
 	var closeTime = moment.utc(this.param('pollClose')+' '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds());
 	var mustFollow = false;
 	var mustSub = false;
@@ -83,8 +82,7 @@ PollController.create = function () {
 		return !!answer;
 	});
 
-	var myDate = new Date();
-	var nowTime = moment.utc(myDate);
+	var nowTime = moment.utc();
 
 	if(!(closeTime > nowTime)){
 		this.request.session._poll = {
