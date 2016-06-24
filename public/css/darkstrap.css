@@ -996,7 +996,7 @@ fieldset[disabled] .form-control {
 }
 
 .theme-dark .label-inverse,
-.theme-dark .badge-inverse, {
+.theme-dark .badge-inverse {
   background-color: #111;
 }
 

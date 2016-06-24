@@ -44,7 +44,9 @@ agenda.define('remove closed polls', function (job, done) {
 });
 
 module.exports = function () {
-	agenda.every('1 day', 'remove closed polls');
+	agenda.on('ready', function () {
+		agenda.every('1 day', 'remove closed polls');
 
-	agenda.start();
+		agenda.start();
+	});
 };

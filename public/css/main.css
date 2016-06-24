@@ -1,9 +1,26 @@
 html {
+	position: relative;
+	min-height: 100%;
+}
+body {
+	/* Margin bottom by footer height */
+	margin-bottom: 60px;
+}
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 60px;
+	border-top: 1px solid #282828;
+	line-height: 59px;
+	padding-left: 25px;
+	padding-right: 25px;
+}
+
+html {
 	/* Prevent scroll on narrow devices */
 	overflow-x: hidden;
-}
-footer {
-	padding: 30px 0;
 }
 
 .browsehappy {
@@ -11,13 +28,8 @@ footer {
 	text-align: center;
 }
 
-.navbar {
-	border-radius: 0;
-}
-
 .navbar .btn.login {
 	background-color: #6441A5;
-	background-image: url("/img/vendor/twitch_glitch_icon_white.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;
 	background-size: 26px auto;
@@ -108,4 +120,10 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
 .js .mix {
 	display: none;
+}
+
+a:hover,
+a:active {
+	text-decoration: none !important;
+	text-underline: none !important;
 }

@@ -1,5 +1,5 @@
-var express = require('express');
+var errorHandler = require('errorhandler');
 
 module.exports = function() {
-	this.use(express.errorHandler());
+	this.use(errorHandler());
 }

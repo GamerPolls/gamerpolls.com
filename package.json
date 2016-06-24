@@ -1,43 +1,68 @@
 {
   "name": "gamerpolls",
-  "version": "0.3.1",
+  "version": "0.4.0",
+  "description": "GamerPolls - BethEdit",
+  "main": "index.js",
   "private": true,
-  "dependencies": {
-    "connect-ensure-login": "0.x",
-    "connect-powered-by": "0.x",
-    "express": "3.x",
-    "locomotive": "0.x",
-    "locomotive-mongoose": "0.x",
-    "mongoose": "3.x",
-    "mongoose-auto-increment": "2.x",
-    "mustache-express": "0.x",
-    "nconf": "0.x",
-    "passport": "0.x",
-    "passport-twitchtv": "0.x",
-    "hogan-express": "0.x",
-    "socket.io": "0.x",
-    "moment": "2.x",
-    "connect-mongo": "0.x",
-    "node-twitch-api": "git://github.com/cletusc/node-twitch-api#master",
-    "jquery-extend": "2.x",
-    "connect-flash": "0.x",
-    "agenda": "0.x",
-    "colors": "0.x",
-    "bootable": "0.x",
-    "bootable-environment": "0.x",
-    "connect-no-www": "0.x",
-    "hookshot": "0.x",
-    "mongoose-shortid-nodeps": "0.5.x",
-    "method-override": "2.2.x"
+  "scripts": {
+    "start": "node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gamerpolls/gamerpolls.com.git"
+  },
+  "author": "Muddr & BethaNeeks",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gamerpolls/gamerpolls.com/issues"
   },
   "domains": [
     "gamerpolls.com"
   ],
-  "subdomain": "gamerpolls",
-  "scripts": {
-    "start": "node server"
-  },
-  "engines": {
-    "node": "0.x"
+  "homepage": "https://github.com/gamerpolls/gamerpolls.com#readme",
+  "dependencies": {
+    "agenda": "^0.8.1",
+    "body-parser": "^1.15.2",
+    "bootable": "^0.2.4",
+    "bootable-environment": "^0.2.0",
+    "colors": "^1.1.2",
+    "compression": "^1.6.2",
+    "connect-ensure-login": "^0.1.1",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^1.2.1",
+    "connect-no-www": "^0.1.2",
+    "connect-powered-by": "^0.1.0",
+    "connect-timeout": "^1.7.0",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.1",
+    "errorhandler": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.13.0",
+    "favicon": "0.0.2",
+    "hogan-express": "^0.5.2",
+    "hookshot": "^0.1.0",
+    "jquery-extend": "^2.0.3",
+    "locomotive": "^0.4.2",
+    "locomotive-mongoose": "^0.1.0",
+    "logger": "0.0.1",
+    "method-override": "^2.3.6",
+    "moment": "^2.13.0",
+    "mongoose": "^4.5.1",
+    "mongoose-auto-increment": "^5.0.1",
+    "mongoose-shortid-nodeps": "^0.6.5",
+    "morgan": "^1.7.0",
+    "mustache-express": "^1.2.2",
+    "nconf": "^0.8.4",
+    "node": "0.0.0",
+    "node-twitch-api": "github:cletusc/node-twitch-api#master",
+    "passport": "^0.3.2",
+    "passport-twitchtv": "^0.1.4",
+    "path": "^0.12.7",
+    "response-time": "^2.3.1",
+    "serve-favicon": "^2.3.0",
+    "serve-index": "^1.8.0",
+    "serve-static": "^1.11.1",
+    "socket.io": "^1.4.6",
+    "vhost": "^3.0.2"
   }
 }

@@ -38,11 +38,13 @@ PollController.create = function () {
 	}
 
 	var self = this;
-	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
+	var answers = this.param('answers[]');
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
+	var closeTime = moment.utc(this.param('pollClose'));
+	console.log(closeTime);
 
 	var mustFollow = false;
 	var mustSub = false;
@@ -63,6 +65,7 @@ PollController.create = function () {
 	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
 
 	answers = answers.map(function (answer) {
+		if(answer == undefined){ return false; }
 		answer = answer.trim();
 		answer = (answer.length > 200 ? answer.substr(0, 200).trim() + '...' : answer);
 		if (answer.length > 0) {
@@ -84,7 +87,8 @@ PollController.create = function () {
 			mustFollow: mustFollow,
 			mustSub: mustSub,
 			isVersus: isVersus,
-			question: question
+			question: question,
+			closeTime: closeTime
 		};
 
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
@@ -115,7 +119,8 @@ PollController.create = function () {
 		mustFollow: mustFollow,
 		mustSub: mustSub,
 		isVersus: isVersus,
-		question: question
+		question: question,
+		closeTime: closeTime
 	};
 
 	if (this.request.isAuthenticated()) {

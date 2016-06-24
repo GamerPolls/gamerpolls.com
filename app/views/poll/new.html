@@ -104,6 +104,15 @@
 					</p>
 				</div>
 			</label>
+
+			<label class="answer">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<i class="fa fa-clock-o fa-fw"></i> Close Date
+					</span>
+					<input class="form-control" type="text" name="pollClose" placeholder="Enter a date to close the poll" required>
+				</div>
+			</label>
 			{{/loggedIn}}
 
 			{{^loggedIn}}
@@ -191,6 +200,14 @@
 				.find('input')
 				.typeahead(typeaheadSetup);
 		});
+		var date = new Date();
+
+		$('[name="pollClose"]').datepicker({
+			minDate: +1,
+			maxDate: "+30D",
+			dateFormat: "yy-mm-dd",
+			defaultDate: +1
+		}).val(date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + (date.getDate() + 1));
 
 		{{#isEditing}}
 		var socket = utils.getSocket();

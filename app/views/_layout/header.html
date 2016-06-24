@@ -1,37 +1,43 @@
-<div class="navbar navbar-inverse navbar-static-top" role="navigation">
-	<div class="container">
+<nav class="navbar navbar-default navbar-static-top">
+	<div class="container-fluid">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/" data-toggle="tooltip" title="WE BETA NOW <img src='/img/tornisPeka.png'/>" data-html="true" data-placement="bottom"><span class="glyphicon glyphicon-stats"></span> GamerPolls</a>
+			<a class="navbar-brand" href="/" data-toggle="tooltip" title="WE BETA NOW <img src='/img/tornisPeka.png'/>" data-html="true" data-placement="bottom">
+				<i class="fa fa-bar-chart fa-fw"></i> GamerPolls
+			</a>
 		</div>
-		
-		{{#loggedIn}}
-		<div class="navbar-collapse collapse navbar-right">
-			<ul class="nav navbar-nav">
-				<li><a href="/account" class="navbar-link" title="My account"><img src="{{user.avatar}}" class="avatar">{{user.displayName}}</a></li>
-				<li><a href="/logout" class="navbar-link logout" title="Logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a></li>
-			</ul>
-		</div>
-		{{/loggedIn}}
 
-		{{^loggedIn}}
-		<div class="navbar-collapse collapse navbar-right">
-			<a href="/login/twitchtv" class="btn btn-success navbar-btn login">Connect with Twitch</a>
-		</div>
-		{{/loggedIn}}
-
-		<div style="height: 1px;" class="navbar-collapse collapse">
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="/">Home</a></li>
+				<li><a href="/"><i class="fa fa-home fa-fw"></i> Home</a></li>
 				{{#user.isBetaTester}}
-				<li><a href="/poll/new">New Poll</a></li>
+				<li><a href="/poll/new"><i class="fa fa-pie-chart fa-fw"></i> New Poll</a></li>
 				{{/user.isBetaTester}}
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				{{#loggedIn}}
+					<li>
+						<a href="/account" class="navbar-link" title="My Account">
+							<img src="{{ user.avatar }}" class="avatar"> {{ user.displayName }}
+						</a>
+					</li>
+					<li>
+						<a href="/logout" class="navbar-link logout" title="Logout">
+							<i class="fa fa-sign-out fa-fw"></i> Logout
+						</a>
+					</li>
+				{{/loggedIn}}
+				{{^loggedIn}}
+					<li>
+						<a href="/login/twitchtv" class="btn btn-success navbar-btn login"><i class="fa fa-twitch fa-fw"></i> Connect with Twitch</a>
+					</li>
+				{{/loggedIn}}
 			</ul>
 		</div>
 	</div>
-</div>
+</nav>
