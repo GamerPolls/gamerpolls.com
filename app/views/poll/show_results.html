@@ -13,14 +13,17 @@
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span> vote(s)
 				</span>
-				<p class="form-control">
-					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-					{{text}}
-					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
-				</p>
-			</div>
-			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
+				<div class="form-control">
+					<div class="progress" style="line-height: 100%; height: 100%; margin-bottom: 0;">
+						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%; line-height: 100%; height: 100%;">
+							<p class="form-control text-left">
+								{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
+								{{text}}
+								{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
+							</p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		{{/poll.answers}}
@@ -38,7 +41,7 @@
 				{{/poll.creator}}
 				<div class="row text-center">
 					<h3>
-						<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> votes
+						<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> vote(s)
 					</h3>
 				</div>
 				<div class="row">

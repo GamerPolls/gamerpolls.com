@@ -68,7 +68,7 @@
 			{{/poll.creator}}
 			<div class="row text-center">
 				<h3>
-					<span data-bind="poll.totalVotes._grand">{{poll.totalVotes._grand}}</span> votes
+					<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> votes
 				</h3>
 			</div>
 			<div class="row">
@@ -140,7 +140,7 @@
 			window.location.href = '/poll/{{poll._id}}/results';
 		});
 		socket.on('vote', function (poll) {
-			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+			$('[data-bind="poll.totalVotes.total"]').text(poll.totalVotes.total);
 		});
 	});
 </script>
