@@ -17,14 +17,16 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
-module.exports = function() {
+module.exports = function () {
 	this.datastore(require('locomotive-mongoose'));
 
 	// Template stuff.
 	this.set('views', __dirname + '/../../app/views');
 	this.set('view engine', 'html');
 	this.engine('html', require('hogan-express'));
-	this.format('html', { extension: '.html' });
+	this.format('html', {
+		extension: '.html'
+	});
 
 	var partials = {};
 	var layout = fs.readdirSync(__dirname + '/../../app/views/_layout');
@@ -46,13 +48,17 @@ module.exports = function() {
 		return utils.getIp(request);
 	});
 	this.use(logger('dev'));
-	this.use(bodyParser.urlencoded({extended: false}));
+	this.use(bodyParser.urlencoded({
+		extended: false
+	}));
 	this.use(bodyParser.json());
 	this.use(cookieParser());
 	this.use(methodOverride());
 	this.use(cookieSession({
 		secret: 'secret',
-		store: new MongoStore({url: nconf.get('MONGO_DB')})
+		store: new MongoStore({
+			url: nconf.get('MONGO_DB')
+		})
 	}));
 	this.use(passport.initialize());
 	this.use(passport.session());

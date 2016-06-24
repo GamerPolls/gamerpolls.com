@@ -11,8 +11,12 @@ AccountController.showAccount = function () {
     var self = this;
     this.title = 'My account';
 
-    Poll.find({creator: this.request.user._id})
-        .sort({ created: 'desc' })
+    Poll.find({
+            creator: this.request.user._id
+        })
+        .sort({
+            created: 'desc'
+        })
         .exec(function (err, polls) {
             if (err) {
                 self.next(err);
@@ -23,31 +27,33 @@ AccountController.showAccount = function () {
         });
 };
 
-AccountController.loginForm = function() {
+AccountController.loginForm = function () {
     this.title = 'Login';
     this.render();
 };
 
-AccountController.login = function(){
+AccountController.login = function () {
     this.request.session.returnTo = this.request.headers.referer;
     var authStrategy = 'auth-' + this.param('authStrategy');
-    if (!passport._strategies.hasOwnProperty(authStrategy)){
+    if (!passport._strategies.hasOwnProperty(authStrategy)) {
         console.log('Couldn\'t find strategy: ' + authStrategy);
         return this.redirect(this.loginFormPath());
     }
     passport.authenticate(
-        authStrategy,
-        {
-            successReturnToOrRedirect: this.urlFor({action: 'showAccount'}),
-            failureRedirect: this.urlFor({action: 'login'})
+        authStrategy, {
+            successReturnToOrRedirect: this.urlFor({
+                action: 'showAccount'
+            }),
+            failureRedirect: this.urlFor({
+                action: 'login'
+            })
         }
     )(this.request, this.response, this.__next)
 };
 
-AccountController.logout = function(){
+AccountController.logout = function () {
     this.request.logout();
     this.redirect('/');
 };
 
 module.exports = AccountController;
-

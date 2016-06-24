@@ -10,9 +10,9 @@
 //  * Use String() for stringifying
 //  * added length
 
-if (!window.localStorage || !window.sessionStorage) (function() {
+if (!window.localStorage || !window.sessionStorage)(function () {
 
-    var Storage = function(type) {
+    var Storage = function (type) {
         function createCookie(name, value, days) {
             var date, expires;
 
@@ -20,7 +20,8 @@ if (!window.localStorage || !window.sessionStorage) (function() {
                 date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toGMTString();
-            } else {
+            }
+            else {
                 expires = "";
             }
             document.cookie = name + "=" + value + expires + "; path=/";
@@ -48,7 +49,8 @@ if (!window.localStorage || !window.sessionStorage) (function() {
             data = JSON.stringify(data);
             if (type == 'session') {
                 window.name = data;
-            } else {
+            }
+            else {
                 createCookie('localStorage', data, 365);
             }
         }
@@ -56,7 +58,8 @@ if (!window.localStorage || !window.sessionStorage) (function() {
         function clearData() {
             if (type == 'session') {
                 window.name = '';
-            } else {
+            }
+            else {
                 createCookie('localStorage', '', 365);
             }
         }
@@ -81,16 +84,16 @@ if (!window.localStorage || !window.sessionStorage) (function() {
         }
 
         return {
-            clear: function() {
+            clear: function () {
                 data = {};
                 clearData();
                 this.length = numKeys();
             },
-            getItem: function(key) {
+            getItem: function (key) {
                 key = encodeURIComponent(key);
                 return data[key] === undefined ? null : data[key];
             },
-            key: function(i) {
+            key: function (i) {
                 // not perfect, but works
                 var ctr = 0;
                 for (var k in data) {
@@ -99,13 +102,13 @@ if (!window.localStorage || !window.sessionStorage) (function() {
                 }
                 return null;
             },
-            removeItem: function(key) {
+            removeItem: function (key) {
                 key = encodeURIComponent(key);
                 delete data[key];
                 setData(data);
                 this.length = numKeys();
             },
-            setItem: function(key, value) {
+            setItem: function (key, value) {
                 key = encodeURIComponent(key);
                 data[key] = String(value);
                 setData(data);

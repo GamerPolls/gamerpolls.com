@@ -3,7 +3,9 @@ var Schema = mongoose.Schema;
 
 var AccountSchema = new Schema({
 	auths: {
-		twitchtv: { id: Number }
+		twitchtv: {
+			id: Number
+		}
 	},
 	email: {
 		type: String,

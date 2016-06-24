@@ -55,14 +55,16 @@ PollSchema.virtual('isClosed').get(function () {
 });
 
 PollSchema.virtual('totalVotes').get(function () {
-	var data = {_grand: 0};
+	var data = {
+		_grand: 0
+	};
 	this.answers.forEach(function (answer) {
 		for (var type in answer.votes) {
 			if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
 				if (typeof data[type] !== 'number') {
 					data[type] = 0;
 				}
-				data[type]  += answer.votes[type];
+				data[type] += answer.votes[type];
 				data._grand += answer.votes[type];
 			}
 		}
@@ -74,7 +76,7 @@ PollSchema.methods.isCreator = function (user) {
 	if (!this.creator || !user) {
 		return false;
 	}
-	
+
 	user = user._id ? user._id.toString() : user.toString();
 	var creator = this.creator._id ? this.creator._id.toString() : this.creator.toString();
 

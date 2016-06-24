@@ -13,7 +13,7 @@
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
 					&nbsp;votes
-				</span>				
+				</span>
 				<p class="form-control">
 					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
 					{{text}}
@@ -220,7 +220,7 @@
 				$('[data-poll-answer-id="' + answer._id + '"]').attr('data-value', answer.votes.normal);
 			});
 			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
-			
+
 			// Perform sort.
 			$('.answers-container').mixItUp('sort', 'value:desc');
 		});

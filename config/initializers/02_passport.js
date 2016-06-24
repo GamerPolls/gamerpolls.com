@@ -7,21 +7,22 @@ var Account = require('../../app/models/account');
 
 module.exports = function () {
 	var self = this;
-	passport.use('auth-twitchtv', new strategies.twitchtv(
-		{
+	passport.use('auth-twitchtv', new strategies.twitchtv({
 			clientID: nconf.get('authkeys:twitchtv:clientID'),
 			clientSecret: nconf.get('authkeys:twitchtv:clientSecret'),
 			callbackURL: nconf.get('authkeys:twitchtv:callbackURL'),
 			scope: ['user_read', 'user_subscriptions'],
 			passReqToCallback: true
 		},
-		function (request, accessToken, refreshToken, profile, done){
+		function (request, accessToken, refreshToken, profile, done) {
 			request.session.twitchtv = {
 				accessToken: accessToken,
 				refreshToken: refreshToken
 			};
 
-			Account.findOne({ 'auths.twitchtv.id': profile.id }, function (err, account){
+			Account.findOne({
+				'auths.twitchtv.id': profile.id
+			}, function (err, account) {
 				if (err) {
 					return done(err);
 				}
@@ -37,8 +38,7 @@ module.exports = function () {
 
 				account.save(function () {
 					self.twitch.api(
-						'/users/:user/subscriptions/:channel',
-						{
+						'/users/:user/subscriptions/:channel', {
 							replacements: {
 								user: profile.username,
 								channel: profile.username

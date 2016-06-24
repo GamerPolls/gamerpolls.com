@@ -4,7 +4,7 @@
 		"twitchtv": {
 			"clientID": "",
 			"clientSecret": "",
-			"callbackURL": ""
+			"callbackURL": "http://localhost:3000/login/twitchtv/callback"
 		}
 	},
 	"sessionSecret": "this should be something super secret",

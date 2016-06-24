@@ -10,8 +10,12 @@ var nconf = require('nconf');
 var hookshot = require('hookshot');
 
 // Config.
-nconf.file({ file: 'default-env.json' });
-nconf.file({ file: 'env.json' });
+nconf.file({
+    file: 'default-env.json'
+});
+nconf.file({
+    file: 'env.json'
+});
 nconf.argv();
 nconf.env();
 
@@ -55,7 +59,7 @@ app.phase(function () {
 });
 
 // Boot the application.
-app.boot(function(err) {
+app.boot(function (err) {
     if (err) {
         console.error(err.message);
         console.error(err.stack);

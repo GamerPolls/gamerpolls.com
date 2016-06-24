@@ -120,7 +120,7 @@
 			{{/poll.userIsCreator}}
 
 		</div>
-		
+
 		<div class="well">
 			<div class="row social-share-buttons text-center">
 				<!-- Note: Facebook share buttons won't show on localhost; if it can't access it, it won't show the button -->
@@ -136,7 +136,7 @@
 	$(function () {
 		var socket = utils.getSocket();
 		socket.on('close', function () {
-			window.location.href = '/poll/{{poll._id}}/results';				
+			window.location.href = '/poll/{{poll._id}}/results';
 		});
 		socket.on('vote', function (poll) {
 			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);

@@ -12,8 +12,7 @@ var moment = require('moment');
 agenda.define('remove closed polls', function (job, done) {
 	console.log('Start task: ' + job.attrs.name);
 
-	Poll.find(
-		{
+	Poll.find({
 			closeTime: {
 				$lte: moment.utc().subtract(2, 'weeks')
 			}
@@ -35,11 +34,11 @@ agenda.define('remove closed polls', function (job, done) {
 					}));
 				});
 			});
-			
+
 			done();
 		}
 	);
-	
+
 	console.log('End task: ' + job.attrs.name);
 });
 

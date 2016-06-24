@@ -33,7 +33,10 @@ PollController.create = function () {
 		}
 		if (!this._poll.isEditable) {
 			console.log('Can\'t edit, redirecting to poll.'.yellow);
-			return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+			return this.redirect(this.urlFor({
+				action: 'showPoll',
+				id: this._poll._id
+			}));
 		}
 	}
 
@@ -51,25 +54,29 @@ PollController.create = function () {
 	var isVersus = false;
 
 	switch (pollType) {
-		case 'mustFollow':
-			mustFollow = true;
-			break;
-		case 'mustSub':
-			mustSub = true;
-			break;
-		case 'isVersus':
-			isVersus = true;
-			break;
+	case 'mustFollow':
+		mustFollow = true;
+		break;
+	case 'mustSub':
+		mustSub = true;
+		break;
+	case 'isVersus':
+		isVersus = true;
+		break;
 	}
-	
+
 	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
 
 	answers = answers.map(function (answer) {
-		if(answer == undefined){ return false; }
+		if (answer == undefined) {
+			return false;
+		}
 		answer = answer.trim();
 		answer = (answer.length > 200 ? answer.substr(0, 200).trim() + '...' : answer);
 		if (answer.length > 0) {
-			return { text: answer };
+			return {
+				text: answer
+			};
 		}
 	}).filter(function (answer) {
 		return !!answer;
@@ -96,11 +103,16 @@ PollController.create = function () {
 		console.log(this.request.session._poll);
 		if (this.isEditing) {
 			console.log('Could not edit poll'.red);
-			return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
+			return this.redirect(this.urlFor({
+				action: 'showEdit',
+				id: this._poll._id
+			}));
 		}
 		else {
 			console.log('Could not create poll'.red);
-			return this.redirect(this.urlFor({ action: 'new' }));
+			return this.redirect(this.urlFor({
+				action: 'new'
+			}));
 		}
 	}
 
@@ -146,7 +158,10 @@ PollController.create = function () {
 			self.request.flash('success', 'Poll Created!');
 			console.log('Poll created!'.green);
 		}
-		return self.redirect(self.urlFor({ action: 'showPoll', id: savedPoll._id }));
+		return self.redirect(self.urlFor({
+			action: 'showPoll',
+			id: savedPoll._id
+		}));
 	});
 };
 
@@ -162,7 +177,10 @@ PollController.showPoll = function () {
 			voted: this._poll.hasVoted(this.request)
 		});
 
-		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showResults',
+			id: this._poll._id
+		}));
 	}
 
 	this.poll = this._poll;
@@ -180,7 +198,10 @@ PollController.showPoll = function () {
 
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.socialTitle = this.poll.question;
-	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
+	this.url = this.urlFor({
+		action: 'showPoll',
+		id: this.poll._id
+	});
 	this.render();
 };
 
@@ -191,7 +212,10 @@ PollController.showEdit = function () {
 
 	if (!this._poll.isEditable) {
 		console.log('Can\'t edit, redirecting to poll.'.yellow);
-		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
 	}
 	this.poll = this._poll;
 
@@ -216,7 +240,10 @@ PollController.vote = function () {
 
 	if (!this._poll.isVotable) {
 		console.log('Can\'t vote, redirecting to poll');
-		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
@@ -226,11 +253,14 @@ PollController.vote = function () {
 			voted: this._poll.hasVoted(this.request)
 		});
 
-		return this.redirect(this.urlFor({ action: 'showResults', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showResults',
+			id: this._poll._id
+		}));
 	}
 
 	var self = this;
-	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [ this.param('answers') ];
+	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [this.param('answers')];
 	var voted = false;
 	var updateData = {
 		$inc: {},
@@ -265,7 +295,10 @@ PollController.vote = function () {
 	if (!voted) {
 		console.log('Invalid options sent, redirecting back to poll.'.red);
 		console.log(answers);
-		return self.redirect(self.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return self.redirect(self.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
 	}
 
 	updateData.$addToSet.voterIPs = utils.getIp(this.request);
@@ -275,11 +308,15 @@ PollController.vote = function () {
 	}
 
 	// Update poll data.
-	Poll.update({_id: this._poll._id}, updateData, function (err) {
+	Poll.update({
+		_id: this._poll._id
+	}, updateData, function (err) {
 		if (err) {
 			return self.next(err);
 		}
-		Poll.findOne({_id: self._poll._id}, function (err, poll) {
+		Poll.findOne({
+			_id: self._poll._id
+		}, function (err, poll) {
 			if (err) {
 				return self.next(err);
 			}
@@ -304,7 +341,10 @@ PollController.vote = function () {
 			self.app.io.sockets.in('poll-' + poll._id).volatile.emit('vote', data);
 			self.request.flash('info', 'Vote Successful!');
 
-			return self.redirect(self.urlFor({ action: 'showResults', id: poll._id }));
+			return self.redirect(self.urlFor({
+				action: 'showResults',
+				id: poll._id
+			}));
 		});
 	});
 };
@@ -332,7 +372,10 @@ PollController.showResults = function () {
 
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.socialTitle = this.poll.question;
-	this.url = this.urlFor({ action: 'showPoll', id: this.poll._id });
+	this.url = this.urlFor({
+		action: 'showPoll',
+		id: this.poll._id
+	});
 	if (this.poll.isVersus) {
 		return this.render('showVersus');
 	}
@@ -346,7 +389,10 @@ PollController.close = function () {
 
 	if (!this._poll.isClosable) {
 		console.log('Poll not closable, redirecting to poll.');
-		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
 	}
 
 	this._poll.closeTime = moment.utc();
@@ -361,7 +407,10 @@ PollController.close = function () {
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
 		self.request.flash('success', 'Poll Closed.');
 
-		return self.redirect(self.urlFor({ action: 'showResults', id: savedPoll._id }));
+		return self.redirect(self.urlFor({
+			action: 'showResults',
+			id: savedPoll._id
+		}));
 	});
 };
 
@@ -372,11 +421,16 @@ PollController.copy = function () {
 
 	if (!this._poll.isCreator(this.request.user)) {
 		console.log('User is not creator, redirecting to poll.');
-		return this.redirect(this.urlFor({ action: 'showPoll', id: this._poll._id }));
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
 	}
 	this.request.session._poll = this._poll;
 
-	return this.redirect(this.urlFor({ action: 'new' }));
+	return this.redirect(this.urlFor({
+		action: 'new'
+	}));
 };
 
 PollController.before('*', function (next) {
@@ -384,7 +438,9 @@ PollController.before('*', function (next) {
 	var id = this.param('id');
 	var apiCalls = 0;
 
-	Poll.findOne({ _id: id })
+	Poll.findOne({
+			_id: id
+		})
 		.populate('creator')
 		.exec(function (err, poll) {
 			if (err) {
@@ -402,7 +458,7 @@ PollController.before('*', function (next) {
 			poll.userIsCreator = poll.isCreator(self.request.user);
 			poll.isClosable = !poll.isClosed && poll.userIsCreator;
 			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.userIsCreator;
-			
+
 			if (poll.userIsCreator) {
 				poll.isSubscribed = true;
 				poll.isFollowing = true;
@@ -416,8 +472,7 @@ PollController.before('*', function (next) {
 			if (poll.mustSub) {
 				apiCalls++;
 				self.app.twitch.api(
-					'/users/:user/subscriptions/:channel',
-					{
+					'/users/:user/subscriptions/:channel', {
 						replacements: {
 							user: self.request.user.username,
 							channel: poll.creator.username
@@ -442,8 +497,7 @@ PollController.before('*', function (next) {
 			if (poll.mustFollow) {
 				apiCalls++;
 				self.app.twitch.api(
-					'/users/:user/follows/channels/:target',
-					{
+					'/users/:user/follows/channels/:target', {
 						replacements: {
 							user: self.request.user.username,
 							target: poll.creator.username
@@ -501,7 +555,7 @@ function calculatePercentages(poll) {
 			scales[type] = 100 / totals[type];
 		}
 	}
-	
+
 	// Add `percentage` property.
 	poll.answers.forEach(function (answer, idx, arr) {
 		answer.percentage = {};

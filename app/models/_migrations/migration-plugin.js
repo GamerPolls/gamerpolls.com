@@ -6,7 +6,7 @@
  * @param {number} option.version The current schema version.
  *
  * Example usage when this file is located in `models/_migrations`:
- * 
+ *
  * file: models/poll.js
  *
  * var PollSchema = new Schema({ ... });
@@ -15,7 +15,7 @@
  *   version: 1
  * });
  *
- * 
+ *
  * file: models/_migrations/poll.js
  *
  * module.exports = {
@@ -40,7 +40,9 @@ module.exports = exports = function schemaMigrations(schema, options) {
 		return;
 	}
 
-	schema.add({ __schemaVersion: Number });
+	schema.add({
+		__schemaVersion: Number
+	});
 
 	schema.post('init', function (doc) {
 		if (!doc.__schemaVersion) {

@@ -14,13 +14,13 @@
 		<div class="pull-left">
 			<h4>
 				{{#poll.mustSub}}Non-Subscribers{{/poll.mustSub}}
-				{{^poll.mustSub}}Not Following{{/poll.mustSub}} - 
+				{{^poll.mustSub}}Not Following{{/poll.mustSub}} -
 				<span data-bind="poll.totalVotes.versus">{{poll.totalVotes.versus}}</span> Votes
 			</h4>
 		</div>
 		<div class="pull-right">
 			<h4>
-				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes - 
+				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes -
 				{{#poll.mustSub}}Subscribers{{/poll.mustSub}}
 				{{^poll.mustSub}}Following{{/poll.mustSub}}
 			</h4>
@@ -214,7 +214,7 @@
 						{{/poll.answers}}
 					]
 				}
-			],			   
+			],
 			tooltip: {
 				formatter: function () {
 					return '<b>'+ this.series.name +'</b><br/>'+ this.point.name +'<br/>'+ 'Votes: ' + Math.abs(this.point.y);

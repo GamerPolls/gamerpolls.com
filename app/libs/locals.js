@@ -37,6 +37,7 @@ module.exports = function (request, response, next) {
 			types[type].forEach(pushMessages);
 		}
 	}
+
 	function pushMessages(message) {
 		messages.push({
 			text: message,

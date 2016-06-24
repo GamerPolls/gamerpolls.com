@@ -1,5 +1,5 @@
 var errorHandler = require('errorhandler');
 
-module.exports = function() {
+module.exports = function () {
 	this.use(errorHandler());
 }
