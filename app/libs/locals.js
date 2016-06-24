@@ -1,10 +1,16 @@
 var utils = require('./utils');
 var pkg = utils.getPackage();
 var nconf = require('nconf');
+var twitch = require('node-twitch-api');
+var express = require('express');
+var session = require('express-session');
+
 /**
  * Expose global data to views.
  */
 module.exports = function (request, response, next) {
+	var self = this;
+
 	// Data available to all clients, e.g. application settings.
 	this.locals.pkg = {
 		version: pkg.version
