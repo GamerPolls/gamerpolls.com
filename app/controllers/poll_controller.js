@@ -46,9 +46,8 @@ PollController.create = function () {
 	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
+	var closeDate = this.param('pollClose');
 	var closeTime = moment.utc(this.param('pollClose'));
-	console.log(closeTime);
-
 	var mustFollow = false;
 	var mustSub = false;
 	var isVersus = false;
@@ -81,6 +80,47 @@ PollController.create = function () {
 	}).filter(function (answer) {
 		return !!answer;
 	});
+
+	function isValidDate(dateString) {
+		var regEx = /^\d{4}-\d{2}-\d{2}$/;
+		if(!dateString.match(regEx))
+			return false;  // Invalid format
+		var d;
+		if(!((d = new Date(dateString))|0))
+			return false; // Invalid date (or this could be epoch)
+		return d.toISOString().slice(0,10) == dateString;
+	}
+
+	var date = closeDate.substring(0, 2);
+	var month = closeDate.substring(3, 5);
+	var year = closeDate.substring(6, 10);
+
+	var myDate = new Date(year, month - 1, date);
+	var today = new Date();
+
+	if(!isValidDate(closeDate) || !(myDate > today)){
+		this.request.session._poll = {
+			answers: answers,
+			multipleChoice: multipleChoice,
+			allowSameIP: allowSameIP,
+			mustFollow: mustFollow,
+			mustSub: mustSub,
+			isVersus: isVersus,
+			question: question,
+			closeTime: closeTime
+		};
+
+		this.request.flash('danger', 'Error: You have provided an invalid date for the Close Date');
+		console.log(this.request.session._poll);
+		if (this.isEditing) {
+			console.log('Could not edit poll'.red);
+			return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
+		}
+		else {
+			console.log('Could not create poll'.red);
+			return this.redirect(this.urlFor({ action: 'new' }));
+		}
+	}
 
 	if (answers.length > 20) {
 		answers = answers.slice(0, 20);
