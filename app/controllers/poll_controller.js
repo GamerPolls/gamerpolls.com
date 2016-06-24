@@ -81,16 +81,6 @@ PollController.create = function () {
 		return !!answer;
 	});
 
-	function isValidDate(dateString) {
-		var regEx = /^\d{4}-\d{2}-\d{2}$/;
-		if(!dateString.match(regEx))
-			return false;  // Invalid format
-		var d;
-		if(!((d = new Date(dateString))|0))
-			return false; // Invalid date (or this could be epoch)
-		return d.toISOString().slice(0,10) == dateString;
-	}
-
 	var date = closeDate.substring(0, 2);
 	var month = closeDate.substring(3, 5);
 	var year = closeDate.substring(6, 10);
@@ -606,6 +596,16 @@ function calculatePercentages(poll) {
 		}
 		arr[idx] = answer;
 	});
+}
+
+function isValidDate(dateString) {
+	var regEx = /^\d{4}-\d{2}-\d{2}$/;
+	if(!dateString.match(regEx))
+		return false;  // Invalid format
+	var d;
+	if(!((d = new Date(dateString))|0))
+		return false; // Invalid date (or this could be epoch)
+	return d.toISOString().slice(0,10) == dateString;
 }
 
 module.exports = PollController;
