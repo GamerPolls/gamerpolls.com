@@ -45,11 +45,25 @@
 			{{>layout/header}}
 
 			<div class="container">
-
-				{{#flash}}
-					<p class="alert alert-{{type}}">{{text}}</p>
-				{{/flash}}
-
+				<div class="row">
+					<div class="col-md-12">
+						{{#disablePolls}}
+							<div class="alert alert-warning">Creating and Editing polls is currently disabled. We are working hard to bring it back up!</div>
+						{{/disablePolls}}
+						{{#disableLogin}}
+							<div class="alert alert-warning">Logging In is currently disabled. We are working hard to bring it back up!</div>
+						{{/disableLogin}}
+						{{#disableVoting}}
+							<div class="alert alert-warning">Voting on Polls is currently disabled. We are working hard to bring it back up!</div>
+						{{/disableVoting}}
+						{{^twitchStatus}}
+							<div class="alert alert-danger">The Twitch.tv API is currently down. Some features of the website may not work correctly.</div>
+						{{/twitchStatus}}
+						{{#flash}}
+							<div class="alert alert-{{type}}">{{text}}</div>
+						{{/flash}}
+					</div>
+				</div>
 				{{{yield}}}
 
 			</div>

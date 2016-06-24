@@ -16,7 +16,9 @@
 			<ul class="nav navbar-nav">
 				<li><a href="/"><i class="fa fa-home fa-fw"></i> Home</a></li>
 				{{#user.isBetaTester}}
-				<li><a href="/poll/new"><i class="fa fa-pie-chart fa-fw"></i> New Poll</a></li>
+					{{#disablePolls}}
+						<li><a href="/poll/new"><i class="fa fa-pie-chart fa-fw"></i> New Poll</a></li>
+					{{/disablePolls}}
 				{{/user.isBetaTester}}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
@@ -33,7 +35,7 @@
 					</li>
 				{{/loggedIn}}
 				{{^loggedIn}}
-					<a href="/login/twitchtv" class="btn btn-success navbar-btn login {{^twitchStatus}}disabled{{/twitchStatus}}"><i class="fa fa-twitch fa-fw"></i> Connect with Twitch</a>
+					<a href="/login/twitchtv" class="btn btn-success navbar-btn login {{^twitchStatus}}disabled {{/twitchStatus}}{{#disableLogin}}disabled{{/disableLogin}}"><i class="fa fa-twitch fa-fw"></i> Connect with Twitch</a>
 				{{/loggedIn}}
 			</ul>
 		</div>
