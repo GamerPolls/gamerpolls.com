@@ -60,6 +60,9 @@ PollSchema.virtual('totalVotes').get(function () {
 	};
 	this.answers.forEach(function (answer) {
 		for (var type in answer.votes) {
+			if (type === '__index') {
+				return;
+			}
 			if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
 				if (typeof data[type] !== 'number') {
 					data[type] = 0;
