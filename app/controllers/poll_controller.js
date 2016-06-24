@@ -22,6 +22,8 @@ PollController.new = function () {
 };
 
 PollController.create = function () {
+	var self = this;
+
 	if (!this.request.session.isBetaTester) {
 		console.log('User is not a beta tester.'.red);
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
@@ -40,9 +42,15 @@ PollController.create = function () {
 		}
 	}
 
+	if(this.__app.locals.disablePolls){
+		console.log('Can\'t create poll, polls are disabled.');
+		self.request.flash('danger', 'Polls are currently disabled. You can not create or edit polls at this time.');
+		return this.redirect(this.urlFor({ action: 'new' }));
+	}
+
 	var today = new Date();
 
-	var self = this;
+
 	var answers = this.param('answers[]');
 	var question = this.param('question').trim();
 	var multipleChoice = Boolean(this.param('multipleChoice'));
@@ -259,6 +267,8 @@ PollController.edit = function () {
 };
 
 PollController.vote = function () {
+	var self = this;
+
 	if (!this._poll) {
 		return this.next();
 	}
@@ -284,7 +294,15 @@ PollController.vote = function () {
 		}));
 	}
 
-	var self = this;
+	if(this.__app.locals.disableVoting){
+		console.log('Can\'t vote, it\'s disabled, redirecting to poll');
+		self.request.flash('danger', 'Voting is currently disabled. You can not vote on this poll.');
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
+	}
+
 	var answers = Array.isArray(this.param('answers')) ? this.param('answers') : [this.param('answers')];
 	var voted = false;
 	var updateData = {
