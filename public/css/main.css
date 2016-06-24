@@ -30,11 +30,8 @@ html {
 
 .navbar .btn.login {
 	background-color: #6441A5;
-	background-position: 5px center;
-	background-repeat: no-repeat;
-	background-size: 26px auto;
 	border: medium none;
-	padding-left: 35px;
+	margin-right: 20px;
 }
 
 .navbar .btn.login:hover {
