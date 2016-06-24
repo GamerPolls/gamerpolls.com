@@ -19,4 +19,8 @@ module.exports = function routes() {
 	this.post('poll/:id/close', 'poll#close');
 	this.get('poll/:id/results', 'poll#showResults');
 	this.get('poll/:id/copy', 'poll#copy');
+
+	// Administration
+	this.get('admin', 'admin#show');
+	this.post('admin', 'admin#process');
 };

@@ -1,0 +1,58 @@
+<form method="post">
+    <h1>Administration Options</h1>
+    <fieldset>
+        <div class="form-group">
+            <label class="answer">
+                <div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="maintenanceMode"{{#maintenanceMode}} checked{{/maintenanceMode}}>
+					</span>
+                    <p class="form-control">
+                        <i class="fa fa-wrench fa-fw" data-toggle="tooltip" data-placement="right" title="Toggle maintenance mode, which disables the website temporarily for non-admins."></i>
+                        Maintenance Mode
+                    </p>
+                </div>
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="answer">
+                <div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="disablePolls"{{#disablePolls}} checked{{/disablePolls}}>
+					</span>
+                    <p class="form-control">
+                        <i class="fa fa-pie-chart fa-fw" data-toggle="tooltip" data-placement="right" title="Toggle the ability to create new polls."></i>
+                        Disable Poll Creation
+                    </p>
+                </div>
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="answer">
+                <div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="disablePolls"{{#disableVoting}} checked{{/disableVoting}}>
+					</span>
+                    <p class="form-control">
+                        <i class="fa fa-check fa-fw" data-toggle="tooltip" data-placement="right" title="Toggle the ability to vote on polls."></i>
+                        Disable Voting
+                    </p>
+                </div>
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="answer">
+                <div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" name="disablePolls"{{#disableLogin}} checked{{/disableLogin}}>
+					</span>
+                    <p class="form-control">
+                        <i class="fa fa-sign-in fa-fw" data-toggle="tooltip" data-placement="right" title="Toggle the ability for users to log in."></i>
+                        Disable Login
+                    </p>
+                </div>
+            </label>
+        </div>
+    </fieldset>
+    <input type="submit" value="Save Changes" class="btn btn-lg btn-success btn-block">
+</form>

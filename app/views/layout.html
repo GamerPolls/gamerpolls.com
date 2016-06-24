@@ -48,7 +48,17 @@
 				<p class="alert alert-{{type}}">{{text}}</p>
 			{{/flash}}
 
-			{{{yield}}}
+			{{^maintenanceMode}}
+				{{^user.isAdmin}}
+					<p class="alert alert-warning">The website is currently in maintenance mode. We should have everything up and running again soon!</p>
+				{{/user.isAdmin}}
+				{{#user.isAdmin}}
+					{{{yield}}}
+				{{/user.isAdmin}}
+			{{/maintenanceMode}}
+			{{#maintenanceMode}}
+				{{{yield}}}
+			{{/maintenanceMode}}
 
 		</div>
 

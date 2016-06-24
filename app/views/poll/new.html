@@ -1,220 +1,227 @@
-<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
-	{{#isEditing}}
-	<h1>Editing Poll</h1>
-	{{/isEditing}}
-	<h2>Question</h2>
-	<div class="form-group">
-		<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}" maxlength="200">
-	</div>
-
-	<h2>Answers</h2>
-	<div class="answers-container">
-		<p class="help-block">Hint: type <code>game:</code> in front of an answer to search.</p>
-
-		{{#poll.answers}}
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}" maxlength="200">
-		</div>
-		{{/poll.answers}}
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-	</div>
-
-	<fieldset>
-		<legend>Options</legend>
-		<div class="form-group">
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="checkbox" name="multipleChoice"{{#poll.multipleChoice}} checked{{/poll.multipleChoice}}>
-					</span>
-					<p class="form-control">
-						Allow multiple choice
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Simple: allow people to vote for more than one item."></span>
-					</p>
-				</div>
-			</label>
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
-					</span>
-					<p class="form-control">
-						Allow multiple votes from one IP
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
-					</p>
-				</div>
-			</label>
-
-			{{#loggedIn}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="normal" checked>
-					</span>
-					<p class="form-control">
-						Normal Poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Your standard everyday poll. Anyone can vote on it."></span>
-					</p>
-				</div>
-			</label>
-			{{^user.hasSubButton}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
-					</span>
-					<p class="form-control">
-						Follower-only poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only your Twitch followers can vote."></span>
-					</p>
-				</div>
-			</label>
-			{{/user.hasSubButton}}
-
-			{{#user.hasSubButton}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
-					</span>
-					<p class="form-control">
-						Subscriber-only poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only subscribers to your Twitch channel can vote."></span>
-					</p>
-				</div>
-			</label>
-			{{/user.hasSubButton}}
-
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
-					</span>
-					<p class="form-control">
-						Versus poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
-					</p>
-				</div>
-			</label>
-
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<i class="fa fa-clock-o fa-fw"></i> Close Date
-					</span>
-					<input class="form-control" type="text" name="pollClose" placeholder="Enter a date to close the poll" required>
-				</div>
-			</label>
-			{{/loggedIn}}
-
-			{{^loggedIn}}
-			<p class="alert alert-info">
-				Please login to see more poll options.
-			</p>
-			{{/loggedIn}}
-		</div>
-	</fieldset>
-	<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
-	{{#isEditing}}
-	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
-	{{/isEditing}}
-</form>
-
-{{#yield-styles}}
-<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
-{{/yield-styles}}
-
-{{#yield-ich}}
-{{=<% %>=}}
-
-<script id="blankanswer" type="text/html">
-	<div class="form-group">
-		<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-	</div>
-</script>
-
-<script id="typeahead-games-list-dropdown" type="text/html">
-	<p>
-		<img src="{{image}}"/>
-		{{name}}
-	</p>
-</script>
-
-<%={{ }}=%>
-{{/yield-ich}}
-
-{{#yield-scripts}}
-<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
-<script>
-	$(function () {
-
-		var typeaheadSetup = {
-			name: 'games-list',
-			template: function (data) {
-				return ich["typeahead-games-list-dropdown"](data).html();
-			},
-			limit: 20,
-			remote: {
-				url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY',
-				filter: function (data) {
-					return data.games.map(function (game) {
-						game.value = 'game:' + game.name;
-						game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
-						game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
-						return game;
-					});
-				},
-				replace: function (url, query) {
-					query = decodeURIComponent(query);
-					if (/^game:.+/.test(query)) {
-						query = query.replace(/^game:/, '').trim();
-						return url.replace('%QUERY', encodeURIComponent(query));
-					}
-					return '-';
-				},
-				beforeSend: function (jqXhr, settings) {
-					if (/^-/.test(settings.url)) {
-						return false;
-					}
-				},
-				dataType: 'jsonp'
-			}
-		};
-
-		$('[name="answers[]"]').typeahead(typeaheadSetup);
-
-		$('.answers-container').on('focus', '.form-group:last-child input', function () {
-			if ($('.answers-container .form-group input.form-control').length >= 20) {
-				return;
-			}
-			ich.blankanswer()
-				.appendTo('.answers-container')
-				.find('input')
-				.typeahead(typeaheadSetup);
-		});
-		var date = new Date();
-
-		$('[name="pollClose"]').datepicker({
-			minDate: +1,
-			maxDate: "+30D",
-			dateFormat: "yy-mm-dd",
-			defaultDate: +1
-		}).val(date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + (date.getDate() + 1));
-
+{{^disablePolls}}
+	<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
 		{{#isEditing}}
-		var socket = utils.getSocket();
-		socket.on('vote', function () {
-			window.location.href = '/poll/{{poll._id}}/';
-		});
+		<h1>Editing Poll</h1>
 		{{/isEditing}}
-	});
-</script>
-{{/yield-scripts}}
+		<h2>Question</h2>
+		<div class="form-group">
+			<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}" maxlength="200">
+		</div>
+
+		<h2>Answers</h2>
+		<div class="answers-container">
+			<p class="help-block">Hint: type <code>game:</code> in front of an answer to search.</p>
+
+			{{#poll.answers}}
+			<div class="form-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}" maxlength="200">
+			</div>
+			{{/poll.answers}}
+			<div class="form-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+			</div>
+		</div>
+
+		<fieldset>
+			<legend>Options</legend>
+			<div class="form-group">
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="checkbox" name="multipleChoice"{{#poll.multipleChoice}} checked{{/poll.multipleChoice}}>
+						</span>
+						<p class="form-control">
+							Allow multiple choice
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Simple: allow people to vote for more than one item."></span>
+						</p>
+					</div>
+				</label>
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
+						</span>
+						<p class="form-control">
+							Allow multiple votes from one IP
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
+						</p>
+					</div>
+				</label>
+
+				{{#loggedIn}}
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="radio" name="pollType" value="normal" checked>
+						</span>
+						<p class="form-control">
+							Normal Poll
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Your standard everyday poll. Anyone can vote on it."></span>
+						</p>
+					</div>
+				</label>
+				{{^user.hasSubButton}}
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
+						</span>
+						<p class="form-control">
+							Follower-only poll
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only your Twitch followers can vote."></span>
+						</p>
+					</div>
+				</label>
+				{{/user.hasSubButton}}
+
+				{{#user.hasSubButton}}
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
+						</span>
+						<p class="form-control">
+							Subscriber-only poll
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only subscribers to your Twitch channel can vote."></span>
+						</p>
+					</div>
+				</label>
+				{{/user.hasSubButton}}
+
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
+						</span>
+						<p class="form-control">
+							Versus poll
+							<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
+						</p>
+					</div>
+				</label>
+
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-clock-o fa-fw"></i> Close Date
+						</span>
+						<input class="form-control" type="text" name="pollClose" placeholder="Enter a date to close the poll" required>
+					</div>
+				</label>
+				{{/loggedIn}}
+
+				{{^loggedIn}}
+				<p class="alert alert-info">
+					Please login to see more poll options.
+				</p>
+				{{/loggedIn}}
+			</div>
+		</fieldset>
+		<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
+		{{#isEditing}}
+		<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
+		{{/isEditing}}
+	</form>
+
+	{{#yield-styles}}
+	<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
+	{{/yield-styles}}
+
+	{{#yield-ich}}
+	{{=<% %>=}}
+
+	<script id="blankanswer" type="text/html">
+		<div class="form-group">
+			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+		</div>
+	</script>
+
+	<script id="typeahead-games-list-dropdown" type="text/html">
+		<p>
+			<img src="{{image}}"/>
+			{{name}}
+		</p>
+	</script>
+
+	<%={{ }}=%>
+	{{/yield-ich}}
+
+	{{#yield-scripts}}
+	<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
+	<script>
+		$(function () {
+
+			var typeaheadSetup = {
+				name: 'games-list',
+				template: function (data) {
+					return ich["typeahead-games-list-dropdown"](data).html();
+				},
+				limit: 20,
+				remote: {
+					url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY&client_id={{#pkg}}{{twitchClientID}}{{/pkg}}',
+					filter: function (data) {
+						return data.games.map(function (game) {
+							game.value = 'game:' + game.name;
+							game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
+							game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
+							return game;
+						});
+					},
+					replace: function (url, query) {
+						query = decodeURIComponent(query);
+						if (/^game:.+/.test(query)) {
+							query = query.replace(/^game:/, '').trim();
+							return url.replace('%QUERY', encodeURIComponent(query));
+						}
+						return '-';
+					},
+					beforeSend: function (jqXhr, settings) {
+						if (/^-/.test(settings.url)) {
+							return false;
+						}
+					},
+					dataType: 'jsonp'
+				}
+			};
+
+			$('[name="answers[]"]').typeahead(typeaheadSetup);
+
+			$('.answers-container').on('focus', '.form-group:last-child input', function () {
+				if ($('.answers-container .form-group input.form-control').length >= 20) {
+					return;
+				}
+				ich.blankanswer()
+					.appendTo('.answers-container')
+					.find('input')
+					.typeahead(typeaheadSetup);
+			});
+			var date = new Date();
+
+			$('[name="pollClose"]').datepicker({
+				minDate: +1,
+				maxDate: "+30D",
+				dateFormat: "yy-mm-dd",
+				defaultDate: +1
+			}).val(date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + (date.getDate() + 1));
+
+			{{#isEditing}}
+			var socket = utils.getSocket();
+			socket.on('vote', function () {
+				window.location.href = '/poll/{{poll._id}}/';
+			});
+			{{/isEditing}}
+		});
+	</script>
+	{{/yield-scripts}}
+{{/disablePolls}}
+{{#disablePolls}}
+	<p class="alert alert-warning">
+		Poll Creation is currently disabled. We should have them enabled again soon. Thank you for your patience.
+	</p>
+{{/disablePolls}}

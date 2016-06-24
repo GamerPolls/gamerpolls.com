@@ -7,7 +7,8 @@ var nconf = require('nconf');
 module.exports = function (request, response, next) {
 	// Data available to all clients, e.g. application settings.
 	this.locals.pkg = {
-		version: pkg.version
+		version: pkg.version,
+		twitchClientID: nconf.get('authkeys:twitchtv:clientID')
 	};
 
 	// Client-specific data, e.g. user info

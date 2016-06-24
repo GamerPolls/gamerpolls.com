@@ -12,6 +12,10 @@
 				<a href="https://twitter.com/GamerPollsSite" target="_blank"><i class="fa fa-twitter fa-fw"></i> @GamerPollsSite</a>
 				&nbsp;|&nbsp;
 				<a href="https://github.com/GamerPolls/gamerpolls.com" target="_blank"><i class="fa fa-github fa-fw"></i> GamerPolls</a>
+				{{#user.isAdmin}}
+					&nbsp;|&nbsp;
+					<a href="/admin/"><i class="fa fa-wrench fa-fw"></i> Administration</a>
+				{{/user.isAdmin}}
 			</div>
 			<div class="col-md-3 text-right">
 				<a href="#"><i id="flipthelights" title="Flip the lights!" class="fa fa-lightbulb-o fa-fw fa-2x"></i></a>

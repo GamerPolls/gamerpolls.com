@@ -11,6 +11,7 @@
 							type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
 							name="answers"
 							value="{{_id}}"
+							class="{{#disableVoting}}disabled{{/disableVoting}}"
 							>
 						</span>
 						<p class="form-control">
@@ -25,7 +26,7 @@
 			<div class="form-group">
 
 			{{#poll.isVotable}}
-				<button type="submit" class="btn btn-lg btn-success btn-block">Vote</button>
+				<button type="submit" class="btn btn-lg btn-success btn-block {{#disableVoting}}disabled{{/disableVoting}}">Vote</button>
 			{{/poll.isVotable}}
 
 			{{^poll.isVotable}}
