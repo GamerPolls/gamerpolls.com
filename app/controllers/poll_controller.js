@@ -225,7 +225,7 @@ PollController.showPoll = function () {
 			answer.textEncoded = encodeURIComponent(answer.text);
 		}
 		answer.text = answer.text.replace(/!\[(.+?)]\((.+?)\)/, '<img src="$2" alt="$1" style="max-width: 50px; max-height: 50px;">');
-		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">$1</a>');
+		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">[Link] $1</a>');
 		return answer;
 	});
 
@@ -411,7 +411,7 @@ PollController.showResults = function () {
 			answer.textEncoded = encodeURIComponent(answer.text);
 		}
 		answer.text = answer.text.replace(/!\[(.+?)]\((.+?)\)/, '<img src="$2" alt="$1" style="max-width: 50px; max-height: 50px;">');
-		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">$1</a>');
+		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">[Link] $1</a>');
 		return answer;
 	});
 
