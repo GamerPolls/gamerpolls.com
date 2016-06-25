@@ -15,12 +15,11 @@
 				</span>
 				<div class="form-control">
 					<div class="progress" style="line-height: 100%; height: 100%; margin-bottom: 0;">
-						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%; line-height: 100%; height: 100%;">
-							<p class="form-control text-left">
-								{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-								{{text}}
-								{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
-							</p>
+						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%; line-height: 100%; height: 100%;"></div>
+						<div class="form-control text-left" style="position: absolute; width: 100%; background-color: transparent; top: 0; left: 0; padding-left: 100px;">
+							{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
+							{{text}}
+							{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
 						</div>
 					</div>
 				</div>
