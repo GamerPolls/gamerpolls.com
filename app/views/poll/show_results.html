@@ -15,11 +15,12 @@
 				</span>
 				<div class="form-control">
 					<div class="progress" style="line-height: 100%; height: 100%; margin-bottom: 0;">
-						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%; line-height: 100%; height: 100%;"></div>
-						<div class="form-control text-left" style="position: absolute; width: 100%; background-color: transparent; top: 0; left: 0; padding-left: 100px;">
-							{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-							{{text}}
-							{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
+						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;">
+							<div class="form-control text-left" style="position: relative; width: 100%; background-color: transparent; top: 0; left: 0; white-space: nowrap;">
+								{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
+								{{& text}}
+								{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -123,6 +124,7 @@
 			}
 		});
 		$('#chart-container').highcharts({
+			useHTML: true,
 			chart: {
 				type: 'pie',
 				backgroundColor: null
@@ -179,8 +181,9 @@
 				data: [
 					{{#poll.answers}}
 					{
+						useHTML: true,
 						id: '{{_id}}',
-						name: '{{text}}',
+						name: '{{&text}}',
 						y: {{votes.normal}}
 					},
 					{{/poll.answers}}
@@ -191,7 +194,7 @@
 						if (this.y === 0) {
 							return;
 						}
-						return '<div class="chart-label">' + (this.point.name.length > 15 ? this.point.name.substr(0, 15).trim() + '...' : this.point.name) + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
+						return '<div class="chart-label">' + ((this.point.name.length > 15) && !(this.point.name.indexOf('<img') > -1) && !(this.point.name.indexOf('<a href') > -1) ? this.point.name.substr(0, 15).trim() + '...' : (!(this.point.name.indexOf('<a href') > -1)) ? this.point.name : jQuery(this.point.name).text().substr(0, 15).trim() + '...') + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
 					}
 				}
 			}],
