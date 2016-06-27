@@ -23,6 +23,9 @@
 		<link rel="stylesheet" href="/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/css/toastr.css">
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		{{#poll.isEmbedded}}
+		<link rel="stylesheet" href="/css/embed.css">
+		{{/poll.isEmbedded}}
 
 		{{{yield-styles}}}
 
@@ -43,33 +46,38 @@
 
 		{{^maintenanceMode}}
 
-			{{>layout/header}}
-
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						{{#disablePolls}}
-							<div class="alert alert-warning">Creating and Editing polls are currently disabled. We are working hard to bring them back up!</div>
-						{{/disablePolls}}
-						{{#disableLogin}}
-							<div class="alert alert-warning">Logging In is currently disabled. We are working hard to bring it back up!</div>
-						{{/disableLogin}}
-						{{#disableVoting}}
-							<div class="alert alert-warning">Voting on Polls is currently disabled. We are working hard to bring it back up!</div>
-						{{/disableVoting}}
-						{{^twitchStatus}}
-							<div class="alert alert-danger">The Twitch.tv API is currently down. Some features of the website may not work correctly.</div>
-						{{/twitchStatus}}
-						{{#flash}}
-							<div class="alert alert-{{type}}">{{text}}</div>
-						{{/flash}}
+			{{^poll.isEmbedded}}
+				{{>layout/header}}
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							{{#disablePolls}}
+								<div class="alert alert-warning">Creating and Editing polls are currently disabled. We are working hard to bring them back up!</div>
+							{{/disablePolls}}
+							{{#disableLogin}}
+								<div class="alert alert-warning">Logging In is currently disabled. We are working hard to bring it back up!</div>
+							{{/disableLogin}}
+							{{#disableVoting}}
+								<div class="alert alert-warning">Voting on Polls is currently disabled. We are working hard to bring it back up!</div>
+							{{/disableVoting}}
+							{{^twitchStatus}}
+								<div class="alert alert-danger">The Twitch.tv API is currently down. Some features of the website may not work correctly.</div>
+							{{/twitchStatus}}
+							{{#flash}}
+								<div class="alert alert-{{type}}">{{text}}</div>
+							{{/flash}}
+						</div>
 					</div>
+					{{{yield}}}
+
 				</div>
-				{{{yield}}}
-
-			</div>
-
-			{{>layout/footer}}
+				{{>layout/footer}}
+			{{/poll.isEmbedded}}
+			{{#poll.isEmbedded}}
+				<div style="padding: 10px; max-width: 1024px;">
+					{{{yield}}}
+				</div>
+			{{/poll.isEmbedded}}
 
 		{{/maintenanceMode}}
 

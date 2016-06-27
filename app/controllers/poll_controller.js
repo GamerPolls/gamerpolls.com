@@ -220,11 +220,18 @@ PollController.showPoll = function () {
 			closed: this._poll.isClosed,
 			voted: this._poll.hasVoted(this.request)
 		});
-
-		return this.redirect(this.urlFor({
-			action: 'showResults',
-			id: this._poll._id
-		}));
+		if (!this._poll.isEmbedded) {
+			return this.redirect(this.urlFor({
+				action: 'showResults',
+				id: this._poll._id
+			}));
+		}
+		else {
+			return this.redirect(this.urlFor({
+				action: 'showResults',
+				id: this._poll._id
+			}) + '?embed');
+		}
 	}
 
 	this.poll = this._poll;
@@ -344,7 +351,7 @@ PollController.vote = function () {
 				return true;
 			}
 		});
-		if ((x >= self._poll.maxChoices) && voted) {
+		if ((x >= self._poll.maxChoices) && voted && (x != self._poll.minChoices)) {
 			self.request.flash('warning', 'You tried to vote for more than the maximum options. Your selections have been omitted and only your first ' + self._poll.maxChoices + ' choices counted.');
 			return true;
 		}
@@ -414,6 +421,7 @@ PollController.showResults = function () {
 	var self = this;
 
 	this.poll = this._poll;
+
 	this.poll.hasVoted = this._poll.hasVoted(this.request);
 
 	calculatePercentages(this.poll);
@@ -518,6 +526,11 @@ PollController.before('*', function (next) {
 			poll.userIsCreator = poll.isCreator(self.request.user);
 			poll.isClosable = !poll.isClosed && poll.userIsCreator;
 			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.userIsCreator;
+
+			poll.isEmbedded = false;
+			if (self.request.query.hasOwnProperty('embed')) {
+				poll.isEmbedded = true;
+			}
 
 			if (poll.userIsCreator) {
 				poll.isSubscribed = true;

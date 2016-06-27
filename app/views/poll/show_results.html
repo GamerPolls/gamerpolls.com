@@ -1,4 +1,4 @@
-<h1 class="text-center">{{poll.question}}</h1>
+<h1 class="{{^poll.isEmbedded}}text-center{{/poll.isEmbedded}}">{{poll.question}}</h1>
 <div class="row">
 	<div class="col-xs-12 col-md-8 answers-container">
 		{{#poll.isClosed}}
@@ -27,6 +27,10 @@
 
 		{{/poll.answers}}
 	</div>
+	{{#poll.isEmbedded}}
+		<div class="well hidden" id="chart-container"></div>
+	{{/poll.isEmbedded}}
+	{{^poll.isEmbedded}}
 	<div class="col-xs-12 col-md-4">
 		<div class="well" id="chart-container"></div>
 			<div class="well">
@@ -90,6 +94,11 @@
 					</div>
 				</div>
 				{{/poll.userIsCreator}}
+				<div class="row">
+					<div class="col-md-12">
+						<a href="/poll/{{poll._id}}?embed" target="_blank" class="btn btn-primary btn-block btn-xs">Embed Poll</a>
+					</div>
+				</div>
 			</div>
 		<div class="well">
 			<div class="row social-share-buttons text-center">
@@ -100,10 +109,8 @@
 			</div>
 		</div>
 	</div>
+	{{/poll.isEmbedded}}
 </div>
-<pre>
-	{{&poll}}
-</pre>
 
 {{#yield-ich}}
 {{=<% %>=}}
