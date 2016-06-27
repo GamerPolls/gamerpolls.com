@@ -40,14 +40,15 @@ var PollSchema = new Schema({
 			return moment.utc(time);
 		}
 	},
-	multipleChoice: Boolean,
 	allowSameIP: Boolean,
 	voterIPs: [String],
 	voterIDs: [Schema.Types.ObjectId],
 	mustFollow: Boolean,
 	mustSub: Boolean,
 	isVersus: Boolean,
-	question: String
+	question: String,
+	minChoices: Number,
+	maxChoices: Number
 });
 
 PollSchema.virtual('isClosed').get(function () {

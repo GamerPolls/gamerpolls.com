@@ -53,27 +53,40 @@ PollController.create = function () {
 
 	var answers = this.param('answers[]');
 	var question = this.param('question').trim();
-	var multipleChoice = Boolean(this.param('multipleChoice'));
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
 	var closeTime = moment.utc(this.param('pollClose')+' '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds());
 	var mustFollow = false;
 	var mustSub = false;
 	var isVersus = false;
+	var minChoices = parseInt(this.param('minChoices'));
+	var maxChoices = parseInt(this.param('maxChoices'));
+	var nowTime = moment.utc();
 
-	switch (pollType) {
-	case 'mustFollow':
-		mustFollow = true;
-		break;
-	case 'mustSub':
-		mustSub = true;
-		break;
-	case 'isVersus':
-		isVersus = true;
-		break;
+	if (isVersus) {
+		if (this.request.session.twitchtv.hasSubButton) {
+			mustSub = true;
+		}
+		else {
+			mustFollow = true;
+		}
 	}
 
-	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
+	switch (pollType) {
+		case 'mustFollow':
+			mustFollow = true;
+			break;
+		case 'mustSub':
+			mustSub = true;
+			break;
+		case 'isVersus':
+			isVersus = true;
+			break;
+	}
+
+	if (answers.length > 20) {
+		answers = answers.slice(0, 20);
+	}
 
 	answers = answers.map(function (answer) {
 		if (answer == undefined) {
@@ -90,19 +103,40 @@ PollController.create = function () {
 		return !!answer;
 	});
 
-	var nowTime = moment.utc();
+	if(!minChoices){
+		minChoices = 1;
+	}
+	if(!maxChoices){
+		maxChoices = answers.length;
+	}
+	if(maxChoices > answers.length){
+		maxChoices = answers.length;
+	}
+	if(minChoices < 1){
+		minChoices = 1;
+	}
+
+	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
+
+	var pollData = this.request.session._poll = {
+		answers: answers,
+		allowSameIP: allowSameIP,
+		mustFollow: mustFollow,
+		mustSub: mustSub,
+		isVersus: isVersus,
+		question: question,
+		closeTime: closeTime,
+		minChoices: minChoices,
+		maxChoices: maxChoices
+	};
+
+	if(maxChoices < minChoices){
+		this.request.flash('danger', 'Error: Maximum Choices can\'t be less than Minimum Choices');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({ action: 'new' }));
+	}
 
 	if(!(closeTime > nowTime)){
-		this.request.session._poll = {
-			answers: answers,
-			multipleChoice: multipleChoice,
-			allowSameIP: allowSameIP,
-			mustFollow: mustFollow,
-			mustSub: mustSub,
-			isVersus: isVersus,
-			question: question,
-			closeTime: closeTime
-		};
 		this.request.flash('danger', 'Error: You have provided an invalid date for the Close Date');
 		console.log(this.request.session._poll);
 		if (this.isEditing) {
@@ -115,21 +149,7 @@ PollController.create = function () {
 		}
 	}
 
-	if (answers.length > 20) {
-		answers = answers.slice(0, 20);
-	}
-
 	if (answers.length < 2 || question === '') {
-		this.request.session._poll = {
-			answers: answers,
-			multipleChoice: multipleChoice,
-			allowSameIP: allowSameIP,
-			mustFollow: mustFollow,
-			mustSub: mustSub,
-			isVersus: isVersus,
-			question: question,
-			closeTime: closeTime
-		};
 
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
 
@@ -148,25 +168,6 @@ PollController.create = function () {
 			}));
 		}
 	}
-
-	if (isVersus) {
-		if (this.request.session.twitchtv.hasSubButton) {
-			mustSub = true;
-		}
-		else {
-			mustFollow = true;
-		}
-	}
-	var pollData = {
-		answers: answers,
-		multipleChoice: multipleChoice,
-		allowSameIP: allowSameIP,
-		mustFollow: mustFollow,
-		mustSub: mustSub,
-		isVersus: isVersus,
-		question: question,
-		closeTime: closeTime
-	};
 
 	if (this.request.isAuthenticated()) {
 		pollData.creator = this.request.user._id;
@@ -318,7 +319,9 @@ PollController.vote = function () {
 	});
 
 	// Add the votes.
+	var x = 0;
 	answers.some(function (id) {
+		x++;
 		self._poll.answers.some(function (val, idx, arr) {
 			if (String(val._id) === id) {
 				if (self._poll.isVersus && !(self._poll.isSubscribed || self._poll.isFollowing)) {
@@ -331,8 +334,8 @@ PollController.vote = function () {
 				return true;
 			}
 		});
-
-		if (!self._poll.multipleChoice && voted) {
+		if ((x >= self._poll.maxChoices) && voted) {
+			self.request.flash('warning', 'You tried to vote for more than the maximum options. Your selections have been omitted and only your first '+self._poll.maxChoices+' choices counted.');
 			return true;
 		}
 	});

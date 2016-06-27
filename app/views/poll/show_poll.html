@@ -8,7 +8,7 @@
 					<div class="input-group">
 						<span class="input-group-addon">
 							<input
-							type="{{#poll.multipleChoice}}checkbox{{/poll.multipleChoice}}{{^poll.multipleChoice}}radio{{/poll.multipleChoice}}"
+							type="checkbox"
 							name="answers"
 							value="{{_id}}"
 							class="{{#disableVoting}}disabled{{/disableVoting}}"
@@ -134,7 +134,26 @@
 </div>
 {{#yield-scripts}}
 <script>
+	var checkbox = $('input:checkbox');
+	checkbox.click(function(){
+		console.log(checkbox.filter(":checked").length);
+		if(checkbox.filter(":checked").length > {{poll.maxChoices}}){
+			$(this).prop('checked', false);
+			toastr.error('You can only select up to {{poll.maxChoices}} answers, your selection has been reversed.');
+			return false;
+		}
+		if(checkbox.filter(":checked").length < {{poll.minChoices}}){
+			toastr.info('You must select at least '+({{poll.minChoices}} - checkbox.filter(":checked").length)+' more answers.');
+			return true;
+		}
+		if(checkbox.filter(":checked").length == {{poll.maxChoices}}){
+			toastr.success('You have selected the maximum number of options!');
+			return true;
+		}
+	});
+
 	$(function () {
+
 		var socket = utils.getSocket();
 		socket.on('close', function () {
 			window.location.href = '/poll/{{poll._id}}/results';
