@@ -55,6 +55,10 @@ PollSchema.virtual('isClosed').get(function () {
 	return moment.utc().isAfter(this.closeTime);
 });
 
+PollSchema.virtual('unevenChoices').get(function (){
+	return (this.maxChoices != this.minChoices);
+});
+
 PollSchema.virtual('totalVotes').get(function () {
 	var data = {
 		total: 0,

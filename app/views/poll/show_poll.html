@@ -2,7 +2,12 @@
 <div class="row">
 	<div class="col-xs-12 col-md-8">
 		<div class="alert alert-info">
-			You may select between {{poll.minChoices}} and {{poll.maxChoices}} answers.
+			{{#poll.unevenChoices}}
+				You may select between {{poll.minChoices}} and {{poll.maxChoices}} answers.
+			{{/poll.unevenChoices}}
+			{{^poll.unevenChoices}}
+				You may select {{poll.maxChoices}} answer(s).
+			{{/poll.unevenChoices}}
 		</div>
 		<form action="/poll/{{poll._id}}/vote" method="post">
 			{{#poll.answers}}
@@ -135,6 +140,9 @@
 		</div>
 	</div>
 </div>
+<pre>
+	{{& poll}}
+</pre>
 {{#yield-scripts}}
 <script>
 	var checkbox = $('input:checkbox');
