@@ -107,7 +107,7 @@ PollSchema.methods.hasVoted = function (request) {
 
 PollSchema.plugin(require('./_migrations/migration-plugin'), {
 	path: 'poll',
-	version: 1
+	version: 2
 });
 
 module.exports = mongoose.model('Poll', PollSchema);
