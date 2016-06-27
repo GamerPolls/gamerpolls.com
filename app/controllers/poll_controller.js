@@ -613,7 +613,6 @@ function calculatePercentages(poll) {
 			}
 		}
 		arr[idx] = answer;
-		console.log(answer);
 	});
 }
 
