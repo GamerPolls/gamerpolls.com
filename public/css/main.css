@@ -124,3 +124,7 @@ a:active {
 	text-decoration: none !important;
 	text-underline: none !important;
 }
+
+code {
+	color: #ff6666;
+}

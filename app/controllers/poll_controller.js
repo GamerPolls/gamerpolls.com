@@ -42,10 +42,12 @@ PollController.create = function () {
 		}
 	}
 
-	if(this.__app.locals.disablePolls){
+	if (this.__app.locals.disablePolls) {
 		console.log('Can\'t create poll, polls are disabled.');
 		self.request.flash('danger', 'Polls are currently disabled. You can not create or edit polls at this time.');
-		return this.redirect(this.urlFor({ action: 'new' }));
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
 	}
 
 	var nowTime = moment.utc();
@@ -61,15 +63,15 @@ PollController.create = function () {
 	var maxChoices = parseInt(this.param('maxChoices'));
 
 	switch (pollType) {
-		case 'mustFollow':
-			mustFollow = true;
-			break;
-		case 'mustSub':
-			mustSub = true;
-			break;
-		case 'isVersus':
-			isVersus = true;
-			break;
+	case 'mustFollow':
+		mustFollow = true;
+		break;
+	case 'mustSub':
+		mustSub = true;
+		break;
+	case 'isVersus':
+		isVersus = true;
+		break;
 	}
 
 	if (isVersus) {
@@ -100,28 +102,37 @@ PollController.create = function () {
 		return !!answer;
 	});
 
-	if(!minChoices || minChoices < 1){
+	if (!minChoices || minChoices < 1) {
 		minChoices = 1;
 	}
-	if(!maxChoices || maxChoices > answers.length){
+	if (!maxChoices) {
+		maxChoices = 1;
+	}
+	if (maxChoices > answers.length) {
 		maxChoices = answers.length;
 	}
 
 	var beforeTime = closeTime.isBefore(moment.utc);
 	var afterTime = closeTime.isAfter(moment.utc().add(3, 'M'));
-	if(beforeTime || afterTime){
-		if(beforeTime){
+	if (beforeTime || afterTime) {
+		if (beforeTime) {
 			this.request.flash('danger', 'Error: You have provided a duration that would end up in the past.');
 		}
-		if(afterTime){
+		if (afterTime) {
 			this.request.flash('danger', 'Error: You have provided a duration that would be past 3 months in the future. 3 Months is the maximum duration of a Poll.');
 		}
-		if(this.isEditing){
+		if (this.isEditing) {
 			console.log('Could not edit poll'.red);
-			return this.redirect(this.urlFor({action: 'showEdit', id: this._poll._id}));
-		} else {
+			return this.redirect(this.urlFor({
+				action: 'showEdit',
+				id: this._poll._id
+			}));
+		}
+		else {
 			console.log('Could not create poll'.red);
-			return this.redirect(this.urlFor({action: 'new'}));
+			return this.redirect(this.urlFor({
+				action: 'new'
+			}));
 		}
 	}
 
@@ -139,10 +150,12 @@ PollController.create = function () {
 		maxChoices: maxChoices
 	};
 
-	if(maxChoices < minChoices){
+	if (maxChoices < minChoices) {
 		this.request.flash('danger', 'Error: Maximum Choices can\'t be less than Minimum Choices');
 		console.log('Could not create poll'.red);
-		return this.redirect(this.urlFor({ action: 'new' }));
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
 	}
 
 
@@ -294,7 +307,7 @@ PollController.vote = function () {
 		}));
 	}
 
-	if(this.__app.locals.disableVoting){
+	if (this.__app.locals.disableVoting) {
 		console.log('Can\'t vote, it\'s disabled, redirecting to poll');
 		self.request.flash('danger', 'Voting is currently disabled. You can not vote on this poll.');
 		return this.redirect(this.urlFor({
@@ -332,7 +345,7 @@ PollController.vote = function () {
 			}
 		});
 		if ((x >= self._poll.maxChoices) && voted) {
-			self.request.flash('warning', 'You tried to vote for more than the maximum options. Your selections have been omitted and only your first '+self._poll.maxChoices+' choices counted.');
+			self.request.flash('warning', 'You tried to vote for more than the maximum options. Your selections have been omitted and only your first ' + self._poll.maxChoices + ' choices counted.');
 			return true;
 		}
 	});
