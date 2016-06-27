@@ -1,6 +1,9 @@
 <h1 class="text-center">{{poll.question}}</h1>
 <div class="row">
 	<div class="col-xs-12 col-md-8">
+		<div class="alert alert-info">
+			You may select between {{poll.minChoices}} and {{poll.maxChoices}} answers.
+		</div>
 		<form action="/poll/{{poll._id}}/vote" method="post">
 			{{#poll.answers}}
 			<div class="form-group">
