@@ -63,15 +63,6 @@ PollController.create = function () {
 	var maxChoices = parseInt(this.param('maxChoices'));
 	var nowTime = moment.utc();
 
-	if (isVersus) {
-		if (this.request.session.twitchtv.hasSubButton) {
-			mustSub = true;
-		}
-		else {
-			mustFollow = true;
-		}
-	}
-
 	switch (pollType) {
 		case 'mustFollow':
 			mustFollow = true;
@@ -82,6 +73,15 @@ PollController.create = function () {
 		case 'isVersus':
 			isVersus = true;
 			break;
+	}
+
+	if (isVersus) {
+		if (this.request.session.twitchtv.hasSubButton) {
+			mustSub = true;
+		}
+		else {
+			mustFollow = true;
+		}
 	}
 
 	if (answers.length > 20) {
@@ -103,17 +103,11 @@ PollController.create = function () {
 		return !!answer;
 	});
 
-	if(!minChoices){
+	if(!minChoices || minChoices < 1){
 		minChoices = 1;
 	}
-	if(!maxChoices){
+	if(!maxChoices || maxChoices > answers.length){
 		maxChoices = answers.length;
-	}
-	if(maxChoices > answers.length){
-		maxChoices = answers.length;
-	}
-	if(minChoices < 1){
-		minChoices = 1;
 	}
 
 	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
@@ -136,7 +130,7 @@ PollController.create = function () {
 		return this.redirect(this.urlFor({ action: 'new' }));
 	}
 
-	if(!(closeTime > nowTime)){
+	if(closeTime.isBefore(moment())){
 		this.request.flash('danger', 'Error: You have provided an invalid date for the Close Date');
 		console.log(this.request.session._poll);
 		if (this.isEditing) {
