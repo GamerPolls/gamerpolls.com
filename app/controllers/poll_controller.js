@@ -48,20 +48,17 @@ PollController.create = function () {
 		return this.redirect(this.urlFor({ action: 'new' }));
 	}
 
-	var today = new Date();
-
-
+	var nowTime = moment.utc();
 	var answers = this.param('answers[]');
 	var question = this.param('question').trim();
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
-	var closeTime = moment.utc(this.param('pollClose')+' '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds());
+	var closeTime = nowTime.add(parseInt(this.param('closeNum')), this.param('closeType'));
 	var mustFollow = false;
 	var mustSub = false;
 	var isVersus = false;
 	var minChoices = parseInt(this.param('minChoices'));
 	var maxChoices = parseInt(this.param('maxChoices'));
-	var nowTime = moment.utc();
 
 	switch (pollType) {
 		case 'mustFollow':
@@ -110,6 +107,24 @@ PollController.create = function () {
 		maxChoices = answers.length;
 	}
 
+	var beforeTime = closeTime.isBefore(moment.utc);
+	var afterTime = closeTime.isAfter(moment.utc().add(3, 'M'));
+	if(beforeTime || afterTime){
+		if(beforeTime){
+			this.request.flash('danger', 'Error: You have provided a duration that would end up in the past.');
+		}
+		if(afterTime){
+			this.request.flash('danger', 'Error: You have provided a duration that would be past 3 months in the future. 3 Months is the maximum duration of a Poll.');
+		}
+		if(this.isEditing){
+			console.log('Could not edit poll'.red);
+			return this.redirect(this.urlFor({action: 'showEdit', id: this._poll._id}));
+		} else {
+			console.log('Could not create poll'.red);
+			return this.redirect(this.urlFor({action: 'new'}));
+		}
+	}
+
 	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
 
 	var pollData = this.request.session._poll = {
@@ -130,18 +145,6 @@ PollController.create = function () {
 		return this.redirect(this.urlFor({ action: 'new' }));
 	}
 
-	if(closeTime.isBefore(moment())){
-		this.request.flash('danger', 'Error: You have provided an invalid date for the Close Date');
-		console.log(this.request.session._poll);
-		if (this.isEditing) {
-			console.log('Could not edit poll'.red);
-			return this.redirect(this.urlFor({ action: 'showEdit', id: this._poll._id }));
-		}
-		else {
-			console.log('Could not create poll'.red);
-			return this.redirect(this.urlFor({ action: 'new' }));
-		}
-	}
 
 	if (answers.length < 2 || question === '') {
 

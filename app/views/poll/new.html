@@ -38,89 +38,84 @@
 						</span>
 						<p class="form-control">
 							Allow multiple votes from one IP
-							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
 						</p>
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
+						</span>
 					</div>
 				</label>
 
 				{{#loggedIn}}
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<input type="radio" name="pollType" value="normal" checked>
-						</span>
-						<p class="form-control">
-							Normal Poll
-							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Your standard everyday poll. Anyone can vote on it."></span>
-						</p>
-					</div>
-				</label>
-				{{^user.hasSubButton}}
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
-						</span>
-						<p class="form-control">
-							Follower-only poll
-							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Only your Twitch followers can vote."></span>
-						</p>
-					</div>
-				</label>
-				{{/user.hasSubButton}}
-
-				{{#user.hasSubButton}}
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
-						</span>
-						<p class="form-control">
-							Subscriber-only poll
-							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Only subscribers to your Twitch channel can vote."></span>
-						</p>
-					</div>
-				</label>
-				{{/user.hasSubButton}}
 
 				<label class="answer">
 					<div class="input-group">
-						<span class="input-group-addon">
-							<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
+						<span class="input-group-addon" style="width: 125px;">
+							<i class="fa fa-cog fa-fw"></i> Poll Type
 						</span>
-						<p class="form-control">
-							Versus poll
-							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
-						</p>
+						<select class="form-control" name="pollType">
+							<option value="normal" {{^poll.mustFollow}}{{^poll.mustSub}}{{^poll.isVersus}}selected{{/poll.isVersus}}{{/poll.mustSub}}{{/poll.mustFollow}}>Normal</option>
+							{{^user.hasSubButton}}
+							<option value="mustFollow" {{#poll.mustFollow}}selected{{/poll.mustFollow}}>Follower Only</option>
+							{{/user.hasSubButton}}
+							{{#user.hasSubButton}}
+							<option value="mustSub" {{#poll.mustSub}}selected{{/poll.mustSub}}>Subscriber Only</option>
+							{{/user.hasSubButton}}
+							<option value="isVersus" {{#poll.isVersus}}selected{{/poll.isVersus}}>Versus</option>
+						</select>
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" data-placement="right" title="Versus: Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
+						</span>
 					</div>
 				</label>
 
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<i class="fa fa-clock-o fa-fw"></i> Close Date *
-						</span>
-						<input class="form-control" type="text" name="pollClose" placeholder="Enter a date to close the poll" required>
+				<div class="row">
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 125px;">
+									<i class="fa fa-clock-o fa-fw"></i> Duration
+								</span>
+								<input type="number" min="1" class="form-control" name="closeNum" value="1" style="width: calc(100% - 100px); float: left;">
+								<select class="selectpicker form-control" name="closeType" style="width: 100px; float: left;">
+									<option value="M">months</option>
+									<option value="w">weeks</option>
+									<option value="d">days</option>
+									<option value="h">hours</option>
+								</select>
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Maximum Duration is 3 Months"></span>
+								</span>
+							</div>
+						</label>
 					</div>
-				</label>
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 175px;">
+									<i class="fa fa-minus fa-fw"></i> Minimum Choices
+								</span>
+								<input class="form-control" type="number" name="minChoices" placeholder="Eg. 2" min="1" value="{{poll.minChoices}}">
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Minimum Votes defaults to 1"></span>
+								</span>
+							</div>
+						</label>
+					</div>
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 175px;">
+									<i class="fa fa-plus fa-fw"></i> Maximum Choices
+								</span>
+								<input class="form-control" type="number" name="maxChoices" placeholder="Eg. 3" min="1" value="{{poll.maxChoices}}">
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Maximum Votes defaults to total answer count"></span>
+								</span>
+							</div>
+						</label>
+					</div>
+				</div>
 
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<i class="fa fa-minus fa-fw"></i> Minimum Choices <span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Minimum Votes defaults to 1"></span>
-						</span>
-						<input class="form-control" type="number" name="minChoices" placeholder="Enter the minimum number of votes a user can choose." min="1">
-					</div>
-				</label>
-
-				<label class="answer">
-					<div class="input-group">
-						<span class="input-group-addon">
-							<i class="fa fa-plus fa-fw"></i> Maximum Choices <span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Maximum Votes defaults to max"></span>
-						</span>
-						<input class="form-control" type="number" name="maxChoices" placeholder="Enter the maximum number of votes a user can choose." min="1">
-					</div>
-				</label>
 				{{/loggedIn}}
 
 				{{^loggedIn}}
@@ -163,6 +158,19 @@
 	<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
 	<script>
 		$(function () {
+			var closeNum = $('input[name="closeNum"]');
+			closeNum.on('focus', function(){
+				var thisVal = closeNum.val();
+				if(thisVal == 1){
+					closeNum.val("");
+				}
+			});
+			closeNum.on('blur', function(){
+				var thisVal = closeNum.val();
+				if(!thisVal){
+					closeNum.val("1");
+				}
+			});
 
 			var typeaheadSetup = {
 				name: 'games-list',
@@ -208,14 +216,6 @@
 					.find('input')
 					.typeahead(typeaheadSetup);
 			});
-			var date = new Date();
-
-			$('[name="pollClose"]').datepicker({
-				minDate: +1,
-				maxDate: "+30D",
-				dateFormat: "yy-mm-dd",
-				defaultDate: {{#poll.closeTime}}"{{poll.closeTime}}"{{/poll.closeTime}}{{^poll.closeTime}}+1{{/poll.closeTime}}
-			}).val(date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + (date.getDate() + 1));
 
 			{{#isEditing}}
 			var socket = utils.getSocket();
