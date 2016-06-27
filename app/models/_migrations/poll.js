@@ -7,10 +7,14 @@ module.exports = {
 			};
 		}, this);
 	},
-	2: function() {
-		if(this.multipleChoice){
+	2: function () {
+		var self = this;
+		self = JSON.parse(JSON.stringify(self));
+
+		if (self.multipleChoice) {
 			this.maxChoices = this.answers.length;
-		} else {
+		}
+		else {
 			this.maxChoices = 1;
 		}
 		this.minChoices = 1;

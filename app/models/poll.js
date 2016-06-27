@@ -48,15 +48,14 @@ var PollSchema = new Schema({
 	isVersus: Boolean,
 	question: String,
 	minChoices: Number,
-	maxChoices: Number,
-	multipleChoice: Boolean
+	maxChoices: Number
 });
 
 PollSchema.virtual('isClosed').get(function () {
 	return moment.utc().isAfter(this.closeTime);
 });
 
-PollSchema.virtual('unevenChoices').get(function (){
+PollSchema.virtual('unevenChoices').get(function () {
 	return (this.maxChoices != this.minChoices);
 });
 
@@ -67,8 +66,8 @@ PollSchema.virtual('totalVotes').get(function () {
 		versus: 0
 	};
 	this.answers.forEach(function (answer) {
-		for (var type in answer.votes){
-			if(type == 'normal' || type == 'versus') {
+		for (var type in answer.votes) {
+			if (type == 'normal' || type == 'versus') {
 				if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
 					data[type] += answer.votes[type];
 					data.total += answer.votes[type];
