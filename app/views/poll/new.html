@@ -109,7 +109,7 @@
 						<span class="input-group-addon">
 							<i class="fa fa-minus fa-fw"></i> Minimum Choices <span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Minimum Votes defaults to 1"></span>
 						</span>
-						<input class="form-control" type="number" name="minChoices" placeholder="Enter the minimum number of votes a user can choose.">
+						<input class="form-control" type="number" name="minChoices" placeholder="Enter the minimum number of votes a user can choose." min="1">
 					</div>
 				</label>
 
@@ -118,7 +118,7 @@
 						<span class="input-group-addon">
 							<i class="fa fa-plus fa-fw"></i> Maximum Choices <span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" title="Maximum Votes defaults to max"></span>
 						</span>
-						<input class="form-control" type="number" name="maxChoices" placeholder="Enter the maximum number of votes a user can choose.">
+						<input class="form-control" type="number" name="maxChoices" placeholder="Enter the maximum number of votes a user can choose." min="1">
 					</div>
 				</label>
 				{{/loggedIn}}
