@@ -17,7 +17,6 @@
 					<div class="form-control text-left" style="border-radius: 0;">
 						{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
 						{{& text}}
-						{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
 					</div>
 					<div class="progress" style="height: 5px; border-radius: 0; position: relative; margin-bottom: 0; margin-top: -5px;">
 						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
