@@ -8,12 +8,12 @@ module.exports = {
 		}, this);
 	},
 	2: function() {
-		this.minChoices = 1;
 		if(this.multipleChoice){
 			this.maxChoices = this.answers.length;
 		} else {
 			this.maxChoices = 1;
 		}
+		this.minChoices = 1;
 		delete this.multipleChoice;
 	}
-}
+};

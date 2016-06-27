@@ -50,7 +50,7 @@ module.exports = exports = function schemaMigrations(schema, options) {
 		}
 		if (doc.__schemaVersion < options.version) {
 			console.log('Document schema version is out of date. Current version: `' + doc.__schemaVersion + '`, latest version: `' + options.version + '`');
-			var migrations = require('./' + options.path.toLower());
+			var migrations = require('./' + options.path.toLowerCase());
 			for (var i = doc.__schemaVersion; i < options.version; i++) {
 				console.log('Migrating from `' + i + '` to `' + (i + 1) + '`...');
 				if (!migrations[i + 1]) {

@@ -48,7 +48,8 @@ var PollSchema = new Schema({
 	isVersus: Boolean,
 	question: String,
 	minChoices: Number,
-	maxChoices: Number
+	maxChoices: Number,
+	multipleChoice: Boolean
 });
 
 PollSchema.virtual('isClosed').get(function () {
