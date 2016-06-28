@@ -1,6 +1,18 @@
-<h1 class="{{^poll.isEmbedded}}text-center{{/poll.isEmbedded}}">{{poll.question}}</h1>
+<h1 class="{{^poll.isEmbedded}}text-center{{/poll.isEmbedded}}">
+	{{poll.question}} <span class="small muted" style="font-size: 12px;">by
+	{{#poll.creator}}
+	<span class="creator">
+		<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+			<img src="{{poll.creator.avatar}}" class="avatar" style="width: 20px; height: 20px; margin-top: -15px;">
+			{{poll.creator.displayName}}
+		</a>
+	</span>
+	{{/poll.creator}}
+	</span>
+	{{#poll.isEmbedded}}<span class="pull-right small muted" style="line-height: 36px;"><span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> total votes</span>{{/poll.isEmbedded}}
+</h1>
 <div class="row">
-	<div class="col-xs-12 col-md-8 answers-container">
+	<div class="col-xs-12 {{^poll.isEmbedded}}col-md-8{{/poll.isEmbedded}} answers-container">
 		{{#poll.isClosed}}
 		<div class="alert alert-danger">
 			<span class="glyphicon glyphicon-remove"></span> This poll is closed! The poll closed <strong><span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span></strong>.
