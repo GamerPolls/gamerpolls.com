@@ -68,6 +68,14 @@ label.answer {
 	width: 100%;
 }
 
+button.btn.btn-grey {
+  background: #444;
+  color: #c6c6c6;
+  border-color: #111;
+  text-shadow: 0 1px 0 black;
+}
+
+
 .chart-label {
 	color: #fff;
 	text-align: center;
@@ -127,4 +135,8 @@ a:active {
 
 code {
 	color: #ff6666;
+}
+
+.answer-options {
+	margin-top: -1px;
 }

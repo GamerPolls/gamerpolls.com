@@ -12,17 +12,77 @@
 		<div class="answers-container">
 			{{#poll.answers}}
 			<div class="form-group">
-				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}" maxlength="200">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200" value="{{text}}">
+					<span class="input-group-btn toggle-answer-options">
+						<button class="btn btn-grey" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options {{^description}}hidden{{/description}}">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200" value="{{description}}">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
 			</div>
 			{{/poll.answers}}
 			<div class="form-group">
-				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
 			</div>
 			<div class="form-group">
-				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
 			</div>
 			<div class="form-group">
-				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -138,7 +198,22 @@
 
 	<script id="blankanswer" type="text/html">
 		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+			<div class="input-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+				<span class="input-group-btn">
+					<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+						<i class="fa fa-plus fa-fw"></i>
+					</button>
+				</span>
+			</div>
+			<div class="answer-options hidden">
+				<div class="input-group">
+					<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+					<span class="input-group-addon">
+						<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+					</span>
+				</div>
+			</div>
 		</div>
 	</script>
 
@@ -214,6 +289,10 @@
 					.appendTo('.answers-container')
 					.find('input')
 					.typeahead(typeaheadSetup);
+			});
+
+			$('.toggle-answer-options').on('click', function(){
+				$(this).closest('.form-group').find('.answer-options').toggleClass('hidden');
 			});
 
 			{{#isEditing}}

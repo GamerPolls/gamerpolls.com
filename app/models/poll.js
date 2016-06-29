@@ -9,6 +9,7 @@ var PollSchema = new Schema({
 	answers: [{
 		id: Schema.Types.ObjectId,
 		text: String,
+		description: String,
 		votes: {
 			normal: {
 				type: Number,

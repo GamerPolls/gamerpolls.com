@@ -52,6 +52,7 @@ PollController.create = function () {
 
 	var nowTime = moment.utc();
 	var answers = this.param('answers[]');
+	var descriptions = this.param('descriptions[]');
 	var question = this.param('question').trim();
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
@@ -87,20 +88,24 @@ PollController.create = function () {
 		answers = answers.slice(0, 20);
 	}
 
-	answers = answers.map(function (answer) {
+	answers = answers.map(function (answer, index) {
 		if (answer == undefined) {
 			return false;
 		}
 		answer = answer.trim();
 		answer = (answer.length > 200 ? answer.substr(0, 200).trim() + '...' : answer);
+		description = descriptions[index].trim();
+		description = (description.length > 200 ? description.substr(0, 200).trim() + '...' : description);
 		if (answer.length > 0) {
 			return {
-				text: answer
+				text: answer,
+				description: description,
 			};
 		}
 	}).filter(function (answer) {
 		return !!answer;
 	});
+	console.log(answers);
 
 	if (!minChoices || minChoices < 1) {
 		minChoices = 1;
