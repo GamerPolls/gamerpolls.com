@@ -127,15 +127,16 @@
 		<script src="/js/main.js"></script>
 		<script src="/js/toastr.min.js"></script>
 
+		{{{yield-scripts}}}
+
+
 		<script>
 			$(document).ready(function(){
 				var socket = utils.getSocket();
-				socket.on('notification', function(data){
+				socket.on('notification_{{user.username}}', function(data){
 					toastr[data.type](data.message);
 				});
 			});
 		</script>
-
-		{{{yield-scripts}}}
 	</body>
 </html>

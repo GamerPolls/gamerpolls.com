@@ -473,6 +473,12 @@ PollController.close = function () {
 		}
 
 		self.app.io.sockets.in('poll-' + savedPoll._id).emit('close', self._poll.closeTime);
+		self.app.io.sockets.emit('notification_' + self._poll.creator.username, {
+			type: 'info',
+			message: 'Your poll ' + self._poll._id + ' has been closed.'
+		});
+		console.log('Sent notification to notification_' + self._poll.creator.username + ''.green);
+
 		self.request.flash('success', 'Poll Closed.');
 
 		return self.redirect(self.urlFor({
