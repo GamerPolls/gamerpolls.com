@@ -105,7 +105,6 @@ PollController.create = function () {
 	}).filter(function (answer) {
 		return !!answer;
 	});
-	console.log(answers);
 
 	if (!minChoices || minChoices < 1) {
 		minChoices = 1;
