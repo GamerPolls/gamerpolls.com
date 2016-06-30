@@ -111,7 +111,10 @@
 				{{/poll.userIsCreator}}
 				<div class="row">
 					<div class="col-md-12">
-						<a href="/poll/{{poll._id}}?embed" target="_blank" class="btn btn-primary btn-block btn-xs">Embed Poll</a>
+						<div class="input-group">
+							<span class="input-group-addon">Embed:</span>
+							<input type="text" readonly class="form-control" id="embed-url">
+						</div>
 					</div>
 				</div>
 			</div>
@@ -255,6 +258,24 @@
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');
 			$('span[data-time]').updateMoments();
+		});
+
+		embed = $('#embed-url');
+		embed.val(window.location.href+'?embed');
+		embed.on('click', function(e){
+			e.preventDefault();
+			url = embed.val();
+			embed.select();
+			try {
+				document.execCommand('copy');
+				embed.val('Copied to Clipboard');
+				setTimeout(function(){
+					embed.val(url);
+					embed.blur();
+				}, 1000);
+			} catch (err) {
+				toastr.error('Sorry, your browser does not support automatic copying. Please press CTRL+C to copy the text.');
+			}
 		});
 	});
 </script>

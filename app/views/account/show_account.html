@@ -23,7 +23,7 @@
 		{{#polls}}
 		<tr{{#isClosed}} class="danger"{{/isClosed}}>
 			<td><a href="/poll/{{_id}}">{{question}}</a></td>
-			<td>{{totalVotes._grand}}</td>
+			<td>{{totalVotes.total}}</td>
 			<td class="hidden-xs"><span data-time="{{created}}">{{created}}</span></td>
 			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
 			<td class="hidden-xs">
