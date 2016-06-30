@@ -291,7 +291,7 @@
 					.typeahead(typeaheadSetup);
 			});
 
-			$('.toggle-answer-options').on('click', function(){
+			$(document).on('click', '.toggle-answer-options', function() {
 				$(this).closest('.form-group').find('.answer-options').toggleClass('hidden');
 			});
 
