@@ -133,28 +133,12 @@ PollController.create = function () {
 	};
 
 	// Checks for closeNum and closeType variables
-	if (closeType == "months" && closeNum > 3) {
-		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
-		console.log('Could not create poll'.red);
-		return this.redirect(this.urlFor({
-			action: 'new'
-		}));
-	}
-	if (closeType == "weeks" && closeNum > 12) {
-		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
-		console.log('Could not create poll'.red);
-		return this.redirect(this.urlFor({
-			action: 'new'
-		}));
-	}
-	if (closeType == "days" && closeNum > 90) {
-		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
-		console.log('Could not create poll'.red);
-		return this.redirect(this.urlFor({
-			action: 'new'
-		}));
-	}
-	if (closeType == "hours" && closeNum > 2190) {
+	if (
+		(closeType == "months" && closeNum > 3) ||
+		(closeType == "weeks" && closeNum > 12) ||
+		(closeType == "days" && closeNum > 90) ||
+		(closeType == "hours" && closeNum > 2190)
+	) {
 		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
 		console.log('Could not create poll'.red);
 		return this.redirect(this.urlFor({
