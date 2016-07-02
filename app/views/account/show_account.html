@@ -27,9 +27,11 @@
 			<td class="hidden-xs"><span data-time="{{created}}">{{created}}</span></td>
 			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
 			<td class="hidden-xs">
+				{{^isClosed}}
 					<form action="/poll/{{_id}}/close" method="post">
 						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
 					</form>
+				{{/isClosed}}
 				{{#isClosed}}
 					{{^isOpenable}}
 						<div class="text-center">Poll Closed</div>
