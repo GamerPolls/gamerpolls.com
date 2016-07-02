@@ -17,6 +17,7 @@ module.exports = function routes() {
 	this.post('poll/:id/edit', 'poll#edit');
 	this.post('poll/:id/vote', 'poll#vote');
 	this.post('poll/:id/close', 'poll#close');
+	this.post('poll/:id/open', 'poll#open');
 	this.get('poll/:id/results', 'poll#showResults');
 	this.get('poll/:id/copy', 'poll#copy');
 

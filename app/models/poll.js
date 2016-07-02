@@ -25,14 +25,11 @@ var PollSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Account'
 	},
-	closeTime: {
-		type: Date,
-		default: function () {
-			return moment.utc().add(1, 'month');
-		},
-		get: function (time) {
-			return moment.utc(time);
-		}
+	closeNum: Number,
+	closeType: String,
+	isClosed: {
+		type: Boolean,
+		default: false
 	},
 	created: {
 		type: Date,
@@ -52,16 +49,16 @@ var PollSchema = new Schema({
 	maxChoices: Number
 });
 
-PollSchema.virtual('isClosed').get(function () {
-	return moment.utc().isAfter(this.closeTime);
-});
-
 PollSchema.virtual('closeTime').get(function () {
 	return moment(this.created).add(this.closeNum, this.closeType);
 });
 
 PollSchema.virtual('unevenChoices').get(function () {
 	return (this.maxChoices != this.minChoices);
+});
+
+PollSchema.virtual('isOpenable').get(function () {
+	return this.isClosed && moment().isBefore(this.closeTime);
 });
 
 PollSchema.virtual('totalVotes').get(function () {
@@ -112,7 +109,7 @@ PollSchema.methods.hasVoted = function (request) {
 
 PollSchema.plugin(require('./_migrations/migration-plugin'), {
 	path: 'poll',
-	version: 2
+	version: 3
 });
 
 module.exports = mongoose.model('Poll', PollSchema);

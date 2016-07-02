@@ -134,11 +134,20 @@
 			<div class="row">
 				<div class="col-md-12">
 					<form action="/poll/{{poll._id}}/close" method="post">
-						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+						<button type="submit" class="btn btn-danger btn-block btn-xs" id="closePollButton">Close Poll</button>
 					</form>
 				</div>
 			</div>
 			{{/poll.isClosable}}
+			{{#poll.isOpenable}}
+			<div class="row">
+				<div class="col-md-12">
+					<form action="/poll/{{poll._id}}/open" method="post">
+						<button type="submit" class="btn btn-success btn-block btn-xs">Re-Open Poll</button>
+					</form>
+				</div>
+			</div>
+			{{/poll.isOpenable}}
 
 			{{#poll.userIsCreator}}
 			<div class="row">
@@ -191,9 +200,21 @@
 
 	$(function () {
 
+		// Making sure the user doesn't mis-click
+		$(document).on('click', '#closePollButton', function(event){
+			event.preventDefault();
+			if(confirm('Are you sure you would like to delete this poll?')){
+				return true;
+			}
+			return false;
+		});
+
 		var socket = utils.getSocket();
 		socket.on('close', function () {
 			window.location.href = '/poll/{{poll._id}}/results';
+		});
+		socket.on('open', function () {
+			window.location.href = '/poll/{{poll._id}}';
 		});
 		socket.on('vote', function (poll) {
 			$('[data-bind="poll.totalVotes.total"]').text(poll.totalVotes.total);

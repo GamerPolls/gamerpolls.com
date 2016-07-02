@@ -56,7 +56,8 @@ PollController.create = function () {
 	var question = this.param('question').trim();
 	var allowSameIP = Boolean(this.param('allowSameIP'));
 	var pollType = this.param('pollType');
-	var closeTime = nowTime.add(parseInt(this.param('closeNum')), this.param('closeType'));
+	var closeNum = parseInt(this.param('closeNum'));
+	var closeType = this.param('closeType');
 	var mustFollow = false;
 	var mustSub = false;
 	var isVersus = false;
@@ -116,30 +117,6 @@ PollController.create = function () {
 		maxChoices = answers.length;
 	}
 
-	var beforeTime = closeTime.isBefore(moment.utc);
-	var afterTime = closeTime.isAfter(moment.utc().add(3, 'M'));
-	if (beforeTime || afterTime) {
-		if (beforeTime) {
-			this.request.flash('danger', 'Error: You have provided a duration that would end up in the past.');
-		}
-		if (afterTime) {
-			this.request.flash('danger', 'Error: You have provided a duration that would be past 3 months in the future. 3 Months is the maximum duration of a Poll.');
-		}
-		if (this.isEditing) {
-			console.log('Could not edit poll'.red);
-			return this.redirect(this.urlFor({
-				action: 'showEdit',
-				id: this._poll._id
-			}));
-		}
-		else {
-			console.log('Could not create poll'.red);
-			return this.redirect(this.urlFor({
-				action: 'new'
-			}));
-		}
-	}
-
 	question = (question.length > 200 ? question.substr(0, 200).trim() + '...' : question);
 
 	var pollData = this.request.session._poll = {
@@ -149,10 +126,49 @@ PollController.create = function () {
 		mustSub: mustSub,
 		isVersus: isVersus,
 		question: question,
-		closeTime: closeTime,
 		minChoices: minChoices,
-		maxChoices: maxChoices
+		maxChoices: maxChoices,
+		closeNum: closeNum,
+		closeType: closeType
 	};
+
+	// Checks for closeNum and closeType variables
+	if (closeType == "months" && closeNum > 3) {
+		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
+	}
+	if (closeType == "weeks" && closeNum > 12) {
+		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
+	}
+	if (closeType == "days" && closeNum > 90) {
+		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
+	}
+	if (closeType == "hours" && closeNum > 2190) {
+		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
+	}
+	if (closeNum < 0) {
+		this.request.flash('danger', 'Error: You have input a negative duration');
+		console.log('Could not create poll'.red);
+		return this.redirect(this.urlFor({
+			action: 'new'
+		}));
+	}
+	// Finish checks of closeNum and closeType variables
 
 	if (maxChoices < minChoices) {
 		this.request.flash('danger', 'Error: Maximum Choices can\'t be less than Minimum Choices');
@@ -467,7 +483,8 @@ PollController.close = function () {
 		}));
 	}
 
-	this._poll.closeTime = moment.utc();
+	//this._poll.closeTime = moment.utc();
+	this._poll.isClosed = true;
 
 	var self = this;
 
@@ -511,6 +528,49 @@ PollController.copy = function () {
 	}));
 };
 
+PollController.open = function () {
+	if (!this._poll) {
+		return this.next();
+	}
+	if (!this._poll.isCreator(this.request.user)) {
+		console.log('User is not creator, redirecting to poll.');
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
+	}
+	if (!this._poll.isOpenable) {
+		console.log('Poll not openable, redirecting to poll.');
+		return this.redirect(this.urlFor({
+			action: 'showPoll',
+			id: this._poll._id
+		}));
+	}
+
+	this._poll.isClosed = false;
+
+	var self = this;
+
+	this._poll.save(function (err, savedPoll) {
+		if (err) {
+			return self.next(err);
+		}
+
+		self.app.io.sockets.in('poll-' + savedPoll._id).emit('open', self._poll.closeTime);
+		self.app.io.sockets.emit('notification_' + self._poll.creator.username, {
+			type: 'info',
+			message: 'Your poll ' + self._poll._id + ' has been re-opened.'
+		});
+
+		self.request.flash('success', 'Poll Re-Opened.');
+
+		return self.redirect(self.urlFor({
+			action: 'showPoll',
+			id: savedPoll._id
+		}));
+	});
+}
+
 PollController.before('*', function (next) {
 	var self = this;
 	var id = this.param('id');
@@ -535,7 +595,7 @@ PollController.before('*', function (next) {
 
 			poll.userIsCreator = poll.isCreator(self.request.user);
 			poll.isClosable = !poll.isClosed && poll.userIsCreator;
-			poll.isEditable = !poll.isClosed && poll.totalVotes._grand < 1 && poll.userIsCreator;
+			poll.isEditable = !poll.isClosed && poll.totalVotes.total < 1 && poll.userIsCreator;
 
 			poll.isEmbedded = false;
 			if (self.request.query.hasOwnProperty('embed')) {
