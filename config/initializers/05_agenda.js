@@ -48,7 +48,7 @@ module.exports = function () {
 		// Twitch API Status
 		twitch.api(
 			'/', {
-				client_id: nconf.get('authkeys:twitchtv:clientID')
+				clientID: nconf.get('authkeys:twitchtv:clientID')
 			},
 			function (err, statusCode, response) {
 				if (err) {
