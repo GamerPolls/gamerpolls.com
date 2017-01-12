@@ -118,7 +118,6 @@
 							{{#user.hasSubButton}}
 							<option value="mustSub" {{#poll.mustSub}}selected{{/poll.mustSub}}>Subscriber Only</option>
 							{{/user.hasSubButton}}
-							<option value="isVersus" {{#poll.isVersus}}selected{{/poll.isVersus}}>Versus</option>
 						</select>
 						<span class="input-group-addon">
 							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" data-placement="right" title="Versus: Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
