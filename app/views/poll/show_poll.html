@@ -38,8 +38,8 @@
 							>
 						</span>
 						<p class="form-control">
-							{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-							{{& text}}
+						{{#isExtra}}{{&html}}&nbsp;{{/isExtra}}
+						{{^isExtra}}{{text}}{{/isExtra}}
 							{{#description}}
 								<span style="color: grey; font-size: 10px;">
 									{{description}}
@@ -83,6 +83,18 @@
 			</div>
 		</form>
 	</div>
+	{{#poll.answers}}
+	<div id="{{_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center;">
+					<img src="{{url}}" data-toggle="modal" data-target="#{{_id}}"><br/><br/><span class="img_text">{{text}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{/poll.answers}}
+
 	{{^poll.isEmbedded}}
 	<div class="col-xs-12 col-md-4">
 		<div class="well">

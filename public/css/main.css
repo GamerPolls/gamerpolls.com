@@ -143,9 +143,13 @@ code {
 
 select {
 	background: #202020 !important;
-  	background-color: rgba(0, 0, 0, 0.3) !important;
-  	color: #FFF !important;
-  	-webkit-appearance: menu;
-  	-moz-appearance: menu;
-  	appearance: menu;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	color: #FFF !important;
+	-webkit-appearance: menu;
+	-moz-appearance: menu;
+	appearance: menu;
+}
+.form-control > img {
+	max-width: 50px;
+	max-height: 50px;
 }

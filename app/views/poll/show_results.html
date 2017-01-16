@@ -30,8 +30,13 @@
 				</span>
 				<div class="form-control">
 					<div class="form-control text-left" style="border-radius: 0;">
-						{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-						{{& text}}
+						{{#isExtra}}{{&html}}&nbsp;{{/isExtra}}
+						{{^isExtra}}{{text}}{{/isExtra}}
+						{{#description}}
+							<span style="color: grey; font-size: 10px;">
+								{{description}}
+							</span>
+						{{/description}}
 					</div>
 					<div class="progress" style="height: 5px; border-radius: 0; position: relative; margin-bottom: 0; margin-top: -5px;">
 						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
@@ -42,6 +47,17 @@
 
 		{{/poll.answers}}
 	</div>
+	{{#poll.answers}}
+	<div id="{{_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center;">
+					<img src="{{url}}" data-toggle="modal" data-target="#{{_id}}"><br/><br/><span class="img_text">{{text}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{/poll.answers}}
 	{{#poll.isEmbedded}}
 		<div class="well hidden" id="chart-container"></div>
 	{{/poll.isEmbedded}}
@@ -227,7 +243,7 @@
 					{
 						useHTML: true,
 						id: '{{_id}}',
-						name: '{{&text}}',
+						name: '{{text}}',
 						y: {{votes.normal}}
 					},
 					{{/poll.answers}}

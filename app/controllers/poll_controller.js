@@ -242,13 +242,32 @@ PollController.showPoll = function () {
 	this.poll = this._poll;
 
 	this.poll.answers = this.poll.answers.map(function (answer) {
+		answer.isExtra = false;
+
+		var imageRegex = /!\[(.+?)]\((.+?)\)/;
+		var linkRegex = /\[(.+?)]\((.+?)\)/;
+
 		if (/game:.+/.test(answer.text)) {
-			answer.isGame = true;
+			answer.isExtra = true;
 			answer.text = answer.text.replace(/^game:/, '').trim();
-			answer.textEncoded = encodeURIComponent(answer.text);
+			answer.html = '<img src="http://static-cdn.jtvnw.net/ttv-boxart/' + encodeURIComponent(answer.text) + '-26x36.jpg" style="margin-bottom: 5px;"> ' + answer.text;
 		}
-		answer.text = answer.text.replace(/!\[(.+?)]\((.+?)\)/, '<img src="$2" alt="$1" style="max-width: 50px; max-height: 50px;">');
-		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">[Link] $1</a>');
+		if (imageRegex.test(answer.text)) {
+			answer.isExtra = true;
+			var match = (answer.text).match(imageRegex);
+
+			answer.html = '<img src="' + match[2] + '" data-toggle="modal" data-target="#' + answer._id + '" style="margin-bottom: 5px;">&nbsp;&nbsp;<span class="img_text">' + match[1] + '</span>';
+			answer.url = match[2];
+			answer.text = match[1];
+		}
+		if (linkRegex.test(answer.text) && !answer.isExtra) {
+			answer.isExtra = true;
+			var match = (answer.text).match(linkRegex);
+
+			answer.html = '<a href="' + match[2] + '" target="_blank">[Link] ' + match[1] + '</a>';
+			answer.text = match[1];
+		}
+
 		return answer;
 	});
 
@@ -356,7 +375,7 @@ PollController.vote = function () {
 				return true;
 			}
 		});
-		if ((x >= self._poll.maxChoices) && voted && (x != self._poll.minChoices)) {
+		if ((x > self._poll.maxChoices) && voted && (x != self._poll.minChoices)) {
 			self.request.flash('warning', 'You tried to vote for more than the maximum options. Your selections have been omitted and only your first ' + self._poll.maxChoices + ' choices counted.');
 			return true;
 		}
@@ -426,18 +445,38 @@ PollController.showResults = function () {
 	var self = this;
 
 	this.poll = this._poll;
-
+	console.log(this.poll.created);
+	console.log(this.poll.closeTime);
 	this.poll.hasVoted = this._poll.hasVoted(this.request);
 
 	calculatePercentages(this.poll);
 	this.poll.answers = this.poll.answers.map(function (answer) {
+		answer.isExtra = false;
+
+		var imageRegex = /!\[(.+?)]\((.+?)\)/;
+		var linkRegex = /\[(.+?)]\((.+?)\)/;
+
 		if (/game:.+/.test(answer.text)) {
-			answer.isGame = true;
+			answer.isExtra = true;
 			answer.text = answer.text.replace(/^game:/, '').trim();
-			answer.textEncoded = encodeURIComponent(answer.text);
+			answer.html = '<img src="http://static-cdn.jtvnw.net/ttv-boxart/' + encodeURIComponent(answer.text) + '-26x36.jpg" style="margin-bottom: 5px;"> ' + answer.text;
 		}
-		answer.text = answer.text.replace(/!\[(.+?)]\((.+?)\)/, '<img src="$2" alt="$1" style="max-width: 50px; max-height: 50px;">');
-		answer.text = answer.text.replace(/\[(.+?)]\((.+?)\)/, '<a href="$2" target="_blank">[Link] $1</a>');
+		if (imageRegex.test(answer.text)) {
+			answer.isExtra = true;
+			var match = (answer.text).match(imageRegex);
+
+			answer.html = '<img src="' + match[2] + '" data-toggle="modal" data-target="#' + answer._id + '" style="margin-bottom: 5px;">&nbsp;&nbsp;<span class="img_text">' + match[1] + '</span>';
+			answer.url = match[2];
+			answer.text = match[1];
+		}
+		if (linkRegex.test(answer.text) && !answer.isExtra) {
+			answer.isExtra = true;
+			var match = (answer.text).match(linkRegex);
+
+			answer.html = '<a href="' + match[2] + '" target="_blank">[Link] ' + match[1] + '</a>';
+			answer.text = match[1];
+		}
+
 		return answer;
 	});
 
@@ -577,7 +616,8 @@ PollController.before('*', function (next) {
 			self.app.io.sockets.on('connection', function (socket) {
 				socket.join('poll-' + poll._id);
 			});
-
+			console.log(poll.created);
+			console.log(poll.closeTime);
 			poll.userIsCreator = poll.isCreator(self.request.user);
 			poll.isClosable = !poll.isClosed && poll.userIsCreator;
 			poll.isEditable = !poll.isClosed && poll.totalVotes.total < 1 && poll.userIsCreator;
