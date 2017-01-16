@@ -134,10 +134,10 @@ PollController.create = function () {
 
 	// Checks for closeNum and closeType variables
 	if (
-		(closeType == "months" && closeNum > 3) ||
-		(closeType == "weeks" && closeNum > 12) ||
-		(closeType == "days" && closeNum > 90) ||
-		(closeType == "hours" && closeNum > 2190)
+		(closeType == "M" && closeNum > 3) ||
+		(closeType == "w" && closeNum > 12) ||
+		(closeType == "d" && closeNum > 90) ||
+		(closeType == "h" && closeNum > 2190)
 	) {
 		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
 		console.log('Could not create poll'.red);
