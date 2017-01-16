@@ -1,43 +1,45 @@
 {
   "name": "gamerpolls",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
-  "dependencies": {
-    "connect-ensure-login": "0.x",
-    "connect-powered-by": "0.x",
-    "express": "3.x",
-    "locomotive": "0.x",
-    "locomotive-mongoose": "0.x",
-    "mongoose": "3.x",
-    "mongoose-auto-increment": "2.x",
-    "mustache-express": "0.x",
-    "nconf": "0.x",
-    "passport": "0.x",
-    "passport-twitchtv": "0.x",
-    "hogan-express": "0.x",
-    "socket.io": "0.x",
-    "moment": "2.x",
-    "connect-mongo": "0.x",
-    "node-twitch-api": "git://github.com/cletusc/node-twitch-api#master",
-    "jquery-extend": "2.x",
-    "connect-flash": "0.x",
-    "agenda": "0.x",
-    "colors": "0.x",
-    "bootable": "0.x",
-    "bootable-environment": "0.x",
-    "connect-no-www": "0.x",
-    "hookshot": "0.x",
-    "mongoose-shortid-nodeps": "0.5.x",
-    "method-override": "2.2.x"
+  "scripts": {
+    "start": "node server"
   },
   "domains": [
     "gamerpolls.com"
   ],
-  "subdomain": "gamerpolls",
-  "scripts": {
-    "start": "node server"
-  },
-  "engines": {
-    "node": "0.x"
+  "dependencies": {
+    "agenda": "^0.9.0",
+    "body-parser": "^1.15.2",
+    "bootable": "^0.2.4",
+    "bootable-environment": "^0.2.0",
+    "colors": "^1.1.2",
+    "connect-ensure-login": "^0.1.1",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^1.3.2",
+    "connect-no-www": "^0.1.2",
+    "connect-powered-by": "^0.1.0",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.2",
+    "errorhandler": "^1.5.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "favicon": "0.0.2",
+    "hogan-express": "^0.5.2",
+    "hookshot": "^0.1.0",
+    "jquery-extend": "^2.0.3",
+    "locomotive": "^0.4.2",
+    "locomotive-mongoose": "^0.1.0",
+    "method-override": "^2.3.7",
+    "moment": "^2.17.1",
+    "mongoose": "^4.7.6",
+    "mongoose-auto-increment": "^5.0.1",
+    "mongoose-shortid-nodeps": "^0.6.5",
+    "morgan": "^1.7.0",
+    "nconf": "^0.8.4",
+    "node-twitch-api": "github:cletusc/node-twitch-api#master",
+    "passport": "^0.3.2",
+    "passport-twitchtv": "^0.1.4",
+    "socket.io": "^1.7.2"
   }
 }

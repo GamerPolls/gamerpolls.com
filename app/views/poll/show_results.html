@@ -1,6 +1,21 @@
-<h1 class="text-center">{{poll.question}}</h1>
+<h1 class="{{^poll.isEmbedded}}text-center{{/poll.isEmbedded}}">
+	{{poll.question}}
+	{{#poll.isEmbedded}}
+		<span class="small muted" style="font-size: 12px;">by
+		{{#poll.creator}}
+			<span class="creator">
+				<a href="http://www.twitch.tv/{{poll.creator.username}}" target="_blank">
+					<img src="{{poll.creator.avatar}}" class="avatar" style="width: 20px; height: 20px; margin-top: -15px;">
+					{{poll.creator.displayName}}
+				</a>
+			</span>
+		{{/poll.creator}}
+		</span>
+		<span class="pull-right small muted" style="line-height: 36px;"><span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> total votes</span>
+	{{/poll.isEmbedded}}
+</h1>
 <div class="row">
-	<div class="col-xs-12 col-md-8 answers-container">
+	<div class="col-xs-12 {{^poll.isEmbedded}}col-md-8{{/poll.isEmbedded}} answers-container">
 		{{#poll.isClosed}}
 		<div class="alert alert-danger">
 			<span class="glyphicon glyphicon-remove"></span> This poll is closed! The poll closed <strong><span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span></strong>.
@@ -11,21 +26,42 @@
 		<div class="form-group answer mix" data-poll-answer-id="{{_id}}" data-value="{{votes.normal}}">
 			<div class="input-group">
 				<span class="input-group-addon">
-					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
-					&nbsp;votes
-				</span>				
-				<p class="form-control">
-					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
-					{{text}}
-					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
-				</p>
-			</div>
-			<div class="progress">
-				<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
+					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span> vote(s)
+				</span>
+				<div class="form-control">
+					<div class="form-control text-left" style="border-radius: 0;">
+						{{#isExtra}}{{&html}}&nbsp;{{/isExtra}}
+						{{^isExtra}}{{text}}{{/isExtra}}
+						{{#description}}
+							<span style="color: grey; font-size: 10px;">
+								{{description}}
+							</span>
+						{{/description}}
+					</div>
+					<div class="progress" style="height: 5px; border-radius: 0; position: relative; margin-bottom: 0; margin-top: -5px;">
+						<div class="progress-bar" data-bind="poll.answer.{{_id}}.percentage.normal" style="width: {{percentage.normal}}%;"></div>
+					</div>
+				</div>
 			</div>
 		</div>
+
 		{{/poll.answers}}
 	</div>
+	{{#poll.answers}}
+	<div id="{{_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center;">
+					<img src="{{url}}" data-toggle="modal" data-target="#{{_id}}"><br/><br/><span class="img_text">{{text}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{/poll.answers}}
+	{{#poll.isEmbedded}}
+		<div class="well hidden" id="chart-container"></div>
+	{{/poll.isEmbedded}}
+	{{^poll.isEmbedded}}
 	<div class="col-xs-12 col-md-4">
 		<div class="well" id="chart-container"></div>
 			<div class="well">
@@ -39,7 +75,7 @@
 				{{/poll.creator}}
 				<div class="row text-center">
 					<h3>
-						<span data-bind="poll.totalVotes._grand">{{poll.totalVotes._grand}}</span> votes
+						<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> vote(s)
 					</h3>
 				</div>
 				<div class="row">
@@ -76,11 +112,20 @@
 				<div class="row">
 					<div class="col-md-12">
 						<form action="/poll/{{poll._id}}/close" method="post">
-							<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+							<button type="submit" class="btn btn-danger btn-block btn-xs" id="closePollButton">Close Poll</button>
 						</form>
 					</div>
 				</div>
 				{{/poll.isClosable}}
+				{{#poll.isOpenable}}
+				<div class="row">
+					<div class="col-md-12">
+						<form action="/poll/{{poll._id}}/open" method="post">
+							<button type="submit" class="btn btn-success btn-block btn-xs">Re-Open Poll</button>
+						</form>
+					</div>
+				</div>
+				{{/poll.isOpenable}}
 
 				{{#poll.userIsCreator}}
 				<div class="row">
@@ -89,6 +134,14 @@
 					</div>
 				</div>
 				{{/poll.userIsCreator}}
+				<div class="row">
+					<div class="col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon">Embed:</span>
+							<input type="text" readonly class="form-control" id="embed-url">
+						</div>
+					</div>
+				</div>
 			</div>
 		<div class="well">
 			<div class="row social-share-buttons text-center">
@@ -99,6 +152,7 @@
 			</div>
 		</div>
 	</div>
+	{{/poll.isEmbedded}}
 </div>
 
 {{#yield-ich}}
@@ -116,12 +170,21 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
 	$(function () {
+
+		// Making sure the user doesn't mis-click
+        $(document).on('click', '#closePollButton', function(event){
+            if(confirm('Are you sure you would like to close this poll?')){
+                return;
+            }
+            event.preventDefault();
+        });
 		$('.answers-container').mixItUp({
 			load: {
 				sort: 'value:desc'
 			}
 		});
 		$('#chart-container').highcharts({
+			useHTML: true,
 			chart: {
 				type: 'pie',
 				backgroundColor: null
@@ -178,6 +241,7 @@
 				data: [
 					{{#poll.answers}}
 					{
+						useHTML: true,
 						id: '{{_id}}',
 						name: '{{text}}',
 						y: {{votes.normal}}
@@ -190,7 +254,7 @@
 						if (this.y === 0) {
 							return;
 						}
-						return '<div class="chart-label">' + (this.point.name.length > 15 ? this.point.name.substr(0, 15).trim() + '...' : this.point.name) + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
+						return '<div class="chart-label">' + ((this.point.name.length > 15) && !(this.point.name.indexOf('<img') > -1) && !(this.point.name.indexOf('<a href') > -1) ? this.point.name.substr(0, 15).trim() + '...' : (!(this.point.name.indexOf('<a href') > -1)) ? this.point.name : $(''+this.point.name+'').text().substr(0, 15).trim() + '...') + '<br/><span class="chart-label-percent">' + Highcharts.numberFormat(this.percentage, 0) + '%</span></div>';
 					}
 				}
 			}],
@@ -219,14 +283,35 @@
 				// Update value for sorting.
 				$('[data-poll-answer-id="' + answer._id + '"]').attr('data-value', answer.votes.normal);
 			});
-			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
-			
+			$('[data-bind="poll.totalVotes.total"]').text(poll.totalVotes.total);
+
 			// Perform sort.
 			$('.answers-container').mixItUp('sort', 'value:desc');
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.answers-container');
 			$('span[data-time]').updateMoments();
+		});
+		socket.on('open', function () {
+			window.location.href = '/poll/{{poll._id}}';
+		});
+
+		embed = $('#embed-url');
+		embed.val(window.location.href+'?embed');
+		embed.on('click', function(e){
+			e.preventDefault();
+			url = embed.val();
+			embed.select();
+			try {
+				document.execCommand('copy');
+				embed.val('Copied to Clipboard');
+				setTimeout(function(){
+					embed.val(url);
+					embed.blur();
+				}, 1000);
+			} catch (err) {
+				toastr.error('Sorry, your browser does not support automatic copying. Please press CTRL+C to copy the text.');
+			}
 		});
 	});
 </script>

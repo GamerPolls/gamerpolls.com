@@ -12,10 +12,12 @@ ErrorHandler.handleAll = function (err, req, res, next) {
 	res.render('_errors/500');
 };
 
-ErrorHandler.notFound = function (req, res){
+ErrorHandler.notFound = function (req, res) {
 	console.error('[404 Not Found]: '.yellow + req.url);
 	res.status(404);
-	res.render('_errors/404', { url: req.url });
+	res.render('_errors/404', {
+		url: req.url
+	});
 };
 
 module.exports = ErrorHandler;

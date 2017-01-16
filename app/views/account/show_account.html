@@ -23,15 +23,25 @@
 		{{#polls}}
 		<tr{{#isClosed}} class="danger"{{/isClosed}}>
 			<td><a href="/poll/{{_id}}">{{question}}</a></td>
-			<td>{{totalVotes._grand}}</td>
+			<td>{{totalVotes.total}}</td>
 			<td class="hidden-xs"><span data-time="{{created}}">{{created}}</span></td>
 			<td><span data-time="{{closeTime}}">{{closeTime}}</span></td>
 			<td class="hidden-xs">
-				
-				<form action="/poll/{{_id}}/close" method="post">
-						<button type="submit" class="btn btn-danger btn-block btn-xs" {{#isClosed}}disabled="disabled"{{/isClosed}}>Close Poll</button>
-				</form>
-				
+				{{^isClosed}}
+					<form action="/poll/{{_id}}/close" method="post">
+						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+					</form>
+				{{/isClosed}}
+				{{#isClosed}}
+					{{^isOpenable}}
+						<div class="text-center">Poll Closed</div>
+					{{/isOpenable}}
+					{{#isOpenable}}
+						<form action="/poll/{{_id}}/open" method="post">
+							<button type="submit" class="btn btn-success btn-block btn-xs">Re-Open Poll</button>
+						</form>
+					{{/isOpenable}}
+				{{/isClosed}}
 			</td>
 		</tr>
 		{{/polls}}

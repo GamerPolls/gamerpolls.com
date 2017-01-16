@@ -29,6 +29,7 @@
 	};
 
 	lightOff = exports.localStorage.get('lightOff', true);
+	lightOff = true; // Forces lightOff to true - temporarily while we see if people used it
 	exports.toggleLight = function (initial) {
 		if (!initial) {
 			lightOff = !lightOff;

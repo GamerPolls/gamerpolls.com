@@ -14,13 +14,13 @@
 		<div class="pull-left">
 			<h4>
 				{{#poll.mustSub}}Non-Subscribers{{/poll.mustSub}}
-				{{^poll.mustSub}}Not Following{{/poll.mustSub}} - 
+				{{^poll.mustSub}}Not Following{{/poll.mustSub}} -
 				<span data-bind="poll.totalVotes.versus">{{poll.totalVotes.versus}}</span> Votes
 			</h4>
 		</div>
 		<div class="pull-right">
 			<h4>
-				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes - 
+				<span data-bind="poll.totalVotes.normal">{{poll.totalVotes.normal}}</span> Votes -
 				{{#poll.mustSub}}Subscribers{{/poll.mustSub}}
 				{{^poll.mustSub}}Following{{/poll.mustSub}}
 			</h4>
@@ -39,7 +39,6 @@
 				<p class="form-control">
 					{{#isGame}}<img src="http://static-cdn.jtvnw.net/ttv-boxart/{{textEncoded}}-26x36.jpg">&nbsp;{{/isGame}}
 					{{text}}
-					{{#isGame}}<a href="http://www.twitch.tv/directory/game/{{textEncoded}}" class="btn btn-primary pull-right" target="_blank">View Twitch streams</a>{{/isGame}}
 				</p>
 				<span class="input-group-addon">
 					<span data-bind="poll.answer.{{_id}}.votes.normal">{{votes.normal}}</span>
@@ -61,7 +60,7 @@
 			{{/poll.creator}}
 			<div class="row text-center">
 				<h3>
-					<span data-bind="poll.totalVotes._grand">{{poll.totalVotes._grand}}</span> votes
+					<span data-bind="poll.totalVotes.total">{{poll.totalVotes.total}}</span> votes
 				</h3>
 			</div>
 			<div class="row">
@@ -98,11 +97,20 @@
 			<div class="row">
 				<div class="col-md-12">
 					<form action="/poll/{{poll._id}}/close" method="post">
-						<button type="submit" class="btn btn-danger btn-block btn-xs">Close Poll</button>
+						<button type="submit" class="btn btn-danger btn-block btn-xs" id="closePollButton">Close Poll</button>
 					</form>
 				</div>
 			</div>
 			{{/poll.isClosable}}
+			{{#poll.isOpenable}}
+			<div class="row">
+				<div class="col-md-12">
+					<form action="/poll/{{poll._id}}/open" method="post">
+						<button type="submit" class="btn btn-success btn-block btn-xs">Re-Open Poll</button>
+					</form>
+				</div>
+			</div>
+			{{/poll.isOpenable}}
 
 			{{#poll.userIsCreator}}
 			<div class="row">
@@ -137,6 +145,14 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
 	$(function () {
+		// Making sure the user doesn't mis-click
+        $(document).on('click', '#closePollButton', function(event){
+            if(confirm('Are you sure you would like to close this poll?')){
+                return;
+            }
+            event.preventDefault();
+        });
+
 		$('#chart-container').highcharts({
 			chart: {
 				type: 'bar',
@@ -214,7 +230,7 @@
 						{{/poll.answers}}
 					]
 				}
-			],			   
+			],
 			tooltip: {
 				formatter: function () {
 					return '<b>'+ this.series.name +'</b><br/>'+ this.point.name +'<br/>'+ 'Votes: ' + Math.abs(this.point.y);
@@ -244,13 +260,16 @@
 				$('[data-bind="poll.answer.' + answer._id + '.votes.versus"]').text(answer.votes.versus);
 				$('[data-bind="poll.answer.' + answer._id + '.percentage.versus"]').css('width', answer.percentage.versus + '%');
 			});
-			$('[data-bind="poll.totalVotes._grand"]').text(poll.totalVotes._grand);
+			$('[data-bind="poll.totalVotes.total"]').text(poll.totalVotes.total);
 			$('[data-bind="poll.totalVotes.normal"]').text(poll.totalVotes.normal);
 			$('[data-bind="poll.totalVotes.versus"]').text(poll.totalVotes.versus);
 		});
 		socket.on('close', function (closeTime) {
 			ich.pollclosed({ closeTime: closeTime }).prependTo('.chart-container');
 			$('span[data-time]').updateMoments();
+		});
+		socket.on('open', function () {
+			window.location.href = '/poll/{{poll._id}}';
 		});
 	});
 </script>

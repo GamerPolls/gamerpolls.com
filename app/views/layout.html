@@ -17,9 +17,15 @@
 
 		<link rel="stylesheet" href="/css/glyphicons.css">
 		<link rel="stylesheet" href="/css/bootstrap.css">
-		<link rel="stylesheet" href="/css/bootstrap-theme.css">
+		<!-- <link rel="stylesheet" href="/css/bootstrap-theme.css"> -->
 		<link rel="stylesheet" href="/css/darkstrap.css">
 		<link rel="stylesheet" href="/css/main.css">
+		<link rel="stylesheet" href="/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/css/toastr.css">
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		{{#poll.isEmbedded}}
+		<link rel="stylesheet" href="/css/embed.css">
+		{{/poll.isEmbedded}}
 
 		{{{yield-styles}}}
 
@@ -37,20 +43,72 @@
 				We require that you have JavaScript enabled. Please <a href="http://enable-javascript.com/">enable JavaScript on your browser</a> in order to get the full functionality of the site.
 			</p>
 		</noscript>
-		
-		{{>layout/header}}
 
-		<div class="container">
+		{{^maintenanceMode}}
 
-			{{#flash}}
-				<p class="alert alert-{{type}}">{{text}}</p>
-			{{/flash}}
+			{{^poll.isEmbedded}}
+				{{>layout/header}}
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							{{#disablePolls}}
+								<div class="alert alert-warning">Creating and Editing polls are currently disabled. We are working hard to bring them back up!</div>
+							{{/disablePolls}}
+							{{#disableLogin}}
+								<div class="alert alert-warning">Logging In is currently disabled. We are working hard to bring it back up!</div>
+							{{/disableLogin}}
+							{{#disableVoting}}
+								<div class="alert alert-warning">Voting on Polls is currently disabled. We are working hard to bring it back up!</div>
+							{{/disableVoting}}
+							{{^twitchStatus}}
+								<div class="alert alert-danger">The Twitch.tv API is currently down. Some features of the website may not work correctly.</div>
+							{{/twitchStatus}}
+							{{#flash}}
+								<div class="alert alert-{{type}}">{{text}}</div>
+							{{/flash}}
+						</div>
+					</div>
+					{{{yield}}}
 
-			{{{yield}}}
-			
-			{{>layout/footer}}
+				</div>
+				{{>layout/footer}}
+			{{/poll.isEmbedded}}
+			{{#poll.isEmbedded}}
+				<div style="padding: 10px;">
+					{{{yield}}}
+				</div>
+			{{/poll.isEmbedded}}
 
-		</div>
+		{{/maintenanceMode}}
+
+		{{#maintenanceMode}}
+			{{#user.isAdmin}}
+				{{>layout/header}}
+
+				<div class="container">
+					<div class="col-md-12">
+						<div class="alert alert-warning">
+							The website is currently in maintenance mode. We should have everything up and running again soon!
+						</div>
+						{{#flash}}
+							<div class="alert alert-{{type}}">{{text}}</div>
+						{{/flash}}
+					</div>
+
+					{{{yield}}}
+
+				</div>
+
+				{{>layout/footer}}
+			{{/user.isAdmin}}
+			{{^user.isAdmin}}
+				<div class="container">
+					<div class="col-md-6 col-md-offset-3">
+						<p class="alert alert-warning">The website is currently in maintenance mode. We should have everything up and running again soon!</p>
+					</div>
+				</div>
+			{{/user.isAdmin}}
+		{{/maintenanceMode}}
 
 		<!-- Facebook JS Sharing -->
 		<div id="fb-root"></div>
@@ -59,6 +117,7 @@
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 		<script src="/js/vendor/bootstrap.min.js"></script>
 		<script src="/js/vendor/ICanHaz.min.js"></script>
 		<script src="/js/moment.min.js"></script>
@@ -66,7 +125,22 @@
 		<script src="/js/plugins.js"></script>
 		<script src="/js/utils.js"></script>
 		<script src="/js/main.js"></script>
+		<script src="/js/toastr.min.js"></script>
 
 		{{{yield-scripts}}}
+
+
+		<script>
+			$(document).ready(function(){
+				var socket = utils.getSocket();
+				socket.on('notification_{{user.username}}', function(data){
+					toastr[data.type](data.message);
+				});
+
+				// Select <option> styling
+				$('option').css('background', '#202020').css('color', '#FFFFFF');
+
+			});
+		</script>
 	</body>
 </html>

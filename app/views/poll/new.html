@@ -1,203 +1,311 @@
-<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
-	{{#isEditing}}
-	<h1>Editing Poll</h1>
-	{{/isEditing}}
-	<h2>Question</h2>
-	<div class="form-group">
-		<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}" maxlength="200">
-	</div>
-
-	<h2>Answers</h2>
-	<div class="answers-container">
-		<p class="help-block">Hint: type <code>game:</code> in front of an answer to search.</p>
-
-		{{#poll.answers}}
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." value="{{text}}" maxlength="200">
-		</div>
-		{{/poll.answers}}
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-		<div class="form-group">
-			<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-		</div>
-	</div>
-
-	<fieldset>
-		<legend>Options</legend>
-		<div class="form-group">
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="checkbox" name="multipleChoice"{{#poll.multipleChoice}} checked{{/poll.multipleChoice}}>
-					</span>
-					<p class="form-control">
-						Allow multiple choice
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Simple: allow people to vote for more than one item."></span>
-					</p>
-				</div>
-			</label>
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
-					</span>
-					<p class="form-control">
-						Allow multiple votes from one IP
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
-					</p>
-				</div>
-			</label>
-
-			{{#loggedIn}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="normal" checked>
-					</span>
-					<p class="form-control">
-						Normal Poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Your standard everyday poll. Anyone can vote on it."></span>
-					</p>
-				</div>
-			</label>
-			{{^user.hasSubButton}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="mustFollow"{{#poll.mustFollow}} checked{{/poll.mustFollow}}>
-					</span>
-					<p class="form-control">
-						Follower-only poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only your Twitch followers can vote."></span>
-					</p>
-				</div>
-			</label>
-			{{/user.hasSubButton}}
-
-			{{#user.hasSubButton}}
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="mustSub"{{#poll.mustSub}} checked{{/poll.mustSub}}>
-					</span>
-					<p class="form-control">
-						Subscriber-only poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Only subscribers to your Twitch channel can vote."></span>
-					</p>
-				</div>
-			</label>
-			{{/user.hasSubButton}}
-
-			<label class="answer">
-				<div class="input-group">
-					<span class="input-group-addon">
-						<input type="radio" name="pollType" value="isVersus"{{#poll.isVersus}} checked{{/poll.isVersus}}>
-					</span>
-					<p class="form-control">
-						Versus poll
-						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
-					</p>
-				</div>
-			</label>
-			{{/loggedIn}}
-
-			{{^loggedIn}}
-			<p class="alert alert-info">
-				Please login to see more poll options.
-			</p>
-			{{/loggedIn}}
-		</div>
-	</fieldset>
-	<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
-	{{#isEditing}}
-	<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
-	{{/isEditing}}
-</form>
-
-{{#yield-styles}}
-<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
-{{/yield-styles}}
-
-{{#yield-ich}}
-{{=<% %>=}}
-
-<script id="blankanswer" type="text/html">
-	<div class="form-group">
-		<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
-	</div>
-</script>
-
-<script id="typeahead-games-list-dropdown" type="text/html">
-	<p>
-		<img src="{{image}}"/>
-		{{name}}
-	</p>
-</script>
-
-<%={{ }}=%>
-{{/yield-ich}}
-
-{{#yield-scripts}}
-<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
-<script>
-	$(function () {
-
-		var typeaheadSetup = {
-			name: 'games-list',
-			template: function (data) {
-				return ich["typeahead-games-list-dropdown"](data).html();
-			},
-			limit: 20,
-			remote: {
-				url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY',
-				filter: function (data) {
-					return data.games.map(function (game) {
-						game.value = 'game:' + game.name;
-						game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
-						game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
-						return game;
-					});
-				},
-				replace: function (url, query) {
-					query = decodeURIComponent(query);
-					if (/^game:.+/.test(query)) {
-						query = query.replace(/^game:/, '').trim();
-						return url.replace('%QUERY', encodeURIComponent(query));
-					}
-					return '-';
-				},
-				beforeSend: function (jqXhr, settings) {
-					if (/^-/.test(settings.url)) {
-						return false;
-					}
-				},
-				dataType: 'jsonp'
-			}
-		};
-
-		$('[name="answers[]"]').typeahead(typeaheadSetup);
-
-		$('.answers-container').on('focus', '.form-group:last-child input', function () {
-			if ($('.answers-container .form-group input.form-control').length >= 20) {
-				return;
-			}
-			ich.blankanswer()
-				.appendTo('.answers-container')
-				.find('input')
-				.typeahead(typeaheadSetup);
-		});
-
+{{^disablePolls}}
+	<form action="/poll/{{#isEditing}}{{poll._id}}/edit{{/isEditing}}{{^isEditing}}new{{/isEditing}}" method="post">
 		{{#isEditing}}
-		var socket = utils.getSocket();
-		socket.on('vote', function () {
-			window.location.href = '/poll/{{poll._id}}/';				
-		});
+		<h1>Editing Poll</h1>
 		{{/isEditing}}
-	});
-</script>
-{{/yield-scripts}}
+		<h2>Question</h2>
+		<div class="form-group">
+			<input type="text" class="form-control" name="question" placeholder="Enter a question..." value="{{poll.question}}" maxlength="200">
+		</div>
+
+		<h2>Answers <a tabindex="-1" class="pull-right small muted" style="font-size: 12px; cursor: pointer; line-height: 33px" href="#formattingOptions" data-toggle="tooltip" data-container="body" data-html="true" data-placement="bottom" title="&lt;div style=&quot;padding: 5px;&quot;&gt;&lt;p&gt;&lt;code&gt;game:gameName&lt;/code&gt;&lt;br&gt;Adds a game as the answer.&lt;/p&gt;&lt;p&gt;&lt;code&gt;[Text](url)&lt;/code&gt;&lt;br&gt;Adds a link to the answer.&lt;/p&gt;&lt;p&gt;&lt;code&gt;![Alt Text](imageURL)&lt;/code&gt;&lt;br&gt;Adds an image to the answer.&lt;/p&gt;&lt;/div&gt;">Formatting Options <i class="fa fa-question-circle fa-fw"></i></a></h2>
+		<div class="answers-container">
+			{{#poll.answers}}
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200" value="{{text}}">
+					<span class="input-group-btn toggle-answer-options">
+						<button class="btn btn-grey" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options {{^description}}hidden{{/description}}">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200" value="{{description}}">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
+			</div>
+			{{/poll.answers}}
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+					<span class="input-group-btn">
+						<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+					</span>
+				</div>
+				<div class="answer-options hidden">
+					<div class="input-group">
+						<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<fieldset>
+			<legend>Options</legend>
+			<div class="form-group">
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="checkbox" name="allowSameIP"{{#poll.allowSameIP}} checked{{/poll.allowSameIP}}>
+						</span>
+						<p class="form-control">
+							Allow multiple votes from one IP
+						</p>
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Allow votes from the same IP. We try to prevent duplicate votes, but it isn't perfect. Only use this option if you need it."></span>
+						</span>
+					</div>
+				</label>
+
+				{{#loggedIn}}
+
+				<label class="answer">
+					<div class="input-group">
+						<span class="input-group-addon" style="width: 125px;">
+							<i class="fa fa-cog fa-fw"></i> Poll Type
+						</span>
+						<select class="form-control" name="pollType">
+							<option value="normal" {{^poll.mustFollow}}{{^poll.mustSub}}{{^poll.isVersus}}selected{{/poll.isVersus}}{{/poll.mustSub}}{{/poll.mustFollow}}>Normal</option>
+							{{^user.hasSubButton}}
+							<option value="mustFollow" {{#poll.mustFollow}}selected{{/poll.mustFollow}}>Follower Only</option>
+							{{/user.hasSubButton}}
+							{{#user.hasSubButton}}
+							<option value="mustSub" {{#poll.mustSub}}selected{{/poll.mustSub}}>Subscriber Only</option>
+							{{/user.hasSubButton}}
+						</select>
+						<span class="input-group-addon">
+							<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" data-placement="right" title="Versus: Compare your {{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes against non-{{#user.hasSubButton}}subscriber{{/user.hasSubButton}}{{^user.hasSubButton}}follower{{/user.hasSubButton}} votes in the same poll."></span>
+						</span>
+					</div>
+				</label>
+
+				<div class="row">
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 125px;">
+									<i class="fa fa-clock-o fa-fw"></i> Duration
+								</span>
+								<input type="number" min="1" class="form-control" name="closeNum" value="1" style="width: calc(100% - 100px); float: left;">
+								<select class="selectpicker form-control" name="closeType" style="width: 100px; float: left;">
+									<option value="M">months</option>
+									<option value="w">weeks</option>
+									<option value="d">days</option>
+									<option value="h">hours</option>
+								</select>
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Maximum Duration is 3 Months"></span>
+								</span>
+							</div>
+						</label>
+					</div>
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 175px;">
+									<i class="fa fa-minus fa-fw"></i> Minimum Choices
+								</span>
+								<input class="form-control" type="number" name="minChoices" placeholder="Eg. 2" min="1" value="{{^poll.minChoices}}1{{/poll.minChoices}}{{#poll.minChoices}}{{poll.minChoices}}{{/poll.minChoices}}">
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Minimum Choices defaults to 1"></span>
+								</span>
+							</div>
+						</label>
+					</div>
+					<div class="col-md-4">
+						<label class="answer">
+							<div class="input-group">
+								<span class="input-group-addon" style="width: 175px;">
+									<i class="fa fa-plus fa-fw"></i> Maximum Choices
+								</span>
+								<input class="form-control" type="number" name="maxChoices" placeholder="Eg. 3" min="1" value="{{^poll.maxChoices}}1{{/poll.maxChoices}}{{#poll.maxChoices}}{{poll.maxChoices}}{{/poll.maxChoices}}">
+								<span class="input-group-addon">
+									<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-container="body" data-placement="right" title="Maximum Choices defaults to 1"></span>
+								</span>
+							</div>
+						</label>
+					</div>
+				</div>
+
+				{{/loggedIn}}
+
+				{{^loggedIn}}
+				<p class="alert alert-info">
+					Please login to see more poll options.
+				</p>
+				{{/loggedIn}}
+			</div>
+		</fieldset>
+		<input type="submit" value="{{#isEditing}}Save Changes{{/isEditing}}{{^isEditing}}Create Poll{{/isEditing}}" class="btn btn-lg btn-success btn-block">
+		{{#isEditing}}
+		<a href="/poll/{{poll._id}}" class="btn btn-lg btn-danger btn-block">Discard Changes</a>
+		{{/isEditing}}
+	</form>
+
+	{{#yield-styles}}
+	<link rel="stylesheet" href="/css/bootstrap-typeahead-fix.css">
+	{{/yield-styles}}
+
+	{{#yield-ich}}
+	{{=<% %>=}}
+
+	<script id="blankanswer" type="text/html">
+		<div class="form-group">
+			<div class="input-group">
+				<input type="text" class="form-control" name="answers[]" placeholder="Enter an answer..." maxlength="200">
+				<span class="input-group-btn">
+					<button class="btn btn-grey toggle-answer-options" type="button" tabindex="-1">
+						<i class="fa fa-plus fa-fw"></i>
+					</button>
+				</span>
+			</div>
+			<div class="answer-options hidden">
+				<div class="input-group">
+					<input type="text" class="form-control" name="descriptions[]" placeholder="Enter a description..." maxlength="200">
+					<span class="input-group-addon">
+						<span class="fa fa-question-circle fa-fw" data-toggle="tooltip" data-placement="right" data-container="body" title="Descriptions for the answer could include game type, how many players, single or multiplayer, etc."></span>
+					</span>
+				</div>
+			</div>
+		</div>
+	</script>
+
+	<script id="typeahead-games-list-dropdown" type="text/html">
+		<p>
+			<img src="{{image}}"/>
+			{{name}}
+		</p>
+	</script>
+
+	<%={{ }}=%>
+	{{/yield-ich}}
+
+	{{#yield-scripts}}
+	<script src="/js/vendor/typeahead.js/typeahead.min.js"></script>
+	<script>
+		$(function () {
+
+			var closeNum = $('input[name="closeNum"]');
+			closeNum.on('focus', function(){
+				var thisVal = closeNum.val();
+				if(thisVal == 1){
+					closeNum.val("");
+				}
+			});
+			closeNum.on('blur', function(){
+				var thisVal = closeNum.val();
+				if(!thisVal){
+					closeNum.val("1");
+				}
+			});
+
+			var typeaheadSetup = {
+				name: 'games-list',
+				template: function (data) {
+					return ich["typeahead-games-list-dropdown"](data).html();
+				},
+				limit: 20,
+				remote: {
+					url: 'https://api.twitch.tv/kraken/search/games?type=suggest&q=%QUERY&client_id={{#pkg}}{{twitchClientID}}{{/pkg}}',
+					filter: function (data) {
+						return data.games.map(function (game) {
+							game.value = 'game:' + game.name;
+							game.tokens = game.name.replace(/[^a-z0-9\s]/gi, '').split(/\s+/);
+							game.image = game.box.template.replace('{width}', '26').replace('{height}', '36');
+							return game;
+						});
+					},
+					replace: function (url, query) {
+						query = decodeURIComponent(query);
+						if (/^game:.+/.test(query)) {
+							query = query.replace(/^game:/, '').trim();
+							return url.replace('%QUERY', encodeURIComponent(query));
+						}
+						return '-';
+					},
+					beforeSend: function (jqXhr, settings) {
+						if (/^-/.test(settings.url)) {
+							return false;
+						}
+					},
+					dataType: 'jsonp'
+				}
+			};
+
+			$('[name="answers[]"]').typeahead(typeaheadSetup);
+
+			$('.answers-container').on('focus', '.form-group:last-child input', function () {
+				if ($('.answers-container .form-group input.form-control').length >= 20) {
+					return;
+				}
+				ich.blankanswer()
+					.appendTo('.answers-container')
+					.find('input')
+					.typeahead(typeaheadSetup);
+			});
+
+			$(document).on('click', '.toggle-answer-options', function() {
+				$(this).closest('.form-group').find('.answer-options').toggleClass('hidden');
+			});
+
+			{{#isEditing}}
+			var socket = utils.getSocket();
+			socket.on('vote', function () {
+				window.location.href = '/poll/{{poll._id}}/';
+			});
+			{{/isEditing}}
+		});
+	</script>
+	{{/yield-scripts}}
+{{/disablePolls}}
+{{#disablePolls}}
+	<p class="alert alert-warning">
+		Poll Creation is currently disabled. We should have them enabled again soon. Thank you for your patience.
+	</p>
+{{/disablePolls}}

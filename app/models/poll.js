@@ -9,6 +9,7 @@ var PollSchema = new Schema({
 	answers: [{
 		id: Schema.Types.ObjectId,
 		text: String,
+		description: String,
 		votes: {
 			normal: {
 				type: Number,
@@ -24,14 +25,11 @@ var PollSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Account'
 	},
-	closeTime: {
-		type: Date,
-		default: function () {
-			return moment.utc().add(1, 'month');
-		},
-		get: function (time) {
-			return moment.utc(time);
-		}
+	closeNum: Number,
+	closeType: String,
+	isClosed: {
+		type: Boolean,
+		default: false
 	},
 	created: {
 		type: Date,
@@ -40,30 +38,42 @@ var PollSchema = new Schema({
 			return moment.utc(time);
 		}
 	},
-	multipleChoice: Boolean,
 	allowSameIP: Boolean,
 	voterIPs: [String],
 	voterIDs: [Schema.Types.ObjectId],
 	mustFollow: Boolean,
 	mustSub: Boolean,
 	isVersus: Boolean,
-	question: String
+	question: String,
+	minChoices: Number,
+	maxChoices: Number
 });
 
-PollSchema.virtual('isClosed').get(function () {
-	return moment.utc().isAfter(this.closeTime);
+PollSchema.virtual('closeTime').get(function () {
+	return moment(this.created).add(this.closeNum, this.closeType);
+});
+
+PollSchema.virtual('unevenChoices').get(function () {
+	return (this.maxChoices != this.minChoices);
+});
+
+PollSchema.virtual('isOpenable').get(function () {
+	return this.isClosed && moment().isBefore(this.closeTime);
 });
 
 PollSchema.virtual('totalVotes').get(function () {
-	var data = {_grand: 0};
+	var data = {
+		total: 0,
+		normal: 0,
+		versus: 0
+	};
 	this.answers.forEach(function (answer) {
 		for (var type in answer.votes) {
-			if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
-				if (typeof data[type] !== 'number') {
-					data[type] = 0;
+			if (type == 'normal' || type == 'versus') {
+				if (answer.votes.hasOwnProperty(type) && typeof answer.votes[type] === 'number') {
+					data[type] += answer.votes[type];
+					data.total += answer.votes[type];
 				}
-				data[type] += answer.votes[type];
-				data._grand += answer.votes[type];
 			}
 		}
 	});
@@ -74,7 +84,7 @@ PollSchema.methods.isCreator = function (user) {
 	if (!this.creator || !user) {
 		return false;
 	}
-	
+
 	user = user._id ? user._id.toString() : user.toString();
 	var creator = this.creator._id ? this.creator._id.toString() : this.creator.toString();
 
@@ -99,7 +109,7 @@ PollSchema.methods.hasVoted = function (request) {
 
 PollSchema.plugin(require('./_migrations/migration-plugin'), {
 	path: 'poll',
-	version: 1
+	version: 3
 });
 
 module.exports = mongoose.model('Poll', PollSchema);

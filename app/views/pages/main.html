@@ -1,14 +1,57 @@
-
-<p class="alert alert-info">
-	We are currently in a limited beta testing period. Twitch users with "subscribe" buttons are automatically enabled as beta users. Other beta users are accepted on a recommendation-basis from other beta testers. The only benefit of being a beta tester is the ability to <strong>create polls</strong>. All users are allowed to vote in polls if they have the link, taking into account any limits that the poll creator set.
-</p>
-
-<h1><span class="glyphicon glyphicon-stats"></span> GamerPolls</h1>
-<p>
-	Welcome to GamerPolls, a place to get the cold-hard opinion from gamers. We are geared towards <a href="http://twitch.tv">Twitch</a> streamers creating polls, with options to make it a subscriber/follower-only polls, or a unique "versus" mode where supporters and non-supported clash their votes against eachother.
-</p>
-
-<h3><span class="glyphicon glyphicon-comment"></span> Voice your idea!</h3>
-<p>
-	Your feedback is valuable to us as we are a community-driven site. Don't like what you see, want new features, or just want to say thanks? Send us an email or tweet your idea and we'll see what we can do!
-</p>
+<div class="row">
+	<div class="col-md-6">
+		<h1><i class="fa fa-bar-chart fa-fw"></i> GamerPolls</h1>
+		<p>
+			Welcome to GamerPolls, a place to get the cold-hard opinion from gamers. We are geared towards <a href="http://twitch.tv">Twitch</a> streamers creating polls, with options to make it a subscriber/follower-only polls, or a unique "versus" mode where supporters and non-supported clash their votes against eachother.
+		</p>
+	</div>
+	<div class="col-md-6">
+		<h1><i class="fa fa-comments fa-fw"></i> Voice Your Ideas!</h1>
+		<p>
+			Your feedback is valuable to us as we are a community-driven site. Don't like what you see? Want new features? Want to say thanks? Send us an email or tweet your idea and we'll see what we can do!
+		</p>
+	</div>
+</div>
+{{#user.isBetaTester}}
+{{^disablePolls}}
+<hr />
+<div class="row">
+	<div class="col-md-12 text-center">
+		<a href="/poll/new" class="btn btn-lg btn-primary" style="text-decoration: none;">
+			<h2 style="margin: 25px; line-height: 40px;">Create your own poll now!</h2>
+		</a>
+	</div>
+</div>
+{{/disablePolls}}
+{{/user.isBetaTester}}
+<hr />
+<div class="row">
+	<div class="col-md-3">
+		<div class="text-center" style="margin: 25px;">
+			<i class="fa fa-usd fa-fw fa-4x"></i>
+			<h4 style="margin-top: 20px;">Subscribers Only</h4>
+			<p style="margin-top: 10px;">Give your Subscribers a thank you with our Subscriber Only Mode!</p>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="text-center" style="margin: 25px;">
+			<i class="fa fa-users fa-fw fa-4x"></i>
+			<h4 style="margin-top: 20px;">Followers Only</h4>
+			<p style="margin-top: 20px;">Let your Followers have the say with our Follower Only Mode!</p>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="text-center" style="margin: 25px;">
+			<i class="fa fa-bolt fa-fw fa-4x"></i>
+			<h4 style="margin-top: 20px;">Versus Mode</h4>
+			<p style="margin-top: 20px;">Pit your Subs vs Viewers in our Versus Mode!</p>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="text-center" style="margin: 25px;">
+			<i class="fa fa-code fa-fw fa-4x"></i>
+			<h4 style="margin-top: 20px;">Real Time</h4>
+			<p style="margin-top: 20px;">All votes are updated real-time. Hands-off polling!</p>
+		</div>
+	</div>
+</div>
