@@ -1,25 +1,13 @@
 {
   "name": "gamerpolls",
   "version": "0.4.0",
-  "description": "GamerPolls - BethEdit",
-  "main": "index.js",
   "private": true,
   "scripts": {
     "start": "node server"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gamerpolls/gamerpolls.com.git"
-  },
-  "author": "Muddr & BethaNeeks",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gamerpolls/gamerpolls.com/issues"
-  },
   "domains": [
     "gamerpolls.com"
   ],
-  "homepage": "https://github.com/gamerpolls/gamerpolls.com#readme",
   "dependencies": {
     "agenda": "^0.9.0",
     "body-parser": "^1.15.2",
