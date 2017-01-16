@@ -40,6 +40,7 @@ app.phase(function (done) {
     console.log('Starting HTTP server.');
     this.httpServer = http.createServer(this.express).listen(
         Number(nconf.get('httpServerPort')),
+        nconf.get('httpServerIP'),
         function () {
             console.log('HTTP server listening on ' + self.httpServer.address().address + ':' + self.httpServer.address().port);
             console.log('Started HTTP server.'.green);
