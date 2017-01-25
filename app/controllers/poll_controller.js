@@ -205,6 +205,7 @@ PollController.create = function () {
 		else {
 			self.request.flash('success', 'Poll Created!');
 			console.log('Poll created!'.green);
+			delete self.request.session._poll;
 		}
 		return self.redirect(self.urlFor({
 			action: 'showPoll',
