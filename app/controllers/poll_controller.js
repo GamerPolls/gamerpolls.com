@@ -642,8 +642,8 @@ PollController.before('*', function (next) {
 				self.app.twitch.api(
 					'/users/:user/subscriptions/:channel', {
 						replacements: {
-							user: self.request.user.username,
-							channel: poll.creator.username
+							user: self.request.user.id,
+							channel: poll.creator.auths.twitchtv.id
 						},
 						accessKey: self.request.session.twitchtv.accessToken
 					},
@@ -667,8 +667,8 @@ PollController.before('*', function (next) {
 				self.app.twitch.api(
 					'/users/:user/follows/channels/:target', {
 						replacements: {
-							user: self.request.user.username,
-							target: poll.creator.username
+							user: self.request.user.id,
+							target: poll.creator.auths.twitchtv.id
 						},
 						accessKey: self.request.session.twitchtv.accessToken
 					},

@@ -40,8 +40,8 @@ module.exports = function () {
 					self.twitch.api(
 						'/users/:user/subscriptions/:channel', {
 							replacements: {
-								user: profile.username,
-								channel: profile.username
+								user: profile.id,
+								channel: profile.id
 							},
 							accessKey: accessToken
 						},

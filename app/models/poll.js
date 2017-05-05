@@ -58,6 +58,7 @@ PollSchema.virtual('unevenChoices').get(function () {
 });
 
 PollSchema.virtual('isOpenable').get(function () {
+	if (!this.isCreator) return false;
 	return this.isClosed && moment().isBefore(this.closeTime);
 });
 
