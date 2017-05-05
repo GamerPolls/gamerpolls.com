@@ -7,7 +7,7 @@ var socketio = require('socket.io');
 var http = require('http');
 var colors = require('colors');
 var nconf = require('nconf');
-var hookshot = require('hookshot');
+var githooked = require('githooked');
 
 // Config.
 nconf.file({
@@ -21,7 +21,7 @@ nconf.env();
 
 // Webhook Listener.
 if (Boolean(nconf.get('listenForWebhook'))) {
-    hookshot('refs/heads/master', nconf.get('githubUpdateCommand')).listen(Number(nconf.get('webhookPort')));
+    githooked('refs/heads/master', nconf.get('githubUpdateCommand')).listen(Number(nconf.get('webhookPort')));
 }
 // Controllers.
 app.phase(locomotive.boot.controllers(__dirname + '/app/controllers'));

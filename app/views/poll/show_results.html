@@ -94,6 +94,7 @@
 						<span data-time="{{poll.closeTime}}">{{poll.closeTime}}</span>
 					</div>
 				</div>
+				{{^poll.isClosed}}
 				{{^poll.hasVoted}}
 				<div class="row">
 					<div class="col-md-12">
@@ -101,6 +102,7 @@
 					</div>
 				</div>
 				{{/poll.hasVoted}}
+				{{/poll.isClosed}}
 				{{#poll.isEditable}}
 				<div class="row">
 					<div class="col-md-12">

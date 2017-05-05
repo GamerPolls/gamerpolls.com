@@ -1,6 +1,6 @@
 {
   "name": "gamerpolls",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "private": true,
   "scripts": {
     "start": "node server"
@@ -25,8 +25,8 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "favicon": "0.0.2",
+    "githooked": "^1.1.1",
     "hogan-express": "^0.5.2",
-    "hookshot": "^0.1.0",
     "jquery-extend": "^2.0.3",
     "locomotive": "^0.4.2",
     "locomotive-mongoose": "^0.1.0",

@@ -16,8 +16,8 @@ module.exports = function () {
 		console.log('Start task: ' + job.attrs.name);
 
 		Poll.find({
-				closeTime: {
-					$lte: moment.utc().subtract(2, 'weeks')
+				created: {
+					$lte: moment.utc().subtract(14, 'weeks')
 				}
 			},
 			function (err, docs) {
@@ -33,7 +33,7 @@ module.exports = function () {
 						console.log('Poll removed: ' + JSON.stringify({
 							_id: doc._id,
 							closeTime: doc.closeTime,
-							creator: doc.creator
+							creator: doc.creator.username
 						}));
 					});
 				});

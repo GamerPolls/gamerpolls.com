@@ -642,7 +642,7 @@ PollController.before('*', function (next) {
 				self.app.twitch.api(
 					'/users/:user/subscriptions/:channel', {
 						replacements: {
-							user: self.request.user.id,
+							user: self.request.user.auths.twitchtv.id,
 							channel: poll.creator.auths.twitchtv.id
 						},
 						accessKey: self.request.session.twitchtv.accessToken
