@@ -616,6 +616,12 @@ PollController.before('*', function (next) {
 			self.app.io.sockets.on('connection', function (socket) {
 				socket.join('poll-' + poll._id);
 			});
+
+			if (moment().isAfter(poll.closeTime)) {
+				poll.isClosed = true;
+				poll.save(function (err, savedPoll) {});
+			}
+
 			console.log(poll.created);
 			console.log(poll.closeTime);
 			poll.userIsCreator = poll.isCreator(self.request.user);
