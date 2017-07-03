@@ -35,8 +35,7 @@ AccountController.loginForm = function () {
 AccountController.login = function () {
     var self = this;
 
-    if(this.__app.locals.disableLogin){
-        console.log('Can\'t login, logging in is disabled.');
+    if (this.__app.locals.disableLogin) {
         self.request.flash('danger', 'Logging in is currently disabled. You can not login at this time.');
         return this.redirect('/');
     }
@@ -44,7 +43,6 @@ AccountController.login = function () {
     this.request.session.returnTo = this.request.headers.referer;
     var authStrategy = 'auth-' + this.param('authStrategy');
     if (!passport._strategies.hasOwnProperty(authStrategy)) {
-        console.log('Couldn\'t find strategy: ' + authStrategy);
         return this.redirect(this.loginFormPath());
     }
     passport.authenticate(

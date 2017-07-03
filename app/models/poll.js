@@ -94,15 +94,12 @@ PollSchema.methods.isCreator = function (user) {
 
 PollSchema.methods.hasVoted = function (request) {
 	if (request.user && this.voterIDs.indexOf(request.user._id) >= 0) {
-		console.log('User voted based on user id.');
 		return true;
 	}
 	if (!this.allowSameIP && this.voterIPs.indexOf(utils.getIp(request)) >= 0) {
-		console.log('User voted based on user ip.');
 		return true;
 	}
 	if (request.session.pollsVotedIn && request.session.pollsVotedIn.indexOf(this._id) >= 0) {
-		console.log('User voted based on session polls voted in.');
 		return true;
 	}
 	return false;

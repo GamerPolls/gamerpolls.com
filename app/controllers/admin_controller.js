@@ -18,7 +18,6 @@ AdminController.process = function () {
     this.__app.locals.disableVoting = Boolean(this.param('disableVoting'));
     this.__app.locals.disableLogin = Boolean(this.param('disableLogin'));
 
-    console.log('Admin variables saved.'.green);
     this.request.flash('success', 'Admin variables saved.');
     return this.redirect(this.urlFor({
         action: 'show'
@@ -28,7 +27,6 @@ AdminController.process = function () {
 AdminController.before('*', function (next) {
     var self = this;
     if (!this.request.session.isAdmin) {
-        console.log('User is not an administrator.'.red);
         this.request.flash('danger', 'Sorry, you need to be an administrator to use this feature!');
         return this.redirect('/');
     }

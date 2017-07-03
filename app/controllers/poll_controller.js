@@ -13,7 +13,6 @@ PollController.new = function () {
 	delete this.request.session._poll;
 
 	if (!this.request.session.isBetaTester) {
-		console.log('User is not a beta tester.'.red);
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
 		return this.redirect('/');
 	}
@@ -25,7 +24,6 @@ PollController.create = function () {
 	var self = this;
 
 	if (!this.request.session.isBetaTester) {
-		console.log('User is not a beta tester.'.red);
 		this.request.flash('danger', 'Sorry, you need to be a beta tester to use this feature!');
 		return this.redirect('/');
 	}
@@ -34,7 +32,6 @@ PollController.create = function () {
 			return this.next();
 		}
 		if (!this._poll.isEditable) {
-			console.log('Can\'t edit, redirecting to poll.'.yellow);
 			return this.redirect(this.urlFor({
 				action: 'showPoll',
 				id: this._poll._id
@@ -43,7 +40,6 @@ PollController.create = function () {
 	}
 
 	if (this.__app.locals.disablePolls) {
-		console.log('Can\'t create poll, polls are disabled.');
 		self.request.flash('danger', 'Polls are currently disabled. You can not create or edit polls at this time.');
 		return this.redirect(this.urlFor({
 			action: 'new'
@@ -140,14 +136,12 @@ PollController.create = function () {
 		(closeType == "h" && closeNum > 2190)
 	) {
 		this.request.flash('danger', 'Error: Maximum duration of a poll is 3 months');
-		console.log('Could not create poll'.red);
 		return this.redirect(this.urlFor({
 			action: 'new'
 		}));
 	}
 	if (closeNum < 0) {
 		this.request.flash('danger', 'Error: You have input a negative duration');
-		console.log('Could not create poll'.red);
 		return this.redirect(this.urlFor({
 			action: 'new'
 		}));
@@ -156,7 +150,6 @@ PollController.create = function () {
 
 	if (maxChoices < minChoices) {
 		this.request.flash('danger', 'Error: Maximum Choices can\'t be less than Minimum Choices');
-		console.log('Could not create poll'.red);
 		return this.redirect(this.urlFor({
 			action: 'new'
 		}));
@@ -167,16 +160,13 @@ PollController.create = function () {
 
 		this.request.flash('danger', 'Error: Question field is blank or only one answer entered!');
 
-		console.log(this.request.session._poll);
 		if (this.isEditing) {
-			console.log('Could not edit poll'.red);
 			return this.redirect(this.urlFor({
 				action: 'showEdit',
 				id: this._poll._id
 			}));
 		}
 		else {
-			console.log('Could not create poll'.red);
 			return this.redirect(this.urlFor({
 				action: 'new'
 			}));
@@ -200,11 +190,9 @@ PollController.create = function () {
 		}
 		if (self.isEditing) {
 			self.request.flash('success', 'Poll Edited!');
-			console.log('Poll edited.'.green);
 		}
 		else {
 			self.request.flash('success', 'Poll Created!');
-			console.log('Poll created!'.green);
 			delete self.request.session._poll;
 		}
 		return self.redirect(self.urlFor({
@@ -220,11 +208,6 @@ PollController.showPoll = function () {
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
-		console.log('Poll is closed or user has voted, redirecting to results.'.yellow);
-		console.log({
-			closed: this._poll.isClosed,
-			voted: this._poll.hasVoted(this.request)
-		});
 		if (!this._poll.isEmbedded) {
 			return this.redirect(this.urlFor({
 				action: 'showResults',
@@ -271,8 +254,6 @@ PollController.showPoll = function () {
 		return answer;
 	});
 
-	console.log('Poll found'.green);
-
 	this.title = 'Poll: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.socialTitle = this.poll.question;
 	this.url = this.urlFor({
@@ -288,7 +269,6 @@ PollController.showEdit = function () {
 	}
 
 	if (!this._poll.isEditable) {
-		console.log('Can\'t edit, redirecting to poll.'.yellow);
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
@@ -318,7 +298,6 @@ PollController.vote = function () {
 	}
 
 	if (!this._poll.isVotable) {
-		console.log('Can\'t vote, redirecting to poll');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
@@ -326,12 +305,6 @@ PollController.vote = function () {
 	}
 
 	if (this._poll.isClosed || this._poll.hasVoted(this.request)) {
-		console.log('Poll is closed or user has voted, redirecting to results.'.yellow);
-		console.log({
-			closed: this._poll.isClosed,
-			voted: this._poll.hasVoted(this.request)
-		});
-
 		return this.redirect(this.urlFor({
 			action: 'showResults',
 			id: this._poll._id
@@ -339,7 +312,6 @@ PollController.vote = function () {
 	}
 
 	if (this.__app.locals.disableVoting) {
-		console.log('Can\'t vote, it\'s disabled, redirecting to poll');
 		self.request.flash('danger', 'Voting is currently disabled. You can not vote on this poll.');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
@@ -445,8 +417,6 @@ PollController.showResults = function () {
 	var self = this;
 
 	this.poll = this._poll;
-	console.log(this.poll.created);
-	console.log(this.poll.closeTime);
 	this.poll.hasVoted = this._poll.hasVoted(this.request);
 
 	calculatePercentages(this.poll);
@@ -480,8 +450,6 @@ PollController.showResults = function () {
 		return answer;
 	});
 
-	console.log('Poll found'.green);
-
 	this.title = 'Results: ' + (this.poll.question.length > 25 ? this.poll.question.substr(0, 25).trim() + '...' : this.poll.question);
 	this.socialTitle = this.poll.question;
 	this.url = this.urlFor({
@@ -500,7 +468,6 @@ PollController.close = function () {
 	}
 
 	if (!this._poll.isClosable) {
-		console.log('Poll not closable, redirecting to poll.');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
@@ -522,7 +489,6 @@ PollController.close = function () {
 			type: 'info',
 			message: 'Your poll ' + self._poll._id + ' has been closed.'
 		});
-		console.log('Sent notification to notification_' + self._poll.creator.username + ''.green);
 
 		self.request.flash('success', 'Poll Closed.');
 
@@ -539,7 +505,6 @@ PollController.copy = function () {
 	}
 
 	if (!this._poll.isCreator(this.request.user)) {
-		console.log('User is not creator, redirecting to poll.');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
@@ -557,14 +522,12 @@ PollController.open = function () {
 		return this.next();
 	}
 	if (!this._poll.isCreator(this.request.user)) {
-		console.log('User is not creator, redirecting to poll.');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
 		}));
 	}
 	if (!this._poll.isOpenable) {
-		console.log('Poll not openable, redirecting to poll.');
 		return this.redirect(this.urlFor({
 			action: 'showPoll',
 			id: this._poll._id
@@ -622,8 +585,6 @@ PollController.before('*', function (next) {
 				poll.save(function (err, savedPoll) {});
 			}
 
-			console.log(poll.created);
-			console.log(poll.closeTime);
 			poll.userIsCreator = poll.isCreator(self.request.user);
 			poll.isClosable = !poll.isClosed && poll.userIsCreator;
 			poll.isEditable = !poll.isClosed && poll.totalVotes.total < 1 && poll.userIsCreator;

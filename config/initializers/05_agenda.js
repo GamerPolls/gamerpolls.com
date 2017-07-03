@@ -13,8 +13,6 @@ module.exports = function () {
 	var self = this;
 	// Remove polls that have been closed for 2+ weeks.
 	agenda.define('remove closed polls', function (job, done) {
-		console.log('Start task: ' + job.attrs.name);
-
 		Poll.find({
 				created: {
 					$lte: moment.utc().subtract(14, 'weeks')
@@ -37,14 +35,12 @@ module.exports = function () {
 						}));
 					});
 				});
-				console.log('End task: ' + job.attrs.name);
 				done();
 			}
 		);
 	});
 
 	agenda.define('check twitch api status', function (job, done) {
-		console.log('Start task: ' + job.attrs.name);
 		// Twitch API Status
 		twitch.api(
 			'/', {
@@ -56,14 +52,11 @@ module.exports = function () {
 				}
 				if (statusCode !== 200) {
 					self.locals.twitchStatus = false;
-					console.log('Twitch API is Down!'.red);
 				}
 				else {
-					console.log('Twitch API is Up!'.green);
 					self.locals.twitchStatus = true;
 				}
 
-				console.log('End task: ' + job.attrs.name);
 				done();
 			}
 		);
