@@ -38,9 +38,8 @@ module.exports = function () {
 
 				account.save(function () {
 					self.twitch.api(
-						'/users/:user/subscriptions/:channel', {
+						'/channels/:channel', {
 							replacements: {
-								user: profile.id,
 								channel: profile.id
 							},
 							accessKey: accessToken
@@ -49,9 +48,10 @@ module.exports = function () {
 							if (err) {
 								return done(err);
 							}
-							if (statusCode !== 422) {
+							if (response.broadcaster_type !== '') {
 								request.session.twitchtv.hasSubButton = true;
 							}
+
 							request.flash('info', 'Welcome ' + account.displayName + '!');
 							return done(null, account);
 						}
