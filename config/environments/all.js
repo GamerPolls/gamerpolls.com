@@ -55,7 +55,7 @@ module.exports = function () {
 	this.use(cookieParser());
 	this.use(methodOverride());
 	this.use(cookieSession({
-		secret: 'secret',
+		secret: process.env['GAMERPOLLS_COOKIE_SECRET'],
 		store: new MongoStore({
 			url: nconf.get('MONGO_DB')
 		})
