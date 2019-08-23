@@ -1,24 +1,46 @@
 var nconf = require('nconf');
 var passport = require('passport');
-var strategies = {
-	twitchtv: require('passport-twitchtv').Strategy
-};
+var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+var request = require('request');
 var Account = require('../../app/models/account');
 
 module.exports = function () {
 	var self = this;
-	passport.use('auth-twitchtv', new strategies.twitchtv({
+	OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
+	  var options = {
+	    url: 'https://api.twitch.tv/helix/users',
+	    method: 'GET',
+	    headers: {
+	      'Client-ID': nconf.get('authkeys:twitchtv:clientID'),
+	      'Accept': 'application/vnd.twitchtv.v5+json',
+	      'Authorization': 'Bearer ' + accessToken
+	    }
+	  };
+
+	  request(options, function (error, response, body) {
+	    if (response && response.statusCode == 200) {
+	      done(null, JSON.parse(body));
+	    } else {
+	      done(JSON.parse(body));
+	    }
+	  });
+	}
+	passport.use('auth-twitchtv', new OAuth2Strategy({
 			clientID: nconf.get('authkeys:twitchtv:clientID'),
 			clientSecret: nconf.get('authkeys:twitchtv:clientSecret'),
 			callbackURL: nconf.get('authkeys:twitchtv:callbackURL'),
-			scope: ['user_read', 'user_subscriptions'],
+			scope: ['user:read:email', 'user_subscriptions'],
+			authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
+			tokenURL: 'https://id.twitch.tv/oauth2/token',
 			passReqToCallback: true
 		},
-		function (request, accessToken, refreshToken, profile, done) {
+		function (request, accessToken, refreshToken, user, done) {
 			request.session.twitchtv = {
 				accessToken: accessToken,
 				refreshToken: refreshToken
 			};
+
+			var profile = user.data[0];
 
 			Account.findOne({
 				'auths.twitchtv.id': profile.id
@@ -31,31 +53,18 @@ module.exports = function () {
 				}
 
 				account.auths.twitchtv.id = profile.id;
-				account.displayName = profile._json.display_name;
-				account.email = profile._json.email;
-				account.avatar = profile._json.logo;
-				account.username = profile.username;
+				account.displayName = profile.display_name;
+				account.email = profile.email;
+				account.avatar = profile.profile_image_url;
+				account.username = profile.login;
+
+				if (profile.broadcaster_type !== '') {
+					request.session.twitchtv.hasSubButton = true;
+				}
 
 				account.save(function () {
-					self.twitch.api(
-						'/channels/:channel', {
-							replacements: {
-								channel: profile.id
-							},
-							accessKey: accessToken
-						},
-						function (err, statusCode, response) {
-							if (err) {
-								return done(err);
-							}
-							if (response.broadcaster_type !== '') {
-								request.session.twitchtv.hasSubButton = true;
-							}
-
-							request.flash('info', 'Welcome ' + account.displayName + '!');
-							return done(null, account);
-						}
-					);
+					request.flash('info', 'Welcome ' + account.displayName + '!');
+					return done(null, account);
 				});
 			})
 		}
